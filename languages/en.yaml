@@ -1,0 +1,6 @@
+PLUGIN_GOOSIALIZE_GOOGLE:
+  NAME: Goosialize Google
+  ENABLED: Plugin enabled
+  ANALYTICS: Analytics
+  SETTINGS: Settings
+  DIAGNOSTICS: Diagnostics

@@ -1,0 +1,10 @@
+enabled: true
+
+analytics:
+  enabled: true
+
+cache:
+  enabled: true
+
+diagnostics:
+  enabled: true

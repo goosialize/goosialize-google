@@ -1,0 +1,17 @@
+{
+  "name": "goosialize/goosialize-google",
+  "description": "Google product integrations for Grav CMS, starting with GA4 reporting.",
+  "type": "grav-plugin",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Goosialize\\Google\\": "classes/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  }
+}
