@@ -1,6 +1,15 @@
 PLUGIN_GOOSIALIZE_GOOGLE:
   NAME: Goosialize Google
   ENABLED: Ενεργοποίηση plugin
+
+  AUTHENTICATION: Ταυτοποίηση
+  DEFAULT_CONNECTION: Προεπιλεγμένη σύνδεση Google
+  DEFAULT_CONNECTION_HELP: Αναγνωριστικό σύνδεσης που χρησιμοποιείται από προεπιλογή για Google API requests.
+
   ANALYTICS: Analytics
+  ANALYTICS_ENABLED: Ενεργοποίηση Google Analytics
+  DEFAULT_PROPERTY: Προεπιλεγμένο GA4 Property ID
+  DEFAULT_PROPERTY_HELP: Αριθμητικό αναγνωριστικό Google Analytics 4 property.
+
   SETTINGS: Ρυθμίσεις
   DIAGNOSTICS: Διαγνωστικά

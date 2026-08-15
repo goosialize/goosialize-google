@@ -1,6 +1,15 @@
 PLUGIN_GOOSIALIZE_GOOGLE:
   NAME: Goosialize Google
   ENABLED: Plugin enabled
+
+  AUTHENTICATION: Authentication
+  DEFAULT_CONNECTION: Default Google connection
+  DEFAULT_CONNECTION_HELP: Connection identifier used by default for Google API requests.
+
   ANALYTICS: Analytics
+  ANALYTICS_ENABLED: Google Analytics enabled
+  DEFAULT_PROPERTY: Default GA4 property ID
+  DEFAULT_PROPERTY_HELP: Numeric Google Analytics 4 property identifier.
+
   SETTINGS: Settings
   DIAGNOSTICS: Diagnostics

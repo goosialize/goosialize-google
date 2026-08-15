@@ -1,10 +1,21 @@
 enabled: true
 
+storage:
+  data_dir: 'user/data/goosialize-google'
+  database: 'google.sqlite'
+
+authentication:
+  default_connection: null
+
 analytics:
   enabled: true
+  default_property: null
 
 cache:
   enabled: true
+  ttl: 900
+  stale_on_error: true
+  stale_max_age: 86400
 
 diagnostics:
   enabled: true

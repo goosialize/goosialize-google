@@ -4,16 +4,20 @@ type: plugin
 version: 0.1.0
 description: Google product integrations for Grav CMS, starting with Google Analytics 4 reporting.
 icon: google
+
 author:
   name: Goosialize Ltd
   email: dev@goosialize.com
+
 homepage: https://goosialize.com
+
 keywords:
   - grav
   - google
   - analytics
   - ga4
   - reporting
+
 bugs: https://github.com/goosialize/goosialize-google/issues
 license: MIT
 
@@ -34,3 +38,36 @@ form:
         0: PLUGIN_ADMIN.DISABLED
       validate:
         type: bool
+
+    authentication:
+      type: section
+      title: PLUGIN_GOOSIALIZE_GOOGLE.AUTHENTICATION
+      underline: true
+
+    authentication.default_connection:
+      type: text
+      label: PLUGIN_GOOSIALIZE_GOOGLE.DEFAULT_CONNECTION
+      help: PLUGIN_GOOSIALIZE_GOOGLE.DEFAULT_CONNECTION_HELP
+
+    analytics:
+      type: section
+      title: PLUGIN_GOOSIALIZE_GOOGLE.ANALYTICS
+      underline: true
+
+    analytics.enabled:
+      type: toggle
+      label: PLUGIN_GOOSIALIZE_GOOGLE.ANALYTICS_ENABLED
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+
+    analytics.default_property:
+      type: text
+      label: PLUGIN_GOOSIALIZE_GOOGLE.DEFAULT_PROPERTY
+      help: PLUGIN_GOOSIALIZE_GOOGLE.DEFAULT_PROPERTY_HELP
+      validate:
+        pattern: '^[0-9]+$'
