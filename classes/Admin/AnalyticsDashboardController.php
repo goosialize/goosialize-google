@@ -55,7 +55,7 @@ final class AnalyticsDashboardController
             );
         }
 
-        if (!$this->authorized($user)) {
+        if (!$this->authorized($request, $user)) {
             return $this->failure(
                 403,
                 'forbidden',
@@ -99,7 +99,7 @@ final class AnalyticsDashboardController
             );
         }
 
-        if (!$this->authorized($user)) {
+        if (!$this->authorized($request, $user)) {
             return $this->failure(
                 403,
                 'forbidden',
@@ -255,9 +255,26 @@ final class AnalyticsDashboardController
     }
 
     private function authorized(
+        ServerRequestInterface $request,
         object $user
     ): bool {
         try {
+            $scopes =
+                $request->getAttribute(
+                    'api_key_scopes'
+                );
+
+            if (
+                is_array($scopes)
+                && $scopes !== []
+                && !$this->scopesPermit(
+                    $scopes,
+                    self::PERMISSION
+                )
+            ) {
+                return false;
+            }
+
             if (
                 $this->userAuthorized(
                     $user,
@@ -283,6 +300,36 @@ final class AnalyticsDashboardController
         } catch (Throwable) {
             return false;
         }
+    }
+
+    /**
+     * @param array<int,mixed> $scopes
+     */
+    private function scopesPermit(
+        array $scopes,
+        string $permission
+    ): bool {
+        foreach ($scopes as $scope) {
+            if (
+                !is_string($scope)
+                || $scope === ''
+            ) {
+                continue;
+            }
+
+            if (
+                $scope === '*'
+                || $scope === $permission
+                || str_starts_with(
+                    $permission,
+                    $scope . '.'
+                )
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function userAuthorized(
