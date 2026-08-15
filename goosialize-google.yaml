@@ -6,6 +6,7 @@ storage:
 
 authentication:
   default_connection: null
+  service_account_file: ''
 
 analytics:
   enabled: true

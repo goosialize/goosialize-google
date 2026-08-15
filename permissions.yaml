@@ -1,0 +1,7 @@
+actions:
+  api.goosialize_google.analytics:
+    type: access
+    label: Goosialize Google Analytics
+    actions:
+      read:
+        label: View Google Analytics

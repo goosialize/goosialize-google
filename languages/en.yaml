@@ -13,3 +13,8 @@ PLUGIN_GOOSIALIZE_GOOGLE:
 
   SETTINGS: Settings
   DIAGNOSTICS: Diagnostics
+  SERVICE_ACCOUNT_FILE: Service account file
+  SERVICE_ACCOUNT_FILE_HELP: Absolute runtime path to the Google service-account JSON file. The credential itself is never stored in plugin configuration or Git.
+  ANALYTICS_DASHBOARD: Google Analytics
+  ANALYTICS_PERMISSION_READ: View Google Analytics
+  NO_ANALYTICS_DATA: No analytics data for this period.

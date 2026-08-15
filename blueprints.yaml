@@ -49,6 +49,11 @@ form:
       label: PLUGIN_GOOSIALIZE_GOOGLE.DEFAULT_CONNECTION
       help: PLUGIN_GOOSIALIZE_GOOGLE.DEFAULT_CONNECTION_HELP
 
+    authentication.service_account_file:
+      type: text
+      label: PLUGIN_GOOSIALIZE_GOOGLE.SERVICE_ACCOUNT_FILE
+      help: PLUGIN_GOOSIALIZE_GOOGLE.SERVICE_ACCOUNT_FILE_HELP
+
     analytics:
       type: section
       title: PLUGIN_GOOSIALIZE_GOOGLE.ANALYTICS

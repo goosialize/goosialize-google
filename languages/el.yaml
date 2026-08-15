@@ -13,3 +13,8 @@ PLUGIN_GOOSIALIZE_GOOGLE:
 
   SETTINGS: Ρυθμίσεις
   DIAGNOSTICS: Διαγνωστικά
+  SERVICE_ACCOUNT_FILE: Αρχείο service account
+  SERVICE_ACCOUNT_FILE_HELP: Απόλυτο runtime path προς το Google service-account JSON. Το ίδιο το credential δεν αποθηκεύεται στο configuration ή στο Git.
+  ANALYTICS_DASHBOARD: Google Analytics
+  ANALYTICS_PERMISSION_READ: Προβολή Google Analytics
+  NO_ANALYTICS_DATA: Δεν υπάρχουν δεδομένα Analytics για αυτή την περίοδο.
