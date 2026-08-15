@@ -5,6 +5,7 @@
   "license": "MIT",
   "require": {
     "php": ">=8.1",
+    "google/analytics-admin": "^0.32",
     "google/analytics-data": "^0.24"
   },
   "autoload": {

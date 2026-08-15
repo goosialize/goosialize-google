@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "90836ed28a1d0dcd7f919bef4ae0c766",
+    "content-hash": "dc0ce89ab51748e330b6e386b37751b7",
     "packages": [
         {
             "name": "brick/math",
@@ -130,6 +130,56 @@
                 "source": "https://github.com/googleapis/php-jwt/tree/v7.1.0"
             },
             "time": "2026-06-11T17:54:14+00:00"
+        },
+        {
+            "name": "google/analytics-admin",
+            "version": "v0.32.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/googleapis/php-analytics-admin.git",
+                "reference": "411d9840ea0f3408d7dffb54755be3a5c1cccb03"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/googleapis/php-analytics-admin/zipball/411d9840ea0f3408d7dffb54755be3a5c1cccb03",
+                "reference": "411d9840ea0f3408d7dffb54755be3a5c1cccb03",
+                "shasum": ""
+            },
+            "require": {
+                "google/gax": "^1.38.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
+            },
+            "suggest": {
+                "ext-grpc": "Enables use of gRPC, a universal high-performance RPC framework created by Google.",
+                "ext-protobuf": "Provides a significant increase in throughput over the pure PHP protobuf implementation. See https://cloud.google.com/php/grpc for installation instructions."
+            },
+            "type": "library",
+            "extra": {
+                "component": {
+                    "id": "analytics-admin",
+                    "path": "AnalyticsAdmin",
+                    "entry": null,
+                    "target": "googleapis/php-analytics-admin.git"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Google\\Analytics\\Admin\\": "src",
+                    "GPBMetadata\\Google\\Analytics\\Admin\\": "metadata"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Google Analytics Admin Client for PHP",
+            "support": {
+                "source": "https://github.com/googleapis/php-analytics-admin/tree/v0.32.0"
+            },
+            "time": "2026-04-28T15:44:32+00:00"
         },
         {
             "name": "google/analytics-data",
