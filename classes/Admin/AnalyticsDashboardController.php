@@ -6,6 +6,7 @@ namespace Goosialize\Google\Admin;
 
 use DateTimeImmutable;
 use Grav\Common\Config\Config;
+use Grav\Common\Grav;
 use Grav\Framework\Psr7\Response;
 use Goosialize\Google\Analytics\Connection\GoogleAnalyticsDataClientFactory;
 use Goosialize\Google\Analytics\Dashboard\AnalyticsDashboardService;
@@ -34,9 +35,20 @@ final class AnalyticsDashboardController
     private const PERMISSION =
         'api.goosialize_google.analytics.read';
 
+    private readonly Config $config;
+
     public function __construct(
-        private readonly Config $config
+        Grav $grav
     ) {
+        $config = $grav['config'] ?? null;
+
+        if (!$config instanceof Config) {
+            throw new RuntimeException(
+                'Grav configuration service is unavailable.'
+            );
+        }
+
+        $this->config = $config;
     }
 
     public function properties(
