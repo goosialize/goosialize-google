@@ -71,6 +71,17 @@ final class GoosializeGooglePlugin extends Plugin
             return;
         }
 
+        /*
+         * Persistent plugin storage is initialized by the web/API
+         * runtime, not by Grav CLI commands. CLI may run under a
+         * different OS user (for example root in a container), which
+         * would otherwise create SQLite files that the web process
+         * cannot write to.
+         */
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
+
         try {
             (new StorageBootstrapper(
                 $this->grav,

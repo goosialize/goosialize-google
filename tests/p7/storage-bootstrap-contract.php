@@ -102,4 +102,30 @@ if (
     );
 }
 
+if (
+    !str_contains(
+        $plugin,
+        "PHP_SAPI === 'cli'"
+    )
+) {
+    throw new RuntimeException(
+        'Persistent storage must not bootstrap during CLI execution.'
+    );
+}
+
+if (
+    strpos(
+        $plugin,
+        "PHP_SAPI === 'cli'"
+    )
+    > strpos(
+        $plugin,
+        'new StorageBootstrapper('
+    )
+) {
+    throw new RuntimeException(
+        'CLI guard must execute before storage bootstrap.'
+    );
+}
+
 echo "P7_STORAGE_BOOTSTRAP_CONTRACT=PASS\n";
