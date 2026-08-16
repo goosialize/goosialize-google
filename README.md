@@ -33,3 +33,19 @@ Plugin-local persistence will use SQLite under:
 ## Status
 
 Early development.
+
+## Installation
+
+Official release ZIPs include production dependencies.
+
+Install under:
+
+`user/plugins/goosialize-google/`
+
+SQLite storage is automatically created at:
+
+`user/data/goosialize-google/google.sqlite`
+
+Google credentials must remain outside the repository and release package.
+
+See `docs/installation.md` for complete setup instructions.
