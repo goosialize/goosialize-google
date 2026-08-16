@@ -80,4 +80,26 @@ if (
     );
 }
 
+if (
+    str_contains(
+        $plugin,
+        'isEnabled()'
+    )
+) {
+    throw new RuntimeException(
+        'Plugin must not depend on unavailable Plugin::isEnabled().'
+    );
+}
+
+if (
+    !str_contains(
+        $plugin,
+        "'plugins.goosialize-google.enabled'"
+    )
+) {
+    throw new RuntimeException(
+        'Plugin enabled state must come from Grav config.'
+    );
+}
+
 echo "P7_STORAGE_BOOTSTRAP_CONTRACT=PASS\n";

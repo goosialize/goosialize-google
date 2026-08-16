@@ -54,15 +54,20 @@ final class GoosializeGooglePlugin extends Plugin
 
     public function onPluginsInitialized(): void
     {
-        if (!$this->isEnabled()) {
-            return;
-        }
-
         $config =
             $this->grav['config']
             ?? null;
 
         if (!$config instanceof \Grav\Common\Config\Config) {
+            return;
+        }
+
+        if (
+            !(bool) $config->get(
+                'plugins.goosialize-google.enabled',
+                true
+            )
+        ) {
             return;
         }
 
