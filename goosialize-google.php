@@ -8,6 +8,7 @@ use Grav\Common\Plugin;
 use Grav\Events\PermissionsRegisterEvent;
 use Grav\Framework\Acl\PermissionsReader;
 use Goosialize\Google\Admin\AnalyticsDashboardController;
+use Goosialize\Google\Core\Persistence\StorageBootstrapper;
 use RocketTheme\Toolbox\Event\Event;
 use Throwable;
 
@@ -53,6 +54,46 @@ final class GoosializeGooglePlugin extends Plugin
 
     public function onPluginsInitialized(): void
     {
+        if (!$this->isEnabled()) {
+            return;
+        }
+
+        $config =
+            $this->grav['config']
+            ?? null;
+
+        if (!$config instanceof \Grav\Common\Config\Config) {
+            return;
+        }
+
+        try {
+            (new StorageBootstrapper(
+                $this->grav,
+                $config
+            ))->bootstrap(
+                __DIR__
+            );
+        } catch (Throwable $error) {
+            $logger =
+                $this->grav['log']
+                ?? null;
+
+            if (
+                is_object($logger)
+                && method_exists(
+                    $logger,
+                    'error'
+                )
+            ) {
+                $logger->error(
+                    'Goosialize Google storage bootstrap failed.',
+                    [
+                        'exception' =>
+                            $error::class,
+                    ]
+                );
+            }
+        }
     }
 
     public function onRegisterPermissions(
