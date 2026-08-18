@@ -81,6 +81,18 @@
     ).toFixed(1)}%`;
   }
 
+  function formatDecimal(
+    value,
+    digits = 1
+  ) {
+    const number =
+      Number(value || 0);
+
+    return Number.isFinite(number)
+      ? number.toFixed(digits)
+      : '0.0';
+  }
+
   function formatDuration(value) {
     const seconds =
       Number(value || 0);
@@ -107,6 +119,7 @@
     constructor() {
       super();
 
+      this.product = 'analytics';
       this.properties = [];
       this.propertyId = '';
       this.days = 30;
@@ -189,9 +202,14 @@
       this.render();
 
       try {
+        const propertiesPath =
+          this.product === 'search_console'
+            ? '/goosialize-google/search-console/properties'
+            : '/goosialize-google/properties';
+
         const payload =
           await this.apiGet(
-            '/goosialize-google/properties'
+            propertiesPath
           );
 
         this.properties =
@@ -200,15 +218,21 @@
             : [];
 
         if (
-          !this.propertyId
+          this.propertyId === ''
           && this.properties.length > 0
         ) {
           this.propertyId =
-            String(
-              this.properties[0]
-                .property_id
-              || ''
-            );
+            this.product === 'search_console'
+              ? String(
+                  this.properties[0]
+                    .site_url
+                  || ''
+                )
+              : String(
+                  this.properties[0]
+                    .property_id
+                  || ''
+                );
         }
 
         if (this.propertyId) {
@@ -222,7 +246,10 @@
         this.error =
           error instanceof Error
             ? error.message
-            : 'Google Analytics could not be loaded.';
+            : this.product
+                === 'search_console'
+              ? 'Google Search Console could not be loaded.'
+              : 'Google Analytics could not be loaded.';
       } finally {
         this.loading = false;
         this.render();
@@ -232,7 +259,7 @@
     async loadDashboard(
       manageState = true
     ) {
-      if (!this.propertyId) {
+      if (this.propertyId === '') {
         this.data = null;
         this.render();
         return;
@@ -246,16 +273,36 @@
 
       try {
         const query =
-          new URLSearchParams({
-            property_id:
-              this.propertyId,
-            days:
-              String(this.days),
-          });
+          new URLSearchParams();
+
+        if (
+          this.product
+          === 'search_console'
+        ) {
+          query.set(
+            'site_url',
+            this.propertyId
+          );
+        } else {
+          query.set(
+            'property_id',
+            this.propertyId
+          );
+        }
+
+        query.set(
+          'days',
+          String(this.days)
+        );
+
+        const dashboardPath =
+          this.product === 'search_console'
+            ? `/goosialize-google/search-console/performance?${query.toString()}`
+            : `/goosialize-google/analytics?${query.toString()}`;
 
         this.data =
           await this.apiGet(
-            `/goosialize-google/analytics?${query.toString()}`
+            dashboardPath
           );
       } catch (error) {
         this.data = null;
@@ -263,7 +310,10 @@
         this.error =
           error instanceof Error
             ? error.message
-            : 'Google Analytics could not be loaded.';
+            : this.product
+                === 'search_console'
+              ? 'Google Search Console could not be loaded.'
+              : 'Google Analytics could not be loaded.';
       } finally {
         if (manageState) {
           this.loading = false;
@@ -301,6 +351,136 @@
 
       const primaryColor =
         'var(--primary-color, var(--purple, #8b5cf6))';
+
+      const productNav =
+        element('section');
+
+      productNav.setAttribute(
+        'aria-label',
+        'Google product'
+      );
+
+      productNav.style.display =
+        'flex';
+
+      productNav.style.gap =
+        '0.35rem';
+
+      productNav.style.padding =
+        '0.3rem';
+
+      productNav.style.width =
+        'fit-content';
+
+      productNav.style.border =
+        `1px solid ${surfaceBorder}`;
+
+      productNav.style.borderRadius =
+        '0.65rem';
+
+      productNav.style.background =
+        surfaceBackground;
+
+      const products = [
+        [
+          'analytics',
+          'Google Analytics',
+        ],
+        [
+          'search_console',
+          'Search Console',
+        ],
+      ];
+
+      for (
+        const [id, label]
+        of products
+      ) {
+        const active =
+          this.product === id;
+
+        const button =
+          element(
+            'button',
+            label
+          );
+
+        button.type =
+          'button';
+
+        button.disabled =
+          this.loading;
+
+        button.setAttribute(
+          'aria-pressed',
+          active
+            ? 'true'
+            : 'false'
+        );
+
+        button.style.minHeight =
+          '2.4rem';
+
+        button.style.padding =
+          '0 0.9rem';
+
+        button.style.border =
+          '0';
+
+        button.style.borderRadius =
+          '0.45rem';
+
+        button.style.font =
+          'inherit';
+
+        button.style.fontWeight =
+          active
+            ? '700'
+            : '500';
+
+        button.style.cursor =
+          this.loading
+            ? 'wait'
+            : 'pointer';
+
+        button.style.color =
+          active
+            ? 'var(--primary-contrast, #fff)'
+            : 'inherit';
+
+        button.style.background =
+          active
+            ? primaryColor
+            : 'transparent';
+
+        button.addEventListener(
+          'click',
+          () => {
+            if (
+              this.product === id
+              || this.loading
+            ) {
+              return;
+            }
+
+            this.product = id;
+            this.properties = [];
+            this.propertyId = '';
+            this.data = null;
+            this.error = null;
+
+            this.load();
+          }
+        );
+
+        productNav.append(
+          button
+        );
+      }
+
+      root.append(
+        productNav
+      );
 
       const toolbar =
         element('section');
@@ -350,7 +530,10 @@
       const propertyLabel =
         element(
           'label',
-          'Property'
+          this.product
+            === 'search_console'
+            ? 'Search Console property'
+            : 'Property'
         );
 
       propertyLabel.style.fontSize =
@@ -373,7 +556,10 @@
 
       property.setAttribute(
         'aria-label',
-        'GA4 property'
+        this.product
+          === 'search_console'
+          ? 'Search Console property'
+          : 'GA4 property'
       );
 
       property.style.width =
@@ -417,7 +603,10 @@
         const option =
           element(
             'option',
-            'No accessible properties'
+            this.product
+              === 'search_console'
+              ? 'No accessible Search Console properties'
+              : 'No accessible properties'
           );
 
         option.value = '';
@@ -430,16 +619,35 @@
           const item
           of this.properties
         ) {
+          const optionLabel =
+            this.product
+              === 'search_console'
+              ? String(
+                  item.site_url
+                  || ''
+                )
+              : `${item.property_name} — ${item.account_name}`;
+
+          const optionValue =
+            this.product
+              === 'search_console'
+              ? String(
+                  item.site_url
+                  || ''
+                )
+              : String(
+                  item.property_id
+                  || ''
+                );
+
           const option =
             element(
               'option',
-              `${item.property_name} — ${item.account_name}`
+              optionLabel
             );
 
           option.value =
-            String(
-              item.property_id
-            );
+            optionValue;
 
           option.selected =
             option.value
@@ -504,7 +712,10 @@
 
       periodControls.setAttribute(
         'aria-label',
-        'Analytics period'
+        this.product
+          === 'search_console'
+          ? 'Search Console period'
+          : 'Analytics period'
       );
 
       periodControls.style.display =
@@ -649,7 +860,10 @@
         const loadingTitle =
           element(
             'strong',
-            'Loading Google Analytics…'
+            this.product
+              === 'search_console'
+              ? 'Loading Google Search Console…'
+              : 'Loading Google Analytics…'
           );
 
         loadingTitle.style.display =
@@ -695,7 +909,10 @@
         const errorTitle =
           element(
             'strong',
-            'Google Analytics could not be loaded'
+            this.product
+              === 'search_console'
+              ? 'Google Search Console could not be loaded'
+              : 'Google Analytics could not be loaded'
           );
 
         errorTitle.style.display =
@@ -748,14 +965,20 @@
         noProperties.append(
           element(
             'strong',
-            'No accessible Google Analytics properties'
+            this.product
+              === 'search_console'
+              ? 'No accessible Search Console properties'
+              : 'No accessible Google Analytics properties'
           )
         );
 
         const text =
           element(
             'p',
-            'The configured Google account does not currently expose any GA4 properties.'
+            this.product
+              === 'search_console'
+              ? 'The configured Google account does not currently expose any Search Console properties.'
+              : 'The configured Google account does not currently expose any GA4 properties.'
           );
 
         text.style.margin =
@@ -803,8 +1026,18 @@
       const eyebrow =
         element(
           'div',
-          this.data?.property?.account
-            || 'Google Analytics'
+          this.product
+            === 'search_console'
+            ? (
+                this.data?.property?.type
+                  === 'domain'
+                  ? 'Domain property'
+                  : 'URL-prefix property'
+              )
+            : (
+                this.data?.property?.account
+                || 'Google Analytics'
+              )
         );
 
       eyebrow.style.marginBottom =
@@ -828,8 +1061,16 @@
       const title =
         element(
           'h2',
-          this.data?.property?.name
-            || 'Google Analytics'
+          this.product
+            === 'search_console'
+            ? (
+                this.data?.property?.site_url
+                || 'Google Search Console'
+              )
+            : (
+                this.data?.property?.name
+                || 'Google Analytics'
+              )
         );
 
       title.style.margin =
@@ -947,7 +1188,10 @@
         const emptyTitle =
           element(
             'h3',
-            'No analytics data'
+            this.product
+              === 'search_console'
+              ? 'No Search Console data'
+              : 'No analytics data'
           );
 
         emptyTitle.style.margin =
@@ -959,7 +1203,10 @@
         const emptyText =
           element(
             'p',
-            'No analytics data for this period.'
+            this.product
+              === 'search_console'
+              ? 'No Search Console data for this period.'
+              : 'No analytics data for this period.'
           );
 
         emptyText.style.margin =
@@ -974,7 +1221,10 @@
         const emptyHelp =
           element(
             'p',
-            'The Google Analytics connection is working correctly. Try another period or confirm that this GA4 property is receiving traffic.'
+            this.product
+              === 'search_console'
+              ? 'The Search Console connection is working correctly. Try another period or confirm that this property has search performance data.'
+              : 'The Google Analytics connection is working correctly. Try another period or confirm that this GA4 property is receiving traffic.'
           );
 
         emptyHelp.style.margin =
@@ -1016,7 +1266,10 @@
 
       cards.setAttribute(
         'aria-label',
-        'Analytics overview'
+        this.product
+          === 'search_console'
+          ? 'Search Console overview'
+          : 'Analytics overview'
       );
 
       cards.style.display =
@@ -1028,56 +1281,86 @@
       cards.style.gap =
         '0.8rem';
 
-      const definitions = [
-        [
-          'Active users',
-          formatInteger(
-            metrics.activeUsers
-          ),
-        ],
-        [
-          'New users',
-          formatInteger(
-            metrics.newUsers
-          ),
-        ],
-        [
-          'Sessions',
-          formatInteger(
-            metrics.sessions
-          ),
-        ],
-        [
-          'Views',
-          formatInteger(
-            metrics.screenPageViews
-          ),
-        ],
-        [
-          'Engagement',
-          formatPercent(
-            metrics.engagementRate
-          ),
-        ],
-        [
-          'Avg. session',
-          formatDuration(
-            metrics.averageSessionDuration
-          ),
-        ],
-        [
-          'Events',
-          formatInteger(
-            metrics.eventCount
-          ),
-        ],
-        [
-          'Key events',
-          formatInteger(
-            metrics.keyEvents
-          ),
-        ],
-      ];
+      const definitions =
+        this.product
+          === 'search_console'
+          ? [
+              [
+                'Clicks',
+                formatInteger(
+                  metrics.clicks
+                ),
+              ],
+              [
+                'Impressions',
+                formatInteger(
+                  metrics.impressions
+                ),
+              ],
+              [
+                'CTR',
+                formatPercent(
+                  metrics.ctr
+                ),
+              ],
+              [
+                'Average position',
+                formatDecimal(
+                  metrics.position,
+                  1
+                ),
+              ],
+            ]
+          : [
+              [
+                'Active users',
+                formatInteger(
+                  metrics.activeUsers
+                ),
+              ],
+              [
+                'New users',
+                formatInteger(
+                  metrics.newUsers
+                ),
+              ],
+              [
+                'Sessions',
+                formatInteger(
+                  metrics.sessions
+                ),
+              ],
+              [
+                'Views',
+                formatInteger(
+                  metrics.screenPageViews
+                ),
+              ],
+              [
+                'Engagement',
+                formatPercent(
+                  metrics.engagementRate
+                ),
+              ],
+              [
+                'Avg. session',
+                formatDuration(
+                  metrics.averageSessionDuration
+                ),
+              ],
+              [
+                'Events',
+                formatInteger(
+                  metrics.eventCount
+                ),
+              ],
+              [
+                'Key events',
+                formatInteger(
+                  metrics.keyEvents
+                ),
+              ],
+            ];
 
       for (
         const [label, value]
@@ -1162,73 +1445,145 @@
       tables.style.gap =
         '1rem';
 
-      this.appendTable(
-        tables,
-        'Top pages',
-        this.data.top_pages,
-        [
-          ['pagePath', 'Page'],
-        ],
-        [
-          ['screenPageViews', 'Views'],
-          ['activeUsers', 'Users'],
-        ]
-      );
-
-      this.appendTable(
-        tables,
-        'Traffic channels',
-        this.data.traffic_channels,
-        [
+      if (
+        this.product
+        === 'search_console'
+      ) {
+        const searchMetrics = [
           [
-            'sessionDefaultChannelGroup',
-            'Channel',
+            'clicks',
+            'Clicks',
+            formatInteger,
           ],
-        ],
-        [
-          ['sessions', 'Sessions'],
-          ['activeUsers', 'Users'],
-        ]
-      );
+          [
+            'impressions',
+            'Impressions',
+            formatInteger,
+          ],
+          [
+            'ctr',
+            'CTR',
+            formatPercent,
+          ],
+          [
+            'position',
+            'Position',
+            (value) =>
+              formatDecimal(
+                value,
+                1
+              ),
+          ],
+        ];
 
-      this.appendTable(
-        tables,
-        'Devices',
-        this.data.devices,
-        [
-          ['deviceCategory', 'Device'],
-        ],
-        [
-          ['sessions', 'Sessions'],
-          ['activeUsers', 'Users'],
-        ]
-      );
+        this.appendSearchConsoleTable(
+          tables,
+          'Top queries',
+          this.data.top_queries,
+          [
+            ['query', 'Query'],
+          ],
+          searchMetrics
+        );
 
-      this.appendTable(
-        tables,
-        'Countries',
-        this.data.countries,
-        [
-          ['country', 'Country'],
-        ],
-        [
-          ['activeUsers', 'Users'],
-          ['sessions', 'Sessions'],
-        ]
-      );
+        this.appendSearchConsoleTable(
+          tables,
+          'Top pages',
+          this.data.top_pages,
+          [
+            ['page', 'Page'],
+          ],
+          searchMetrics
+        );
 
-      this.appendTable(
-        tables,
-        'Events',
-        this.data.events,
-        [
-          ['eventName', 'Event'],
-        ],
-        [
-          ['eventCount', 'Count'],
-          ['totalUsers', 'Users'],
-        ]
-      );
+        this.appendSearchConsoleTable(
+          tables,
+          'Devices',
+          this.data.devices,
+          [
+            ['device', 'Device'],
+          ],
+          searchMetrics
+        );
+
+        this.appendSearchConsoleTable(
+          tables,
+          'Countries',
+          this.data.countries,
+          [
+            ['country', 'Country'],
+          ],
+          searchMetrics
+        );
+      } else {
+        this.appendTable(
+          tables,
+          'Top pages',
+          this.data.top_pages,
+          [
+            ['pagePath', 'Page'],
+          ],
+          [
+            ['screenPageViews', 'Views'],
+            ['activeUsers', 'Users'],
+          ]
+        );
+
+        this.appendTable(
+          tables,
+          'Traffic channels',
+          this.data.traffic_channels,
+          [
+            [
+              'sessionDefaultChannelGroup',
+              'Channel',
+            ],
+          ],
+          [
+            ['sessions', 'Sessions'],
+            ['activeUsers', 'Users'],
+          ]
+        );
+
+        this.appendTable(
+          tables,
+          'Devices',
+          this.data.devices,
+          [
+            ['deviceCategory', 'Device'],
+          ],
+          [
+            ['sessions', 'Sessions'],
+            ['activeUsers', 'Users'],
+          ]
+        );
+
+        this.appendTable(
+          tables,
+          'Countries',
+          this.data.countries,
+          [
+            ['country', 'Country'],
+          ],
+          [
+            ['activeUsers', 'Users'],
+            ['sessions', 'Sessions'],
+          ]
+        );
+
+        this.appendTable(
+          tables,
+          'Events',
+          this.data.events,
+          [
+            ['eventName', 'Event'],
+          ],
+          [
+            ['eventCount', 'Count'],
+            ['totalUsers', 'Users'],
+          ]
+        );
+      }
 
       if (tables.childElementCount > 0) {
         root.append(tables);
@@ -1428,6 +1783,225 @@
 
       root.append(section);
     }
+    appendSearchConsoleTable(
+      root,
+      title,
+      rows,
+      dimensions,
+      metrics
+    ) {
+      if (
+        Array.isArray(rows) === false
+        || rows.length === 0
+      ) {
+        return;
+      }
+
+      const section =
+        element('article');
+
+      section.style.minWidth =
+        '0';
+
+      section.style.border =
+        '1px solid var(--border-color, rgba(255, 255, 255, 0.10))';
+
+      section.style.borderRadius =
+        '0.65rem';
+
+      section.style.background =
+        'var(--body-bg, rgba(255, 255, 255, 0.025))';
+
+      section.style.overflow =
+        'hidden';
+
+      const heading =
+        element(
+          'h3',
+          title
+        );
+
+      heading.style.margin =
+        '0';
+
+      heading.style.padding =
+        '0.9rem 1rem';
+
+      heading.style.fontSize =
+        '1rem';
+
+      heading.style.borderBottom =
+        '1px solid var(--border-color, rgba(255, 255, 255, 0.10))';
+
+      section.append(
+        heading
+      );
+
+      const scroll =
+        element('div');
+
+      scroll.style.overflowX =
+        'auto';
+
+      const table =
+        element('table');
+
+      table.style.width =
+        '100%';
+
+      table.style.borderCollapse =
+        'collapse';
+
+      table.style.fontSize =
+        '0.88rem';
+
+      const head =
+        element('thead');
+
+      const headRow =
+        element('tr');
+
+      for (
+        const [, label]
+        of [...dimensions, ...metrics]
+      ) {
+        const th =
+          element(
+            'th',
+            label
+          );
+
+        th.style.padding =
+          '0.65rem 0.8rem';
+
+        th.style.textAlign =
+          'left';
+
+        th.style.whiteSpace =
+          'nowrap';
+
+        th.style.fontSize =
+          '0.72rem';
+
+        th.style.fontWeight =
+          '700';
+
+        th.style.textTransform =
+          'uppercase';
+
+        th.style.letterSpacing =
+          '0.035em';
+
+        th.style.color =
+          'var(--text-muted, var(--gray-500, #8f94a3))';
+
+        th.style.borderBottom =
+          '1px solid var(--border-color, rgba(255, 255, 255, 0.10))';
+
+        headRow.append(
+          th
+        );
+      }
+
+      head.append(
+        headRow
+      );
+
+      table.append(
+        head
+      );
+
+      const body =
+        element('tbody');
+
+      for (const row of rows) {
+        const tr =
+          element('tr');
+
+        for (
+          const [key]
+          of dimensions
+        ) {
+          const td =
+            element(
+              'td',
+              row?.[key]
+              ?? ''
+            );
+
+          td.style.padding =
+            '0.7rem 0.8rem';
+
+          td.style.borderBottom =
+            '1px solid var(--border-color, rgba(255, 255, 255, 0.07))';
+
+          td.style.verticalAlign =
+            'top';
+
+          tr.append(
+            td
+          );
+        }
+
+        for (
+          const [
+            key,
+            ,
+            formatter,
+          ]
+          of metrics
+        ) {
+          const td =
+            element(
+              'td',
+              formatter(
+                row?.[key]
+                ?? 0
+              )
+            );
+
+          td.style.padding =
+            '0.7rem 0.8rem';
+
+          td.style.borderBottom =
+            '1px solid var(--border-color, rgba(255, 255, 255, 0.07))';
+
+          td.style.textAlign =
+            'right';
+
+          td.style.whiteSpace =
+            'nowrap';
+
+          td.style.fontVariantNumeric =
+            'tabular-nums';
+
+          tr.append(
+            td
+          );
+        }
+
+        body.append(
+          tr
+        );
+      }
+
+      table.append(
+        body
+      );
+
+      scroll.append(
+        table
+      );
+
+      section.append(
+        scroll
+      );
+
+      root.append(
+        section
+      );
+    }
+
   }
 
   customElements.define(
