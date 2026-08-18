@@ -654,18 +654,43 @@
       root.append(toolbar);
 
       if (this.loading) {
-        const panel =
-          element(
-            'section',
-            this.product === 'search_console'
-              ? 'Loading Google Search Console…'
-              : 'Loading Google Analytics…'
-          );
+        const progress =
+          element('div');
 
-        panel.className =
-          'rounded-lg border border-border bg-card p-6 text-center text-sm text-muted-foreground';
+        progress.className =
+          'h-0.5 w-full overflow-hidden rounded-full bg-muted';
 
-        root.append(panel);
+        progress.setAttribute(
+          'role',
+          'progressbar'
+        );
+
+        progress.setAttribute(
+          'aria-busy',
+          'true'
+        );
+
+        progress.setAttribute(
+          'aria-label',
+          this.product === 'search_console'
+            ? 'Loading Search Console data'
+            : 'Loading Google Analytics data'
+        );
+
+        const progressBar =
+          element('div');
+
+        progressBar.className =
+          'h-full w-full bg-primary animate-pulse';
+
+        progress.append(
+          progressBar
+        );
+
+        root.append(
+          progress
+        );
+
         this.append(root);
         return;
       }

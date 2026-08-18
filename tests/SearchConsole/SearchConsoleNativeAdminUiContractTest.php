@@ -51,7 +51,6 @@ $requiredClasses = [
     'text-primary-foreground',
     'hover:bg-accent',
     'p-5',
-    'p-6',
     'px-4',
     'py-2',
     'py-3',
