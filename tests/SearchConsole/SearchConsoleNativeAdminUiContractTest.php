@@ -77,7 +77,7 @@ foreach (
 foreach (
     [
         "'label' =>\n                'Goosialize Google'",
-        "'title' =>\n                'Goosialize Google'",
+        "'title' =>\n                'Goosialize Google — Tools & Integrations'",
     ] as $needle
 ) {
     if (
@@ -87,7 +87,7 @@ foreach (
         ) === false
     ) {
         throw new RuntimeException(
-            'Goosialize Google page identity contract missing.'
+            'Goosialize Google Tools & Integrations page identity contract missing.'
         );
     }
 }

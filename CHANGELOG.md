@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-18
+
+### Changed
+
+- Updated the product identity to **Goosialize Google — Tools & Integrations**.
+- Kept the compact **Goosialize Google** label in Admin2 navigation.
+- Updated English and Greek plugin identity labels.
+- Updated README and installation documentation to reflect the current Google Analytics and Search Console modules.
+- Clarified potential future integrations including Business Profile, Maps / Places, PageSpeed, Google Ads and YouTube Analytics.
+
+
 ## [0.2.0] - 2026-08-18
 
 ### Added

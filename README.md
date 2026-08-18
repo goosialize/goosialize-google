@@ -1,28 +1,30 @@
-# Goosialize Google
+# Goosialize Google — Tools & Integrations
 
-Google product integrations for Grav CMS 2.
+Google tools and integrations for Grav CMS 2.
 
 ## Current scope
 
-Version 0.2.0 supports Google Analytics 4 reporting and Google Search Console performance reporting.
+Version 0.2.1 includes:
 
-Planned future modules may include:
+- Google Analytics 4 reporting
+- Google Search Console performance reporting
 
-- Google Search Console
+Potential future integrations may include:
+
 - Google Business Profile
 - Google Maps / Places
 - PageSpeed
 - Google Ads
-
-These future modules are not implemented in the initial release.
+- YouTube Analytics
 
 ## Architecture
 
 The plugin separates reusable Google infrastructure from product-specific modules.
 
-Initial module:
+Current modules:
 
-- Analytics
+- Google Analytics
+- Google Search Console
 
 Google APIs remain authoritative for Google-owned data.
 
@@ -32,7 +34,9 @@ Plugin-local persistence will use SQLite under:
 
 ## Status
 
-Early development.
+Active development.
+
+Google Analytics and Google Search Console are implemented and available through the Admin2 dashboard.
 
 ## Installation
 

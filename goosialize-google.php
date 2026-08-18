@@ -239,7 +239,7 @@ final class GoosializeGooglePlugin extends Plugin
             'plugin' =>
                 'goosialize-google',
             'title' =>
-                'Goosialize Google',
+                'Goosialize Google — Tools & Integrations',
             'icon' =>
                 'fa-chart-line',
             'page_type' =>

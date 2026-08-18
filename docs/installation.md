@@ -1,4 +1,4 @@
-# Goosialize Google — Installation
+# Goosialize Google — Tools & Integrations — Installation
 
 Requirements:
 
