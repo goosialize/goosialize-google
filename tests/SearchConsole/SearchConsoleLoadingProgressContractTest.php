@@ -24,7 +24,13 @@ $required = [
     "'Loading Search Console data'",
     "'Loading Google Analytics data'",
     "const progressBar =",
-    "'h-full w-full bg-primary animate-pulse'",
+    "'h-full w-1/3 rounded-full bg-primary'",
+    "progressBar.animate(",
+    "'translateX(-120%)'",
+    "'translateX(320%)'",
+    "duration: 900",
+    "iterations: Infinity",
+    "easing: 'ease-in-out'",
     "progress.append(",
     "progressBar",
 ];
@@ -46,6 +52,7 @@ foreach ($required as $needle) {
 $forbidden = [
     'Loading Google Search Console…',
     'Loading Google Analytics…',
+    'animate-pulse',
     '.style.',
 ];
 

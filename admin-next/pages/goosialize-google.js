@@ -681,7 +681,25 @@
           element('div');
 
         progressBar.className =
-          'h-full w-full bg-primary animate-pulse';
+          'h-full w-1/3 rounded-full bg-primary';
+
+        progressBar.animate(
+          [
+            {
+              transform:
+                'translateX(-120%)',
+            },
+            {
+              transform:
+                'translateX(320%)',
+            },
+          ],
+          {
+            duration: 900,
+            iterations: Infinity,
+            easing: 'ease-in-out',
+          }
+        );
 
         progress.append(
           progressBar
