@@ -127,32 +127,14 @@
       this.loading = false;
       this.error = null;
 
-      this._actionListener =
-        (event) => {
-          if (
-            event?.detail?.id
-              === 'refresh'
-          ) {
-            this.loadDashboard();
-          }
-        };
     }
 
     connectedCallback() {
-      window.addEventListener(
-        'grav:plugin-page-action',
-        this._actionListener
-      );
-
       this.render();
       this.load();
     }
 
     disconnectedCallback() {
-      window.removeEventListener(
-        'grav:plugin-page-action',
-        this._actionListener
-      );
     }
 
     async apiGet(path) {
@@ -831,9 +813,81 @@
         periodControls
       );
 
+      const refreshButton =
+        element(
+          'button',
+          this.loading
+            ? 'Refreshing…'
+            : 'Refresh'
+        );
+
+      refreshButton.type =
+        'button';
+
+      refreshButton.disabled =
+        this.loading
+        || this.propertyId === '';
+
+      refreshButton.setAttribute(
+        'aria-label',
+        this.product
+          === 'search_console'
+          ? 'Refresh Search Console data'
+          : 'Refresh Google Analytics data'
+      );
+
+      refreshButton.style.minHeight =
+        '2.65rem';
+
+      refreshButton.style.padding =
+        '0 1rem';
+
+      refreshButton.style.border =
+        `1px solid ${surfaceBorder}`;
+
+      refreshButton.style.borderRadius =
+        '0.5rem';
+
+      refreshButton.style.background =
+        'var(--input-bg, var(--body-bg, transparent))';
+
+      refreshButton.style.color =
+        'inherit';
+
+      refreshButton.style.font =
+        'inherit';
+
+      refreshButton.style.fontWeight =
+        '600';
+
+      refreshButton.style.cursor =
+        this.loading
+          ? 'wait'
+          : 'pointer';
+
+      refreshButton.style.opacity =
+        refreshButton.disabled
+          ? '0.65'
+          : '1';
+
+      refreshButton.addEventListener(
+        'click',
+        () => {
+          if (
+            this.loading
+            || this.propertyId === ''
+          ) {
+            return;
+          }
+
+          this.loadDashboard();
+        }
+      );
+
       toolbar.append(
         propertyGroup,
-        periodGroup
+        periodGroup,
+        refreshButton
       );
 
       root.append(toolbar);

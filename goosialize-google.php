@@ -244,16 +244,6 @@ final class GoosializeGooglePlugin extends Plugin
                 'fa-chart-line',
             'page_type' =>
                 'component',
-            'actions' => [
-                [
-                    'id' =>
-                        'refresh',
-                    'label' =>
-                        'Refresh',
-                    'icon' =>
-                        'fa-refresh',
-                ],
-            ],
         ];
     }
 
