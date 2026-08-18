@@ -311,7 +311,7 @@
         element('section');
 
       root.className =
-        'space-y-4 p-6';
+        'space-y-4 px-6 pb-6';
 
       const productNav =
         element('div');
@@ -409,7 +409,7 @@
         element('select');
 
       property.className =
-        'mt-1 flex h-10 w-full appearance-none rounded-lg border border-input bg-muted/50 px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
+        'mt-1 h-10 w-full rounded-lg border border-input bg-muted/50 px-3 py-2 text-sm text-foreground shadow-sm focus:outline-none focus:ring-1 focus:ring-ring';
 
       property.setAttribute(
         'aria-label',
@@ -510,7 +510,7 @@
         element('div');
 
       periodControls.className =
-        'mt-1 inline-flex h-10 items-center rounded-md border border-border bg-background shadow-sm';
+        'mt-1 inline-flex h-10 items-center rounded-md border border-border bg-background p-1 shadow-sm';
 
       periodControls.setAttribute(
         'role',
@@ -546,7 +546,7 @@
         button.className =
           active
             ? 'h-8 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground'
-            : 'h-8 rounded-md px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground';
+            : 'h-8 rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground';
 
         button.setAttribute(
           'aria-pressed',
@@ -597,7 +597,7 @@
         || this.propertyId === '';
 
       refreshButton.className =
-        'h-10 shrink-0 rounded-md border border-border px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50';
+        'inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50';
 
       refreshButton.setAttribute(
         'aria-label',
@@ -737,7 +737,7 @@
         element('header');
 
       heading.className =
-        'space-y-0.5';
+        'space-y-0.5 pt-1';
 
       const title =
         element(

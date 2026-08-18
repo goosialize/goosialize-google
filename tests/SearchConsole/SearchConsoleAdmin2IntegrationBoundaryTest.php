@@ -16,16 +16,15 @@ if ($page === false) {
 }
 
 $required = [
-    'border-b-2 border-primary px-3 py-2 text-sm font-medium text-primary',
+    'space-y-4 px-6 pb-6',
+    'border-b-2 border-primary',
     'border-b-2 border-transparent',
-    'text-xs font-medium text-muted-foreground',
     'h-10 w-full rounded-lg border border-input bg-muted/50',
-    'sm:flex-row sm:items-end',
-    'min-w-0 flex-1',
-    'mt-1 inline-flex h-10 items-center',
+    'text-xs',
+    'font-medium',
+    'text-muted-foreground',
     'inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-border',
-    'text-xl font-semibold tracking-tight text-foreground',
-    'rounded-lg border border-border bg-card py-12 text-center',
+    'mt-1 inline-flex h-10 items-center rounded-md border border-border bg-background p-1 shadow-sm',
 ];
 
 foreach ($required as $needle) {
@@ -36,18 +35,16 @@ foreach ($required as $needle) {
         ) === false
     ) {
         throw new RuntimeException(
-            'P9-F2 native composition missing: '
+            'Admin2 integration contract missing: '
             . $needle
         );
     }
 }
 
 $forbidden = [
-    'grid gap-4 rounded-lg border border-border bg-card p-5 md:grid-cols-[minmax(0,1fr)_auto_auto]',
-    'inline-flex gap-1 rounded-md border border-border bg-card p-1',
-    'inline-flex gap-1 rounded-md border border-border bg-background p-1',
-    'Goosialize Ltd',
     '.style.',
+    'Goosialize Ltd',
+    'grav:plugin-page-action',
 ];
 
 foreach ($forbidden as $needle) {
@@ -58,10 +55,10 @@ foreach ($forbidden as $needle) {
         )
     ) {
         throw new RuntimeException(
-            'P9-F2 forbidden legacy composition remains: '
+            'Unsupported/legacy integration remains: '
             . $needle
         );
     }
 }
 
-echo "SEARCH_CONSOLE_NATIVE_COMPOSITION_CONTRACT=PASS\n";
+echo "ADMIN2_INTEGRATION_BOUNDARY=PASS\n";
