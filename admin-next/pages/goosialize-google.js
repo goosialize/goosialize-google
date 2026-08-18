@@ -310,73 +310,26 @@
       const root =
         element('section');
 
-      root.style.display =
-        'grid';
-
-      root.style.gap =
-        '1.5rem';
-
-      root.style.width =
-        '100%';
-
-      root.style.boxSizing =
-        'border-box';
-
-      const surfaceBorder =
-        'var(--border-color, rgba(255, 255, 255, 0.10))';
-
-      const surfaceBackground =
-        'var(--body-bg, rgba(255, 255, 255, 0.025))';
-
-      const mutedColor =
-        'var(--text-muted, var(--gray-500, #8f94a3))';
-
-      const primaryColor =
-        'var(--primary-color, var(--purple, #8b5cf6))';
+      root.className =
+        'space-y-4 p-6';
 
       const productNav =
-        element('section');
+        element('div');
+
+      productNav.className =
+        'inline-flex gap-1 rounded-md border border-border bg-card p-1';
 
       productNav.setAttribute(
         'aria-label',
         'Google product'
       );
 
-      productNav.style.display =
-        'flex';
-
-      productNav.style.gap =
-        '0.35rem';
-
-      productNav.style.padding =
-        '0.3rem';
-
-      productNav.style.width =
-        'fit-content';
-
-      productNav.style.border =
-        `1px solid ${surfaceBorder}`;
-
-      productNav.style.borderRadius =
-        '0.65rem';
-
-      productNav.style.background =
-        surfaceBackground;
-
-      const products = [
-        [
-          'analytics',
-          'Google Analytics',
-        ],
-        [
-          'search_console',
-          'Search Console',
-        ],
-      ];
-
       for (
         const [id, label]
-        of products
+        of [
+          ['analytics', 'Google Analytics'],
+          ['search_console', 'Search Console'],
+        ]
       ) {
         const active =
           this.product === id;
@@ -387,11 +340,15 @@
             label
           );
 
-        button.type =
-          'button';
+        button.type = 'button';
 
         button.disabled =
           this.loading;
+
+        button.className =
+          active
+            ? 'rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground'
+            : 'rounded-md px-4 py-2 text-sm font-medium hover:bg-accent';
 
         button.setAttribute(
           'aria-pressed',
@@ -399,41 +356,6 @@
             ? 'true'
             : 'false'
         );
-
-        button.style.minHeight =
-          '2.4rem';
-
-        button.style.padding =
-          '0 0.9rem';
-
-        button.style.border =
-          '0';
-
-        button.style.borderRadius =
-          '0.45rem';
-
-        button.style.font =
-          'inherit';
-
-        button.style.fontWeight =
-          active
-            ? '700'
-            : '500';
-
-        button.style.cursor =
-          this.loading
-            ? 'wait'
-            : 'pointer';
-
-        button.style.color =
-          active
-            ? 'var(--primary-contrast, #fff)'
-            : 'inherit';
-
-        button.style.background =
-          active
-            ? primaryColor
-            : 'transparent';
 
         button.addEventListener(
           'click',
@@ -455,126 +377,46 @@
           }
         );
 
-        productNav.append(
-          button
-        );
+        productNav.append(button);
       }
 
-      root.append(
-        productNav
-      );
+      root.append(productNav);
 
       const toolbar =
         element('section');
 
-      toolbar.style.display =
-        'flex';
-
-      toolbar.style.alignItems =
-        'end';
-
-      toolbar.style.justifyContent =
-        'space-between';
-
-      toolbar.style.gap =
-        '1rem';
-
-      toolbar.style.flexWrap =
-        'wrap';
-
-      toolbar.style.padding =
-        '1rem';
-
-      toolbar.style.border =
-        `1px solid ${surfaceBorder}`;
-
-      toolbar.style.borderRadius =
-        '0.65rem';
-
-      toolbar.style.background =
-        surfaceBackground;
+      toolbar.className =
+        'grid gap-4 rounded-lg border border-border bg-card p-5 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-end';
 
       const propertyGroup =
-        element('div');
+        element('label');
 
-      propertyGroup.style.display =
-        'grid';
-
-      propertyGroup.style.gap =
-        '0.45rem';
-
-      propertyGroup.style.flex =
-        '1 1 320px';
-
-      propertyGroup.style.maxWidth =
-        '520px';
+      propertyGroup.className =
+        'block text-sm';
 
       const propertyLabel =
         element(
-          'label',
-          this.product
-            === 'search_console'
+          'span',
+          this.product === 'search_console'
             ? 'Search Console property'
             : 'Property'
         );
 
-      propertyLabel.style.fontSize =
-        '0.78rem';
-
-      propertyLabel.style.fontWeight =
-        '600';
-
-      propertyLabel.style.color =
-        mutedColor;
-
-      propertyLabel.style.textTransform =
-        'uppercase';
-
-      propertyLabel.style.letterSpacing =
-        '0.04em';
+      propertyLabel.className =
+        'mb-1 block text-sm font-medium text-muted-foreground';
 
       const property =
         element('select');
 
+      property.className =
+        'block w-full rounded-md border border-input bg-background p-2 text-sm';
+
       property.setAttribute(
         'aria-label',
-        this.product
-          === 'search_console'
+        this.product === 'search_console'
           ? 'Search Console property'
           : 'GA4 property'
       );
-
-      property.style.width =
-        '100%';
-
-      property.style.minHeight =
-        '2.65rem';
-
-      property.style.padding =
-        '0 2.5rem 0 0.8rem';
-
-      property.style.border =
-        `1px solid ${surfaceBorder}`;
-
-      property.style.borderRadius =
-        '0.5rem';
-
-      property.style.background =
-        'var(--input-bg, var(--body-bg, transparent))';
-
-      property.style.color =
-        'inherit';
-
-      property.style.font =
-        'inherit';
-
-      property.style.fontWeight =
-        '600';
-
-      property.style.cursor =
-        this.loading
-          ? 'wait'
-          : 'pointer';
 
       property.disabled =
         this.loading;
@@ -585,16 +427,13 @@
         const option =
           element(
             'option',
-            this.product
-              === 'search_console'
+            this.product === 'search_console'
               ? 'No accessible Search Console properties'
               : 'No accessible properties'
           );
 
         option.value = '';
-
         property.append(option);
-
         property.disabled = true;
       } else {
         for (
@@ -602,8 +441,7 @@
           of this.properties
         ) {
           const optionLabel =
-            this.product
-              === 'search_console'
+            this.product === 'search_console'
               ? String(
                   item.site_url
                   || ''
@@ -611,8 +449,7 @@
               : `${item.property_name} — ${item.account_name}`;
 
           const optionValue =
-            this.product
-              === 'search_console'
+            this.product === 'search_console'
               ? String(
                   item.site_url
                   || ''
@@ -657,35 +494,23 @@
       const periodGroup =
         element('div');
 
-      periodGroup.style.display =
-        'grid';
-
-      periodGroup.style.gap =
-        '0.45rem';
+      periodGroup.className =
+        'space-y-1';
 
       const periodLabel =
         element(
-          'span',
+          'div',
           'Period'
         );
 
-      periodLabel.style.fontSize =
-        '0.78rem';
-
-      periodLabel.style.fontWeight =
-        '600';
-
-      periodLabel.style.color =
-        mutedColor;
-
-      periodLabel.style.textTransform =
-        'uppercase';
-
-      periodLabel.style.letterSpacing =
-        '0.04em';
+      periodLabel.className =
+        'text-sm font-medium text-muted-foreground';
 
       const periodControls =
         element('div');
+
+      periodControls.className =
+        'inline-flex gap-1 rounded-md border border-border bg-background p-1';
 
       periodControls.setAttribute(
         'role',
@@ -694,29 +519,10 @@
 
       periodControls.setAttribute(
         'aria-label',
-        this.product
-          === 'search_console'
+        this.product === 'search_console'
           ? 'Search Console period'
           : 'Analytics period'
       );
-
-      periodControls.style.display =
-        'inline-flex';
-
-      periodControls.style.padding =
-        '0.2rem';
-
-      periodControls.style.gap =
-        '0.2rem';
-
-      periodControls.style.border =
-        `1px solid ${surfaceBorder}`;
-
-      periodControls.style.borderRadius =
-        '0.55rem';
-
-      periodControls.style.background =
-        'var(--input-bg, rgba(0, 0, 0, 0.08))';
 
       for (
         const days
@@ -737,55 +543,17 @@
         button.disabled =
           this.loading;
 
+        button.className =
+          active
+            ? 'rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground'
+            : 'rounded-md px-3 py-2 text-sm hover:bg-accent';
+
         button.setAttribute(
           'aria-pressed',
           active
             ? 'true'
             : 'false'
         );
-
-        button.style.minHeight =
-          '2.2rem';
-
-        button.style.padding =
-          '0 0.8rem';
-
-        button.style.border =
-          '0';
-
-        button.style.borderRadius =
-          '0.4rem';
-
-        button.style.font =
-          'inherit';
-
-        button.style.fontSize =
-          '0.9rem';
-
-        button.style.fontWeight =
-          active
-            ? '700'
-            : '500';
-
-        button.style.cursor =
-          this.loading
-            ? 'wait'
-            : 'pointer';
-
-        button.style.color =
-          active
-            ? 'var(--primary-contrast, #fff)'
-            : 'inherit';
-
-        button.style.background =
-          active
-            ? primaryColor
-            : 'transparent';
-
-        button.style.opacity =
-          this.loading
-            ? '0.65'
-            : '1';
 
         button.addEventListener(
           'click',
@@ -828,47 +596,15 @@
         this.loading
         || this.propertyId === '';
 
+      refreshButton.className =
+        'rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-60';
+
       refreshButton.setAttribute(
         'aria-label',
-        this.product
-          === 'search_console'
+        this.product === 'search_console'
           ? 'Refresh Search Console data'
           : 'Refresh Google Analytics data'
       );
-
-      refreshButton.style.minHeight =
-        '2.65rem';
-
-      refreshButton.style.padding =
-        '0 1rem';
-
-      refreshButton.style.border =
-        `1px solid ${surfaceBorder}`;
-
-      refreshButton.style.borderRadius =
-        '0.5rem';
-
-      refreshButton.style.background =
-        'var(--input-bg, var(--body-bg, transparent))';
-
-      refreshButton.style.color =
-        'inherit';
-
-      refreshButton.style.font =
-        'inherit';
-
-      refreshButton.style.fontWeight =
-        '600';
-
-      refreshButton.style.cursor =
-        this.loading
-          ? 'wait'
-          : 'pointer';
-
-      refreshButton.style.opacity =
-        refreshButton.disabled
-          ? '0.65'
-          : '1';
 
       refreshButton.addEventListener(
         'click',
@@ -893,198 +629,122 @@
       root.append(toolbar);
 
       if (this.loading) {
-        const loadingPanel =
-          element('section');
-
-        loadingPanel.style.padding =
-          '2.5rem 1.5rem';
-
-        loadingPanel.style.border =
-          `1px solid ${surfaceBorder}`;
-
-        loadingPanel.style.borderRadius =
-          '0.65rem';
-
-        loadingPanel.style.background =
-          surfaceBackground;
-
-        loadingPanel.style.textAlign =
-          'center';
-
-        const loadingTitle =
+        const panel =
           element(
-            'strong',
-            this.product
-              === 'search_console'
+            'section',
+            this.product === 'search_console'
               ? 'Loading Google Search Console…'
               : 'Loading Google Analytics…'
           );
 
-        loadingTitle.style.display =
-          'block';
+        panel.className =
+          'rounded-lg border border-border bg-card p-6 text-center text-sm text-muted-foreground';
 
-        loadingTitle.style.fontSize =
-          '1rem';
-
-        loadingPanel.append(
-          loadingTitle
-        );
-
-        root.append(
-          loadingPanel
-        );
-
+        root.append(panel);
         this.append(root);
-
         return;
       }
 
       if (this.error) {
-        const errorPanel =
+        const panel =
           element('section');
 
-        errorPanel.setAttribute(
+        panel.className =
+          'rounded-md border border-destructive/40 bg-destructive/10 p-4 text-sm';
+
+        panel.setAttribute(
           'role',
           'alert'
         );
 
-        errorPanel.style.padding =
-          '1rem 1.1rem';
-
-        errorPanel.style.border =
-          '1px solid var(--danger-color, #d95858)';
-
-        errorPanel.style.borderRadius =
-          '0.65rem';
-
-        errorPanel.style.background =
-          'var(--danger-bg, rgba(217, 88, 88, 0.08))';
-
-        const errorTitle =
+        const title =
           element(
             'strong',
-            this.product
-              === 'search_console'
+            this.product === 'search_console'
               ? 'Google Search Console could not be loaded'
               : 'Google Analytics could not be loaded'
           );
 
-        errorTitle.style.display =
-          'block';
+        title.className =
+          'block font-semibold text-destructive';
 
-        errorTitle.style.marginBottom =
-          '0.35rem';
-
-        const errorMessage =
+        const message =
           element(
-            'div',
+            'p',
             this.error
           );
 
-        errorMessage.style.color =
-          mutedColor;
+        message.className =
+          'mt-1 text-sm text-muted-foreground';
 
-        errorPanel.append(
-          errorTitle,
-          errorMessage
+        panel.append(
+          title,
+          message
         );
 
-        root.append(
-          errorPanel
-        );
-
+        root.append(panel);
         this.append(root);
-
         return;
       }
 
       if (
         this.properties.length === 0
       ) {
-        const noProperties =
+        const panel =
           element('section');
 
-        noProperties.style.padding =
-          '2rem 1.5rem';
+        panel.className =
+          'rounded-lg border border-border bg-card p-5';
 
-        noProperties.style.border =
-          `1px solid ${surfaceBorder}`;
-
-        noProperties.style.borderRadius =
-          '0.65rem';
-
-        noProperties.style.background =
-          surfaceBackground;
-
-        noProperties.append(
+        const title =
           element(
             'strong',
-            this.product
-              === 'search_console'
+            this.product === 'search_console'
               ? 'No accessible Search Console properties'
               : 'No accessible Google Analytics properties'
-          )
-        );
+          );
 
-        const text =
+        title.className =
+          'font-semibold';
+
+        const copy =
           element(
             'p',
-            this.product
-              === 'search_console'
+            this.product === 'search_console'
               ? 'The configured Google account does not currently expose any Search Console properties.'
               : 'The configured Google account does not currently expose any GA4 properties.'
           );
 
-        text.style.margin =
-          '0.5rem 0 0';
+        copy.className =
+          'mt-1 text-sm text-muted-foreground';
 
-        text.style.color =
-          mutedColor;
+        panel.append(
+          title,
+          copy
+        );
 
-        noProperties.append(text);
-
-        root.append(noProperties);
-
+        root.append(panel);
         this.append(root);
-
         return;
       }
 
       if (!this.data) {
         this.append(root);
-
         return;
       }
 
       const heading =
-        element('section');
+        element('header');
 
-      heading.style.display =
-        'flex';
-
-      heading.style.alignItems =
-        'end';
-
-      heading.style.justifyContent =
-        'space-between';
-
-      heading.style.gap =
-        '1rem';
-
-      heading.style.flexWrap =
-        'wrap';
-
-      const headingCopy =
-        element('div');
+      heading.className =
+        'space-y-1';
 
       const eyebrow =
         element(
-          'div',
-          this.product
-            === 'search_console'
+          'p',
+          this.product === 'search_console'
             ? (
-                this.data?.property?.type
-                  === 'domain'
+                this.data?.property?.type === 'domain'
                   ? 'Domain property'
                   : 'URL-prefix property'
               )
@@ -1094,29 +754,13 @@
               )
         );
 
-      eyebrow.style.marginBottom =
-        '0.3rem';
-
-      eyebrow.style.fontSize =
-        '0.78rem';
-
-      eyebrow.style.fontWeight =
-        '600';
-
-      eyebrow.style.color =
-        mutedColor;
-
-      eyebrow.style.textTransform =
-        'uppercase';
-
-      eyebrow.style.letterSpacing =
-        '0.04em';
+      eyebrow.className =
+        'text-sm text-muted-foreground';
 
       const title =
         element(
           'h2',
-          this.product
-            === 'search_console'
+          this.product === 'search_console'
             ? (
                 this.data?.property?.site_url
                 || 'Google Search Console'
@@ -1127,14 +771,8 @@
               )
         );
 
-      title.style.margin =
-        '0';
-
-      title.style.fontSize =
-        '1.45rem';
-
-      title.style.lineHeight =
-        '1.2';
+      title.className =
+        'text-2xl font-semibold text-foreground';
 
       const period =
         element(
@@ -1142,172 +780,67 @@
           `${this.data?.period?.start_date || ''} — ${this.data?.period?.end_date || ''}`
         );
 
-      period.style.margin =
-        '0.35rem 0 0';
+      period.className =
+        'text-sm text-muted-foreground';
 
-      period.style.color =
-        mutedColor;
-
-      headingCopy.append(
+      heading.append(
         eyebrow,
         title,
         period
       );
 
-      heading.append(
-        headingCopy
-      );
-
-      root.append(
-        heading
-      );
+      root.append(heading);
 
       if (
         this.data.empty === true
       ) {
-        const empty =
+        const panel =
           element('section');
 
-        empty.style.display =
-          'grid';
+        panel.className =
+          'rounded-lg border border-border bg-card p-6 text-center';
 
-        empty.style.placeItems =
-          'center';
-
-        empty.style.minHeight =
-          '260px';
-
-        empty.style.padding =
-          '2.5rem 1.5rem';
-
-        empty.style.border =
-          `1px solid ${surfaceBorder}`;
-
-        empty.style.borderRadius =
-          '0.75rem';
-
-        empty.style.background =
-          surfaceBackground;
-
-        empty.style.textAlign =
-          'center';
-
-        const emptyInner =
-          element('div');
-
-        emptyInner.style.maxWidth =
-          '520px';
-
-        const emptyMark =
-          element(
-            'div',
-            '↗'
-          );
-
-        emptyMark.setAttribute(
-          'aria-hidden',
-          'true'
-        );
-
-        emptyMark.style.display =
-          'grid';
-
-        emptyMark.style.placeItems =
-          'center';
-
-        emptyMark.style.width =
-          '3rem';
-
-        emptyMark.style.height =
-          '3rem';
-
-        emptyMark.style.margin =
-          '0 auto 1rem';
-
-        emptyMark.style.borderRadius =
-          '0.7rem';
-
-        emptyMark.style.background =
-          'var(--primary-bg, rgba(139, 92, 246, 0.14))';
-
-        emptyMark.style.color =
-          primaryColor;
-
-        emptyMark.style.fontSize =
-          '1.35rem';
-
-        emptyMark.style.fontWeight =
-          '700';
-
-        const emptyTitle =
+        const title =
           element(
             'h3',
-            this.product
-              === 'search_console'
+            this.product === 'search_console'
               ? 'No Search Console data'
               : 'No analytics data'
           );
 
-        emptyTitle.style.margin =
-          '0';
+        title.className =
+          'text-lg font-semibold';
 
-        emptyTitle.style.fontSize =
-          '1.15rem';
-
-        const emptyText =
+        const copy =
           element(
             'p',
-            this.product
-              === 'search_console'
+            this.product === 'search_console'
               ? 'No Search Console data for this period.'
               : 'No analytics data for this period.'
           );
 
-        emptyText.style.margin =
-          '0.55rem 0 0';
+        copy.className =
+          'mt-2 text-sm text-muted-foreground';
 
-        emptyText.style.color =
-          mutedColor;
-
-        emptyText.style.lineHeight =
-          '1.55';
-
-        const emptyHelp =
+        const help =
           element(
             'p',
-            this.product
-              === 'search_console'
-              ? 'The Search Console connection is working correctly. Try another period or confirm that this property has search performance data.'
-              : 'The Google Analytics connection is working correctly. Try another period or confirm that this GA4 property is receiving traffic.'
+            this.product === 'search_console'
+              ? 'Try another period or confirm that this property has search performance data.'
+              : 'Try another period or confirm that this GA4 property is receiving traffic.'
           );
 
-        emptyHelp.style.margin =
-          '0.35rem 0 0';
+        help.className =
+          'mt-1 text-sm text-muted-foreground';
 
-        emptyHelp.style.color =
-          mutedColor;
-
-        emptyHelp.style.fontSize =
-          '0.88rem';
-
-        emptyHelp.style.lineHeight =
-          '1.55';
-
-        emptyInner.append(
-          emptyMark,
-          emptyTitle,
-          emptyText,
-          emptyHelp
+        panel.append(
+          title,
+          copy,
+          help
         );
 
-        empty.append(
-          emptyInner
-        );
-
-        root.append(empty);
-
+        root.append(panel);
         this.append(root);
-
         return;
       }
 
@@ -1318,26 +851,18 @@
       const cards =
         element('section');
 
+      cards.className =
+        'grid gap-4 sm:grid-cols-2 xl:grid-cols-4';
+
       cards.setAttribute(
         'aria-label',
-        this.product
-          === 'search_console'
+        this.product === 'search_console'
           ? 'Search Console overview'
           : 'Analytics overview'
       );
 
-      cards.style.display =
-        'grid';
-
-      cards.style.gridTemplateColumns =
-        'repeat(auto-fit, minmax(170px, 1fr))';
-
-      cards.style.gap =
-        '0.8rem';
-
       const definitions =
-        this.product
-          === 'search_console'
+        this.product === 'search_console'
           ? [
               [
                 'Clicks',
@@ -1423,17 +948,8 @@
         const card =
           element('article');
 
-        card.style.padding =
-          '1rem 1.05rem';
-
-        card.style.border =
-          `1px solid ${surfaceBorder}`;
-
-        card.style.borderRadius =
-          '0.65rem';
-
-        card.style.background =
-          surfaceBackground;
+        card.className =
+          'rounded-lg border border-border bg-card p-5';
 
         const labelNode =
           element(
@@ -1441,23 +957,8 @@
             label
           );
 
-        labelNode.style.marginBottom =
-          '0.45rem';
-
-        labelNode.style.fontSize =
-          '0.78rem';
-
-        labelNode.style.fontWeight =
-          '600';
-
-        labelNode.style.color =
-          mutedColor;
-
-        labelNode.style.textTransform =
-          'uppercase';
-
-        labelNode.style.letterSpacing =
-          '0.035em';
+        labelNode.className =
+          'text-sm text-muted-foreground';
 
         const valueNode =
           element(
@@ -1465,17 +966,8 @@
             value
           );
 
-        valueNode.style.display =
-          'block';
-
-        valueNode.style.fontSize =
-          '1.65rem';
-
-        valueNode.style.lineHeight =
-          '1.1';
-
-        valueNode.style.fontVariantNumeric =
-          'tabular-nums';
+        valueNode.className =
+          'mt-1 block text-2xl font-semibold tabular-nums';
 
         card.append(
           labelNode,
@@ -1490,18 +982,11 @@
       const tables =
         element('section');
 
-      tables.style.display =
-        'grid';
-
-      tables.style.gridTemplateColumns =
-        'repeat(auto-fit, minmax(min(100%, 420px), 1fr))';
-
-      tables.style.gap =
-        '1rem';
+      tables.className =
+        'grid gap-4 xl:grid-cols-2';
 
       if (
-        this.product
-        === 'search_console'
+        this.product === 'search_console'
       ) {
         const searchMetrics = [
           [
@@ -1534,9 +1019,7 @@
           tables,
           'Top queries',
           this.data.top_queries,
-          [
-            ['query', 'Query'],
-          ],
+          [['query', 'Query']],
           searchMetrics
         );
 
@@ -1544,9 +1027,7 @@
           tables,
           'Top pages',
           this.data.top_pages,
-          [
-            ['page', 'Page'],
-          ],
+          [['page', 'Page']],
           searchMetrics
         );
 
@@ -1554,9 +1035,7 @@
           tables,
           'Devices',
           this.data.devices,
-          [
-            ['device', 'Device'],
-          ],
+          [['device', 'Device']],
           searchMetrics
         );
 
@@ -1564,9 +1043,7 @@
           tables,
           'Countries',
           this.data.countries,
-          [
-            ['country', 'Country'],
-          ],
+          [['country', 'Country']],
           searchMetrics
         );
       } else {
@@ -1574,9 +1051,7 @@
           tables,
           'Top pages',
           this.data.top_pages,
-          [
-            ['pagePath', 'Page'],
-          ],
+          [['pagePath', 'Page']],
           [
             ['screenPageViews', 'Views'],
             ['activeUsers', 'Users'],
@@ -1587,12 +1062,7 @@
           tables,
           'Traffic channels',
           this.data.traffic_channels,
-          [
-            [
-              'sessionDefaultChannelGroup',
-              'Channel',
-            ],
-          ],
+          [['sessionDefaultChannelGroup', 'Channel']],
           [
             ['sessions', 'Sessions'],
             ['activeUsers', 'Users'],
@@ -1603,9 +1073,7 @@
           tables,
           'Devices',
           this.data.devices,
-          [
-            ['deviceCategory', 'Device'],
-          ],
+          [['deviceCategory', 'Device']],
           [
             ['sessions', 'Sessions'],
             ['activeUsers', 'Users'],
@@ -1616,9 +1084,7 @@
           tables,
           'Countries',
           this.data.countries,
-          [
-            ['country', 'Country'],
-          ],
+          [['country', 'Country']],
           [
             ['activeUsers', 'Users'],
             ['sessions', 'Sessions'],
@@ -1629,9 +1095,7 @@
           tables,
           'Events',
           this.data.events,
-          [
-            ['eventName', 'Event'],
-          ],
+          [['eventName', 'Event']],
           [
             ['eventCount', 'Count'],
             ['totalUsers', 'Users'],
@@ -1639,7 +1103,9 @@
         );
       }
 
-      if (tables.childElementCount > 0) {
+      if (
+        tables.childElementCount > 0
+      ) {
         root.append(tables);
       }
 
@@ -1663,20 +1129,8 @@
       const section =
         element('article');
 
-      section.style.minWidth =
-        '0';
-
-      section.style.border =
-        '1px solid var(--border-color, rgba(255, 255, 255, 0.10))';
-
-      section.style.borderRadius =
-        '0.65rem';
-
-      section.style.background =
-        'var(--body-bg, rgba(255, 255, 255, 0.025))';
-
-      section.style.overflow =
-        'hidden';
+      section.className =
+        'overflow-hidden rounded-lg border border-border bg-card';
 
       const heading =
         element(
@@ -1684,40 +1138,28 @@
           title
         );
 
-      heading.style.margin =
-        '0';
-
-      heading.style.padding =
-        '0.9rem 1rem';
-
-      heading.style.fontSize =
-        '1rem';
-
-      heading.style.borderBottom =
-        '1px solid var(--border-color, rgba(255, 255, 255, 0.10))';
+      heading.className =
+        'border-b border-border px-4 py-3 font-semibold';
 
       section.append(heading);
 
       const scroll =
         element('div');
 
-      scroll.style.overflowX =
-        'auto';
+      scroll.className =
+        'overflow-x-auto';
 
       const table =
         element('table');
 
-      table.style.width =
-        '100%';
-
-      table.style.borderCollapse =
-        'collapse';
-
-      table.style.fontSize =
-        '0.88rem';
+      table.className =
+        'w-full text-sm';
 
       const head =
         element('thead');
+
+      head.className =
+        'bg-muted/50 text-left text-muted-foreground';
 
       const headRow =
         element('tr');
@@ -1732,38 +1174,13 @@
             label
           );
 
-        th.style.padding =
-          '0.65rem 0.8rem';
-
-        th.style.textAlign =
-          'left';
-
-        th.style.whiteSpace =
-          'nowrap';
-
-        th.style.fontSize =
-          '0.72rem';
-
-        th.style.fontWeight =
-          '700';
-
-        th.style.textTransform =
-          'uppercase';
-
-        th.style.letterSpacing =
-          '0.035em';
-
-        th.style.color =
-          'var(--text-muted, var(--gray-500, #8f94a3))';
-
-        th.style.borderBottom =
-          '1px solid var(--border-color, rgba(255, 255, 255, 0.10))';
+        th.className =
+          'px-4 py-3 text-left text-sm font-medium';
 
         headRow.append(th);
       }
 
       head.append(headRow);
-
       table.append(head);
 
       const body =
@@ -1772,6 +1189,9 @@
       for (const row of rows) {
         const tr =
           element('tr');
+
+        tr.className =
+          'border-t border-border';
 
         for (
           const [key]
@@ -1784,14 +1204,8 @@
               ?? ''
             );
 
-          td.style.padding =
-            '0.7rem 0.8rem';
-
-          td.style.borderBottom =
-            '1px solid var(--border-color, rgba(255, 255, 255, 0.07))';
-
-          td.style.verticalAlign =
-            'top';
+          td.className =
+            'px-4 py-3';
 
           tr.append(td);
         }
@@ -1808,20 +1222,8 @@
               )
             );
 
-          td.style.padding =
-            '0.7rem 0.8rem';
-
-          td.style.borderBottom =
-            '1px solid var(--border-color, rgba(255, 255, 255, 0.07))';
-
-          td.style.textAlign =
-            'right';
-
-          td.style.whiteSpace =
-            'nowrap';
-
-          td.style.fontVariantNumeric =
-            'tabular-nums';
+          td.className =
+            'px-4 py-3 text-right tabular-nums';
 
           tr.append(td);
         }
@@ -1830,13 +1232,11 @@
       }
 
       table.append(body);
-
       scroll.append(table);
-
       section.append(scroll);
-
       root.append(section);
     }
+
     appendSearchConsoleTable(
       root,
       title,
@@ -1845,7 +1245,7 @@
       metrics
     ) {
       if (
-        Array.isArray(rows) === false
+        !Array.isArray(rows)
         || rows.length === 0
       ) {
         return;
@@ -1854,20 +1254,8 @@
       const section =
         element('article');
 
-      section.style.minWidth =
-        '0';
-
-      section.style.border =
-        '1px solid var(--border-color, rgba(255, 255, 255, 0.10))';
-
-      section.style.borderRadius =
-        '0.65rem';
-
-      section.style.background =
-        'var(--body-bg, rgba(255, 255, 255, 0.025))';
-
-      section.style.overflow =
-        'hidden';
+      section.className =
+        'overflow-hidden rounded-lg border border-border bg-card';
 
       const heading =
         element(
@@ -1875,42 +1263,28 @@
           title
         );
 
-      heading.style.margin =
-        '0';
+      heading.className =
+        'border-b border-border px-4 py-3 font-semibold';
 
-      heading.style.padding =
-        '0.9rem 1rem';
-
-      heading.style.fontSize =
-        '1rem';
-
-      heading.style.borderBottom =
-        '1px solid var(--border-color, rgba(255, 255, 255, 0.10))';
-
-      section.append(
-        heading
-      );
+      section.append(heading);
 
       const scroll =
         element('div');
 
-      scroll.style.overflowX =
-        'auto';
+      scroll.className =
+        'overflow-x-auto';
 
       const table =
         element('table');
 
-      table.style.width =
-        '100%';
-
-      table.style.borderCollapse =
-        'collapse';
-
-      table.style.fontSize =
-        '0.88rem';
+      table.className =
+        'w-full text-sm';
 
       const head =
         element('thead');
+
+      head.className =
+        'bg-muted/50 text-left text-muted-foreground';
 
       const headRow =
         element('tr');
@@ -1925,45 +1299,14 @@
             label
           );
 
-        th.style.padding =
-          '0.65rem 0.8rem';
+        th.className =
+          'px-4 py-3 text-left text-sm font-medium';
 
-        th.style.textAlign =
-          'left';
-
-        th.style.whiteSpace =
-          'nowrap';
-
-        th.style.fontSize =
-          '0.72rem';
-
-        th.style.fontWeight =
-          '700';
-
-        th.style.textTransform =
-          'uppercase';
-
-        th.style.letterSpacing =
-          '0.035em';
-
-        th.style.color =
-          'var(--text-muted, var(--gray-500, #8f94a3))';
-
-        th.style.borderBottom =
-          '1px solid var(--border-color, rgba(255, 255, 255, 0.10))';
-
-        headRow.append(
-          th
-        );
+        headRow.append(th);
       }
 
-      head.append(
-        headRow
-      );
-
-      table.append(
-        head
-      );
+      head.append(headRow);
+      table.append(head);
 
       const body =
         element('tbody');
@@ -1971,6 +1314,9 @@
       for (const row of rows) {
         const tr =
           element('tr');
+
+        tr.className =
+          'border-t border-border';
 
         for (
           const [key]
@@ -1983,18 +1329,10 @@
               ?? ''
             );
 
-          td.style.padding =
-            '0.7rem 0.8rem';
+          td.className =
+            'px-4 py-3';
 
-          td.style.borderBottom =
-            '1px solid var(--border-color, rgba(255, 255, 255, 0.07))';
-
-          td.style.verticalAlign =
-            'top';
-
-          tr.append(
-            td
-          );
+          tr.append(td);
         }
 
         for (
@@ -2014,46 +1352,19 @@
               )
             );
 
-          td.style.padding =
-            '0.7rem 0.8rem';
+          td.className =
+            'px-4 py-3 text-right tabular-nums';
 
-          td.style.borderBottom =
-            '1px solid var(--border-color, rgba(255, 255, 255, 0.07))';
-
-          td.style.textAlign =
-            'right';
-
-          td.style.whiteSpace =
-            'nowrap';
-
-          td.style.fontVariantNumeric =
-            'tabular-nums';
-
-          tr.append(
-            td
-          );
+          tr.append(td);
         }
 
-        body.append(
-          tr
-        );
+        body.append(tr);
       }
 
-      table.append(
-        body
-      );
-
-      scroll.append(
-        table
-      );
-
-      section.append(
-        scroll
-      );
-
-      root.append(
-        section
-      );
+      table.append(body);
+      scroll.append(table);
+      section.append(scroll);
+      root.append(section);
     }
 
   }

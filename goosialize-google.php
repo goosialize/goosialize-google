@@ -202,7 +202,7 @@ final class GoosializeGooglePlugin extends Plugin
             'plugin' =>
                 'goosialize-google',
             'label' =>
-                'Google Analytics',
+                'Goosialize Google',
             'icon' =>
                 'fa-chart-line',
             'route' =>
@@ -239,7 +239,7 @@ final class GoosializeGooglePlugin extends Plugin
             'plugin' =>
                 'goosialize-google',
             'title' =>
-                'Google Analytics',
+                'Goosialize Google',
             'icon' =>
                 'fa-chart-line',
             'page_type' =>
