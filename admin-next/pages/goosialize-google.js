@@ -317,7 +317,7 @@
         element('div');
 
       productNav.className =
-        'inline-flex gap-1 rounded-md border border-border bg-card p-1';
+        'flex gap-1 overflow-x-auto border-b border-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden';
 
       productNav.setAttribute(
         'aria-label',
@@ -347,8 +347,8 @@
 
         button.className =
           active
-            ? 'rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground'
-            : 'rounded-md px-4 py-2 text-sm font-medium hover:bg-accent';
+            ? 'flex shrink-0 items-center whitespace-nowrap border-b-2 border-primary px-3 py-2 text-sm font-medium text-primary'
+            : 'flex shrink-0 items-center whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:border-border hover:text-foreground';
 
         button.setAttribute(
           'aria-pressed',
@@ -386,13 +386,13 @@
         element('section');
 
       toolbar.className =
-        'grid gap-4 rounded-lg border border-border bg-card p-5 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-end';
+        'flex flex-col gap-3 sm:flex-row sm:items-end';
 
       const propertyGroup =
         element('label');
 
       propertyGroup.className =
-        'block text-sm';
+        'min-w-0 flex-1';
 
       const propertyLabel =
         element(
@@ -403,13 +403,13 @@
         );
 
       propertyLabel.className =
-        'mb-1 block text-sm font-medium text-muted-foreground';
+        'block text-xs font-medium text-muted-foreground';
 
       const property =
         element('select');
 
       property.className =
-        'block w-full rounded-md border border-input bg-background p-2 text-sm';
+        'mt-1 flex h-10 w-full appearance-none rounded-lg border border-input bg-muted/50 px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
 
       property.setAttribute(
         'aria-label',
@@ -495,7 +495,7 @@
         element('div');
 
       periodGroup.className =
-        'space-y-1';
+        'shrink-0';
 
       const periodLabel =
         element(
@@ -504,13 +504,13 @@
         );
 
       periodLabel.className =
-        'text-sm font-medium text-muted-foreground';
+        'text-xs font-medium text-muted-foreground';
 
       const periodControls =
         element('div');
 
       periodControls.className =
-        'inline-flex gap-1 rounded-md border border-border bg-background p-1';
+        'mt-1 inline-flex h-10 items-center rounded-md border border-border bg-background shadow-sm';
 
       periodControls.setAttribute(
         'role',
@@ -545,8 +545,8 @@
 
         button.className =
           active
-            ? 'rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground'
-            : 'rounded-md px-3 py-2 text-sm hover:bg-accent';
+            ? 'h-8 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground'
+            : 'h-8 rounded-md px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground';
 
         button.setAttribute(
           'aria-pressed',
@@ -597,7 +597,7 @@
         || this.propertyId === '';
 
       refreshButton.className =
-        'rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-60';
+        'h-10 shrink-0 rounded-md border border-border px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50';
 
       refreshButton.setAttribute(
         'aria-label',
@@ -737,25 +737,7 @@
         element('header');
 
       heading.className =
-        'space-y-1';
-
-      const eyebrow =
-        element(
-          'p',
-          this.product === 'search_console'
-            ? (
-                this.data?.property?.type === 'domain'
-                  ? 'Domain property'
-                  : 'URL-prefix property'
-              )
-            : (
-                this.data?.property?.account
-                || 'Google Analytics'
-              )
-        );
-
-      eyebrow.className =
-        'text-sm text-muted-foreground';
+        'space-y-0.5';
 
       const title =
         element(
@@ -772,7 +754,7 @@
         );
 
       title.className =
-        'text-2xl font-semibold text-foreground';
+        'text-xl font-semibold tracking-tight text-foreground';
 
       const period =
         element(
@@ -784,7 +766,6 @@
         'text-sm text-muted-foreground';
 
       heading.append(
-        eyebrow,
         title,
         period
       );
@@ -798,7 +779,7 @@
           element('section');
 
         panel.className =
-          'rounded-lg border border-border bg-card p-6 text-center';
+          'rounded-lg border border-border bg-card py-12 text-center';
 
         const title =
           element(
@@ -809,7 +790,7 @@
           );
 
         title.className =
-          'text-lg font-semibold';
+          'text-sm font-medium text-foreground';
 
         const copy =
           element(
