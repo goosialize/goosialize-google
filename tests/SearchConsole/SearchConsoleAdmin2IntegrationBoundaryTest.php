@@ -23,7 +23,7 @@ $required = [
     'text-xs',
     'font-medium',
     'text-muted-foreground',
-    'inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-border',
+    'mt-1 inline-flex h-10 items-center justify-center rounded-md border border-border',
     'mt-1 inline-flex h-10 items-center rounded-md border border-border bg-background p-1 shadow-sm',
 ];
 

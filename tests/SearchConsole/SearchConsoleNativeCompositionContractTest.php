@@ -23,7 +23,7 @@ $required = [
     'sm:flex-row sm:items-end',
     'min-w-0 flex-1',
     'mt-1 inline-flex h-10 items-center',
-    'inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-border',
+    'mt-1 inline-flex h-10 items-center justify-center rounded-md border border-border',
     'text-xl font-semibold tracking-tight text-foreground',
     'rounded-lg border border-border bg-card py-12 text-center',
 ];

@@ -581,6 +581,26 @@
         periodControls
       );
 
+      const refreshGroup =
+        element('div');
+
+      refreshGroup.className =
+        'shrink-0';
+
+      const refreshSpacer =
+        element(
+          'div',
+          'Refresh'
+        );
+
+      refreshSpacer.className =
+        'invisible text-xs font-medium text-muted-foreground';
+
+      refreshSpacer.setAttribute(
+        'aria-hidden',
+        'true'
+      );
+
       const refreshButton =
         element(
           'button',
@@ -597,7 +617,7 @@
         || this.propertyId === '';
 
       refreshButton.className =
-        'inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50';
+        'mt-1 inline-flex h-10 items-center justify-center rounded-md border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50';
 
       refreshButton.setAttribute(
         'aria-label',
@@ -620,10 +640,15 @@
         }
       );
 
+      refreshGroup.append(
+        refreshSpacer,
+        refreshButton
+      );
+
       toolbar.append(
         propertyGroup,
         periodGroup,
-        refreshButton
+        refreshGroup
       );
 
       root.append(toolbar);
