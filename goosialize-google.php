@@ -8,6 +8,7 @@ use Grav\Common\Plugin;
 use Grav\Events\PermissionsRegisterEvent;
 use Grav\Framework\Acl\PermissionsReader;
 use Goosialize\Google\Admin\AnalyticsDashboardController;
+use Goosialize\Google\Admin\SearchConsoleDashboardController;
 use Goosialize\Google\Core\Persistence\StorageBootstrapper;
 use RocketTheme\Toolbox\Event\Event;
 use Throwable;
@@ -152,6 +153,22 @@ final class GoosializeGooglePlugin extends Plugin
             [
                 AnalyticsDashboardController::class,
                 'analytics',
+            ]
+        );
+
+        $routes->get(
+            '/goosialize-google/search-console/properties',
+            [
+                SearchConsoleDashboardController::class,
+                'properties',
+            ]
+        );
+
+        $routes->get(
+            '/goosialize-google/search-console/performance',
+            [
+                SearchConsoleDashboardController::class,
+                'performance',
             ]
         );
     }

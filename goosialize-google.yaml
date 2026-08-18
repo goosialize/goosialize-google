@@ -20,3 +20,7 @@ cache:
 
 diagnostics:
   enabled: true
+
+search_console:
+  enabled: true
+  default_property: null

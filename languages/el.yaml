@@ -18,3 +18,9 @@ PLUGIN_GOOSIALIZE_GOOGLE:
   ANALYTICS_DASHBOARD: Google Analytics
   ANALYTICS_PERMISSION_READ: Προβολή Google Analytics
   NO_ANALYTICS_DATA: Δεν υπάρχουν δεδομένα Analytics για αυτή την περίοδο.
+  SEARCH_CONSOLE: Search Console
+  SEARCH_CONSOLE_ENABLED: Ενεργοποίηση Google Search Console
+  SEARCH_CONSOLE_DEFAULT_PROPERTY: Προεπιλεγμένο Search Console property
+  SEARCH_CONSOLE_DEFAULT_PROPERTY_HELP: URL του Search Console property, συμπεριλαμβανομένων sc-domain properties όπου εφαρμόζεται.
+  SEARCH_CONSOLE_PERMISSION_READ: Προβολή Google Search Console
+  NO_SEARCH_CONSOLE_DATA: Δεν υπάρχουν δεδομένα Search Console για αυτή την περίοδο.

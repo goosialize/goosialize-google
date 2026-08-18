@@ -5,3 +5,10 @@ actions:
     actions:
       read:
         label: View Google Analytics
+
+  api.goosialize_google.search_console:
+    type: access
+    label: Goosialize Google Search Console
+    actions:
+      read:
+        label: View Google Search Console
