@@ -10,8 +10,34 @@ use RuntimeException;
 final class ServiceAccountCredentialProvider
     implements CredentialProviderInterface
 {
-    private const SCOPE =
+    public const ANALYTICS_READONLY_SCOPE =
         'https://www.googleapis.com/auth/analytics.readonly';
+
+    /**
+     * @param list<string> $scopes
+     */
+    public function __construct(
+        private array $scopes = [
+            self::ANALYTICS_READONLY_SCOPE,
+        ]
+    ) {
+        if ($this->scopes === []) {
+            throw new RuntimeException(
+                'At least one Google OAuth scope is required.'
+            );
+        }
+
+        foreach ($this->scopes as $scope) {
+            if (
+                !is_string($scope)
+                || trim($scope) === ''
+            ) {
+                throw new RuntimeException(
+                    'Google OAuth scopes must be non-empty strings.'
+                );
+            }
+        }
+    }
 
     public function supports(
         CredentialType $type
@@ -91,7 +117,14 @@ final class ServiceAccountCredentialProvider
         }
 
         $credentials = new ServiceAccountCredentials(
-            [self::SCOPE],
+            array_values(
+                array_unique(
+                    array_map(
+                        'trim',
+                        $this->scopes
+                    )
+                )
+            ),
             $data
         );
 
