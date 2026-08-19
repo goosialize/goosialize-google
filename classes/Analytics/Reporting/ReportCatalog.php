@@ -70,9 +70,11 @@ final class ReportCatalog
                 'date',
             ],
             [
-                'activeUsers',
-                'sessions',
                 'screenPageViews',
+                'sessions',
+                'eventCount',
+                'engagementRate',
+                'averageSessionDuration',
             ],
             100
         );

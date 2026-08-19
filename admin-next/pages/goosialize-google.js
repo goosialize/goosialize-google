@@ -534,6 +534,39 @@
         color: var(--muted-foreground);
       }
 
+      .goosialize-google-chart-toggles {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.35rem;
+      }
+
+      .goosialize-google-chart-toggle {
+        height: 1.8rem;
+        padding: 0 0.55rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: transparent;
+        font-size: 0.65rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          opacity 120ms ease,
+          border-color 120ms ease,
+          color 120ms ease,
+          background 120ms ease;
+      }
+
+      .goosialize-google-chart-toggle:hover {
+        background:
+          color-mix(
+            in srgb,
+            var(--foreground)
+            5%,
+            transparent
+          );
+      }
+
       .goosialize-google-chart-legend {
         display: flex;
         gap: 0.75rem;
@@ -1808,9 +1841,9 @@
                 row?.dimensions?.date
                 || ''
               ),
-            users:
+            views:
               Number(
-                row?.metrics?.activeUsers
+                row?.metrics?.screenPageViews
                 || 0
               ),
             sessions:
@@ -1818,9 +1851,19 @@
                 row?.metrics?.sessions
                 || 0
               ),
-            views:
+            events:
               Number(
-                row?.metrics?.screenPageViews
+                row?.metrics?.eventCount
+                || 0
+              ),
+            engagement:
+              Number(
+                row?.metrics?.engagementRate
+                || 0
+              ),
+            duration:
+              Number(
+                row?.metrics?.averageSessionDuration
                 || 0
               ),
           }))
@@ -1871,67 +1914,66 @@
         period
       );
 
-      const legend =
-        element('div');
-
-      legend.className =
-        'goosialize-google-chart-legend';
-
       const series = [
         {
-          key: 'users',
-          label: 'Users',
+          key: 'views',
+          label: 'Views',
           color: '#8b5cf6',
-          width: 2.3,
-          dash: '',
-          area: true,
+          format: formatInteger,
+          enabled: true,
         },
         {
           key: 'sessions',
           label: 'Sessions',
           color: '#3b82f6',
-          width: 1.7,
-          dash: '6 4',
-          area: false,
+          format: formatInteger,
+          enabled: true,
         },
         {
-          key: 'views',
-          label: 'Views',
-          color: '#14b8a6',
-          width: 1.7,
-          dash: '2 4',
-          area: false,
+          key: 'events',
+          label: 'Events',
+          color: '#ec4899',
+          format: formatInteger,
+          enabled: true,
+        },
+        {
+          key: 'engagement',
+          label: 'Engagement',
+          color: '#22c55e',
+          format: formatPercent,
+          enabled: false,
+        },
+        {
+          key: 'duration',
+          label: 'Avg. session',
+          color: '#f59e0b',
+          format: formatDuration,
+          enabled: false,
         },
       ];
 
-      for (
-        const item
-        of series
-      ) {
-        const legendItem =
-          element('span');
-
-        const sample =
-          element('i');
-
-        sample.style.background =
-          item.color;
-
-        legendItem.append(
-          sample,
-          document.createTextNode(
-            item.label
-          )
+      const active =
+        new Set(
+          series
+            .filter(
+              (item) =>
+                item.enabled
+            )
+            .map(
+              (item) =>
+                item.key
+            )
         );
 
-        legend.append(
-          legendItem
-        );
-      }
+      const toggles =
+        element('div');
+
+      toggles.className =
+        'goosialize-google-chart-toggles';
 
       header.append(
         headingBlock,
-        legend
+        toggles
       );
 
       const chartShell =
@@ -1940,542 +1982,623 @@
       chartShell.className =
         'goosialize-google-links-chart-shell';
 
-      const ns =
-        'http://www.w3.org/2000/svg';
-
-      const svg =
-        document.createElementNS(
-          ns,
-          'svg'
-        );
-
-      const width = 900;
-      const height = 280;
-      const left = 45;
-      const right = 15;
-      const top = 18;
-      const bottom = 35;
-
-      svg.setAttribute(
-        'viewBox',
-        `0 0 ${width} ${height}`
+      wrapper.append(
+        header,
+        chartShell
       );
 
-      svg.setAttribute(
-        'preserveAspectRatio',
-        'none'
-      );
+      const renderChart =
+        () => {
+          chartShell.replaceChildren();
 
-      const plotWidth =
-        width - left - right;
+          const ns =
+            'http://www.w3.org/2000/svg';
 
-      const plotHeight =
-        height - top - bottom;
-
-      const max =
-        Math.max(
-          1,
-          ...data.flatMap(
-            (row) => [
-              row.users,
-              row.sessions,
-              row.views,
-            ]
-          )
-        );
-
-      const xFor =
-        (index) =>
-          left
-          + (
-              data.length === 1
-                ? plotWidth / 2
-                : (
-                    plotWidth
-                    * index
-                    / (
-                      data.length - 1
-                    )
-                  )
+          const svg =
+            document.createElementNS(
+              ns,
+              'svg'
             );
 
-      const yFor =
-        (value) =>
-          top
-          + plotHeight
-          - (
-              Number(value || 0)
-              / max
-              * plotHeight
-            );
+          const width = 900;
+          const height = 280;
+          const left = 38;
+          const right = 16;
+          const top = 18;
+          const bottom = 34;
 
-      for (
-        let tick = 0;
-        tick <= 4;
-        tick += 1
-      ) {
-        const y =
-          top
-          + plotHeight
-          * tick / 4;
-
-        const line =
-          document.createElementNS(
-            ns,
-            'line'
+          svg.setAttribute(
+            'viewBox',
+            `0 0 ${width} ${height}`
           );
 
-        line.setAttribute(
-          'x1',
-          String(left)
-        );
-        line.setAttribute(
-          'x2',
-          String(width - right)
-        );
-        line.setAttribute(
-          'y1',
-          String(y)
-        );
-        line.setAttribute(
-          'y2',
-          String(y)
-        );
-        line.setAttribute(
-          'stroke',
-          'currentColor'
-        );
-        line.setAttribute(
-          'stroke-opacity',
-          '0.08'
-        );
-        line.setAttribute(
-          'stroke-dasharray',
-          '3 3'
-        );
+          svg.setAttribute(
+            'preserveAspectRatio',
+            'none'
+          );
 
-        svg.append(line);
-      }
+          svg.style.width =
+            '100%';
 
-      const curve =
-        (points) =>
-          points
-            .map(
-              (point, index) => {
-                if (index === 0) {
-                  return (
-                    `M ${point.x},${point.y}`
-                  );
-                }
+          svg.style.height =
+            '100%';
 
-                const previous =
-                  points[index - 1];
+          svg.style.display =
+            'block';
 
-                const control =
-                  (
-                    previous.x
-                    + point.x
-                  ) / 2;
+          const plotWidth =
+            width - left - right;
 
-                return (
-                  `C ${control},${previous.y} ` +
-                  `${control},${point.y} ` +
-                  `${point.x},${point.y}`
+          const plotHeight =
+            height - top - bottom;
+
+          const xFor =
+            (index) =>
+              left
+              + (
+                  data.length === 1
+                    ? plotWidth / 2
+                    : (
+                        plotWidth
+                        * index
+                        / (
+                          data.length - 1
+                        )
+                      )
                 );
+
+          const maxima = {};
+
+          for (
+            const item
+            of series
+          ) {
+            maxima[item.key] =
+              Math.max(
+                1,
+                ...data.map(
+                  (row) =>
+                    Number(
+                      row[item.key]
+                      || 0
+                    )
+                )
+              );
+          }
+
+          const yFor =
+            (
+              key,
+              value
+            ) =>
+              top
+              + plotHeight
+              - (
+                  Number(value || 0)
+                  / maxima[key]
+                  * plotHeight
+                );
+
+          for (
+            let tick = 0;
+            tick <= 4;
+            tick += 1
+          ) {
+            const y =
+              top
+              + (
+                  plotHeight
+                  * tick
+                  / 4
+                );
+
+            const line =
+              document.createElementNS(
+                ns,
+                'line'
+              );
+
+            line.setAttribute(
+              'x1',
+              String(left)
+            );
+
+            line.setAttribute(
+              'x2',
+              String(width - right)
+            );
+
+            line.setAttribute(
+              'y1',
+              String(y)
+            );
+
+            line.setAttribute(
+              'y2',
+              String(y)
+            );
+
+            line.setAttribute(
+              'stroke',
+              'currentColor'
+            );
+
+            line.setAttribute(
+              'stroke-opacity',
+              '0.08'
+            );
+
+            line.setAttribute(
+              'stroke-dasharray',
+              '3 3'
+            );
+
+            svg.append(line);
+          }
+
+          const buildCurve =
+            (points) =>
+              points
+                .map(
+                  (
+                    point,
+                    index
+                  ) => {
+                    if (index === 0) {
+                      return (
+                        `M ${point.x},${point.y}`
+                      );
+                    }
+
+                    const previous =
+                      points[index - 1];
+
+                    const control =
+                      (
+                        previous.x
+                        + point.x
+                      ) / 2;
+
+                    return (
+                      `C ${control},${previous.y} ` +
+                      `${control},${point.y} ` +
+                      `${point.x},${point.y}`
+                    );
+                  }
+                )
+                .join(' ');
+
+          for (
+            const item
+            of series
+          ) {
+            if (
+              !active.has(
+                item.key
+              )
+            ) {
+              continue;
+            }
+
+            const points =
+              data.map(
+                (
+                  row,
+                  index
+                ) => ({
+                  x:
+                    xFor(index),
+
+                  y:
+                    yFor(
+                      item.key,
+                      row[item.key]
+                    ),
+                })
+              );
+
+            const path =
+              document.createElementNS(
+                ns,
+                'path'
+              );
+
+            path.setAttribute(
+              'd',
+              buildCurve(points)
+            );
+
+            path.setAttribute(
+              'fill',
+              'none'
+            );
+
+            path.setAttribute(
+              'stroke',
+              item.color
+            );
+
+            path.setAttribute(
+              'stroke-width',
+              '2'
+            );
+
+            path.setAttribute(
+              'vector-effect',
+              'non-scaling-stroke'
+            );
+
+            svg.append(path);
+
+            points.forEach(
+              (point) => {
+                const marker =
+                  document.createElementNS(
+                    ns,
+                    'circle'
+                  );
+
+                marker.setAttribute(
+                  'cx',
+                  String(point.x)
+                );
+
+                marker.setAttribute(
+                  'cy',
+                  String(point.y)
+                );
+
+                marker.setAttribute(
+                  'r',
+                  '4'
+                );
+
+                marker.setAttribute(
+                  'fill',
+                  '#ffffff'
+                );
+
+                marker.setAttribute(
+                  'stroke',
+                  item.color
+                );
+
+                marker.setAttribute(
+                  'stroke-width',
+                  '2'
+                );
+
+                marker.setAttribute(
+                  'vector-effect',
+                  'non-scaling-stroke'
+                );
+
+                svg.append(marker);
               }
-            )
-            .join(' ');
+            );
+          }
 
-      const defs =
-        document.createElementNS(
-          ns,
-          'defs'
-        );
+          const guide =
+            document.createElementNS(
+              ns,
+              'line'
+            );
 
-      const gradient =
-        document.createElementNS(
-          ns,
-          'linearGradient'
-        );
-
-      gradient.id =
-        'goosialize-google-admin-area';
-
-      gradient.setAttribute(
-        'x1',
-        '0'
-      );
-      gradient.setAttribute(
-        'x2',
-        '0'
-      );
-      gradient.setAttribute(
-        'y1',
-        '0'
-      );
-      gradient.setAttribute(
-        'y2',
-        '1'
-      );
-
-      for (
-        const [
-          offset,
-          opacity,
-        ]
-        of [
-          ['0%', '0.22'],
-          ['100%', '0.01'],
-        ]
-      ) {
-        const stop =
-          document.createElementNS(
-            ns,
-            'stop'
+          guide.setAttribute(
+            'y1',
+            String(top)
           );
 
-        stop.setAttribute(
-          'offset',
-          offset
-        );
-        stop.setAttribute(
-          'stop-color',
-          '#8b5cf6'
-        );
-        stop.setAttribute(
-          'stop-opacity',
-          opacity
-        );
+          guide.setAttribute(
+            'y2',
+            String(
+              top + plotHeight
+            )
+          );
 
-        gradient.append(stop);
-      }
+          guide.setAttribute(
+            'stroke',
+            'currentColor'
+          );
 
-      defs.append(gradient);
-      svg.append(defs);
+          guide.setAttribute(
+            'stroke-opacity',
+            '0'
+          );
 
-      const allPoints = [];
+          guide.setAttribute(
+            'stroke-dasharray',
+            '3 3'
+          );
+
+          svg.append(guide);
+
+          const tooltip =
+            element('div');
+
+          tooltip.className =
+            'goosialize-google-chart-tooltip';
+
+          data.forEach(
+            (
+              row,
+              index
+            ) => {
+              const x =
+                xFor(index);
+
+              const previous =
+                index === 0
+                  ? left
+                  : (
+                      xFor(
+                        index - 1
+                      )
+                      + x
+                    ) / 2;
+
+              const next =
+                index
+                  === data.length - 1
+                  ? width - right
+                  : (
+                      x
+                      + xFor(
+                        index + 1
+                      )
+                    ) / 2;
+
+              const hit =
+                document.createElementNS(
+                  ns,
+                  'rect'
+                );
+
+              hit.setAttribute(
+                'x',
+                String(previous)
+              );
+
+              hit.setAttribute(
+                'y',
+                String(top)
+              );
+
+              hit.setAttribute(
+                'width',
+                String(
+                  Math.max(
+                    1,
+                    next - previous
+                  )
+                )
+              );
+
+              hit.setAttribute(
+                'height',
+                String(plotHeight)
+              );
+
+              hit.setAttribute(
+                'fill',
+                'transparent'
+              );
+
+              hit.style.cursor =
+                'crosshair';
+
+              hit.addEventListener(
+                'mouseenter',
+                () => {
+                  guide.setAttribute(
+                    'x1',
+                    String(x)
+                  );
+
+                  guide.setAttribute(
+                    'x2',
+                    String(x)
+                  );
+
+                  guide.setAttribute(
+                    'stroke-opacity',
+                    '0.28'
+                  );
+
+                  tooltip.replaceChildren();
+
+                  const title =
+                    element(
+                      'strong',
+                      formatGaDate(
+                        row.date
+                      )
+                    );
+
+                  tooltip.append(
+                    title
+                  );
+
+                  for (
+                    const item
+                    of series
+                  ) {
+                    if (
+                      !active.has(
+                        item.key
+                      )
+                    ) {
+                      continue;
+                    }
+
+                    const line =
+                      element('div');
+
+                    const label =
+                      element(
+                        'span',
+                        item.label
+                      );
+
+                    label.style.color =
+                      item.color;
+
+                    const value =
+                      element(
+                        'b',
+                        item.format(
+                          row[item.key]
+                        )
+                      );
+
+                    line.append(
+                      label,
+                      value
+                    );
+
+                    tooltip.append(
+                      line
+                    );
+                  }
+
+                  tooltip.style.display =
+                    'block';
+
+                  tooltip.style.left =
+                    `${Math.min(
+                      80,
+                      Math.max(
+                        6,
+                        x / width
+                        * 100
+                      )
+                    )}%`;
+
+                  tooltip.style.top =
+                    '1rem';
+                }
+              );
+
+              hit.addEventListener(
+                'mouseleave',
+                () => {
+                  guide.setAttribute(
+                    'stroke-opacity',
+                    '0'
+                  );
+
+                  tooltip.style.display =
+                    'none';
+                }
+              );
+
+              svg.append(hit);
+            }
+          );
+
+          chartShell.append(
+            svg,
+            tooltip
+          );
+        };
+
+      const updateToggle =
+        (
+          button,
+          item
+        ) => {
+          const enabled =
+            active.has(
+              item.key
+            );
+
+          button.dataset.active =
+            enabled
+              ? 'true'
+              : 'false';
+
+          button.setAttribute(
+            'aria-pressed',
+            enabled
+              ? 'true'
+              : 'false'
+          );
+
+          button.style.opacity =
+            enabled
+              ? '1'
+              : '0.42';
+
+          button.style.borderColor =
+            enabled
+              ? item.color
+              : 'var(--border)';
+
+          button.style.color =
+            enabled
+              ? item.color
+              : 'var(--muted-foreground)';
+        };
 
       for (
         const item
         of series
       ) {
-        const points =
-          data.map(
-            (row, index) => ({
-              x: xFor(index),
-              y: yFor(
-                row[item.key]
-              ),
-              row,
-              value:
-                row[item.key],
-            })
+        const button =
+          element(
+            'button',
+            item.label
           );
 
-        const d =
-          curve(points);
+        button.type =
+          'button';
 
-        if (
-          item.area
-          && points.length > 0
-        ) {
-          const area =
-            document.createElementNS(
-              ns,
-              'path'
-            );
+        button.className =
+          'goosialize-google-chart-toggle';
 
-          area.setAttribute(
-            'd',
-            (
-              `${d} ` +
-              `L ${points[points.length - 1].x},${top + plotHeight} ` +
-              `L ${points[0].x},${top + plotHeight} Z`
-            )
-          );
-
-          area.setAttribute(
-            'fill',
-            'url(#goosialize-google-admin-area)'
-          );
-
-          svg.append(area);
-        }
-
-        const path =
-          document.createElementNS(
-            ns,
-            'path'
-          );
-
-        path.setAttribute(
-          'd',
-          d
-        );
-        path.setAttribute(
-          'fill',
-          'none'
-        );
-        path.setAttribute(
-          'stroke',
-          item.color
-        );
-        path.setAttribute(
-          'stroke-width',
-          String(item.width)
-        );
-        path.setAttribute(
-          'vector-effect',
-          'non-scaling-stroke'
+        updateToggle(
+          button,
+          item
         );
 
-        if (item.dash) {
-          path.setAttribute(
-            'stroke-dasharray',
-            item.dash
-          );
-        }
+        button.addEventListener(
+          'click',
+          () => {
+            if (
+              active.has(
+                item.key
+              )
+            ) {
+              if (
+                active.size === 1
+              ) {
+                return;
+              }
 
-        svg.append(path);
-
-        points.forEach(
-          (point, index) => {
-            const circle =
-              document.createElementNS(
-                ns,
-                'circle'
+              active.delete(
+                item.key
               );
+            } else {
+              active.add(
+                item.key
+              );
+            }
 
-            circle.setAttribute(
-              'cx',
-              String(point.x)
-            );
-            circle.setAttribute(
-              'cy',
-              String(point.y)
-            );
-            circle.setAttribute(
-              'r',
-              '3.5'
-            );
-            circle.setAttribute(
-              'fill',
-              item.color
-            );
-            circle.setAttribute(
-              'stroke',
-              'var(--card)'
-            );
-            circle.setAttribute(
-              'stroke-width',
-              '2'
+            updateToggle(
+              button,
+              item
             );
 
-            svg.append(circle);
-
-            allPoints.push({
-              index,
-              point,
-              item,
-            });
+            renderChart();
           }
+        );
+
+        toggles.append(
+          button
         );
       }
 
-      const guide =
-        document.createElementNS(
-          ns,
-          'line'
-        );
-
-      guide.setAttribute(
-        'y1',
-        String(top)
-      );
-      guide.setAttribute(
-        'y2',
-        String(top + plotHeight)
-      );
-      guide.setAttribute(
-        'stroke',
-        'currentColor'
-      );
-      guide.setAttribute(
-        'stroke-opacity',
-        '0'
-      );
-      guide.setAttribute(
-        'stroke-dasharray',
-        '3 3'
-      );
-
-      svg.append(guide);
-
-      const tooltip =
-        element('div');
-
-      tooltip.className =
-        'goosialize-google-chart-tooltip';
-
-      data.forEach(
-        (row, index) => {
-          const x =
-            xFor(index);
-
-          const previous =
-            index === 0
-              ? left
-              : (
-                  xFor(index - 1)
-                  + x
-                ) / 2;
-
-          const next =
-            index === data.length - 1
-              ? width - right
-              : (
-                  x
-                  + xFor(index + 1)
-                ) / 2;
-
-          const hit =
-            document.createElementNS(
-              ns,
-              'rect'
-            );
-
-          hit.setAttribute(
-            'x',
-            String(previous)
-          );
-          hit.setAttribute(
-            'y',
-            String(top)
-          );
-          hit.setAttribute(
-            'width',
-            String(
-              Math.max(
-                1,
-                next - previous
-              )
-            )
-          );
-          hit.setAttribute(
-            'height',
-            String(plotHeight)
-          );
-          hit.setAttribute(
-            'fill',
-            'transparent'
-          );
-
-          hit.style.cursor =
-            'crosshair';
-
-          hit.addEventListener(
-            'mouseenter',
-            () => {
-              guide.setAttribute(
-                'x1',
-                String(x)
-              );
-              guide.setAttribute(
-                'x2',
-                String(x)
-              );
-              guide.setAttribute(
-                'stroke-opacity',
-                '0.25'
-              );
-
-              tooltip.replaceChildren();
-
-              const title =
-                element(
-                  'strong',
-                  formatGaDate(
-                    row.date
-                  )
-                );
-
-              tooltip.append(title);
-
-              for (
-                const item
-                of series
-              ) {
-                const line =
-                  element('div');
-
-                const label =
-                  element(
-                    'span',
-                    item.label
-                  );
-
-                const value =
-                  element(
-                    'b',
-                    formatInteger(
-                      row[item.key]
-                    )
-                  );
-
-                label.style.color =
-                  item.color;
-
-                line.append(
-                  label,
-                  value
-                );
-
-                tooltip.append(line);
-              }
-
-              tooltip.style.display =
-                'block';
-
-              tooltip.style.left =
-                `${Math.min(
-                  80,
-                  Math.max(
-                    7,
-                    x / width * 100
-                  )
-                )}%`;
-
-              tooltip.style.top =
-                '1rem';
-            }
-          );
-
-          hit.addEventListener(
-            'mouseleave',
-            () => {
-              guide.setAttribute(
-                'stroke-opacity',
-                '0'
-              );
-
-              tooltip.style.display =
-                'none';
-            }
-          );
-
-          svg.append(hit);
-        }
-      );
-
-      chartShell.append(
-        svg,
-        tooltip
-      );
-
-      wrapper.append(
-        header,
-        chartShell
-      );
+      renderChart();
 
       root.append(wrapper);
     }
