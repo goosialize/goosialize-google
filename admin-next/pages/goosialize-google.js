@@ -1229,6 +1229,41 @@
           searchMetrics
         );
       } else {
+        const visualGrid =
+          element('section');
+
+        visualGrid.className =
+          'goosialize-google-detail-grid';
+
+        this.appendDonutBreakdown(
+          visualGrid,
+          'Traffic channels',
+          this.data.traffic_channels,
+          'sessionDefaultChannelGroup',
+          'sessions',
+          'Sessions'
+        );
+
+        this.appendDonutBreakdown(
+          visualGrid,
+          'Devices',
+          this.data.devices,
+          'deviceCategory',
+          'sessions',
+          'Sessions'
+        );
+
+        if (
+          visualGrid.childElementCount > 0
+        ) {
+          root.append(visualGrid);
+        }
+
+        this.appendCountryMap(
+          root,
+          this.data.countries
+        );
+
         this.appendTable(
           tables,
           'Top pages',
@@ -1242,39 +1277,6 @@
 
         this.appendTable(
           tables,
-          'Traffic channels',
-          this.data.traffic_channels,
-          [['sessionDefaultChannelGroup', 'Channel']],
-          [
-            ['sessions', 'Sessions'],
-            ['activeUsers', 'Users'],
-          ]
-        );
-
-        this.appendTable(
-          tables,
-          'Devices',
-          this.data.devices,
-          [['deviceCategory', 'Device']],
-          [
-            ['sessions', 'Sessions'],
-            ['activeUsers', 'Users'],
-          ]
-        );
-
-        this.appendTable(
-          tables,
-          'Countries',
-          this.data.countries,
-          [['country', 'Country']],
-          [
-            ['activeUsers', 'Users'],
-            ['sessions', 'Sessions'],
-          ]
-        );
-
-        this.appendTable(
-          tables,
           'Events',
           this.data.events,
           [['eventName', 'Event']],
@@ -1283,15 +1285,6 @@
             ['totalUsers', 'Users'],
           ]
         );
-
-        if (
-          tables.lastElementChild
-        ) {
-          tables.lastElementChild
-            .classList.add(
-              'goosialize-google-full-width'
-            );
-        }
       }
 
       if (
@@ -1380,37 +1373,59 @@
       legend.className =
         'flex flex-wrap items-center gap-4 text-xs text-muted-foreground';
 
+      const series = [
+        {
+          key: 'users',
+          label: 'Users',
+          color: '#a855f7',
+          dash: '',
+          radius: 5,
+        },
+        {
+          key: 'sessions',
+          label: 'Sessions',
+          color: '#3b82f6',
+          dash: '9 5',
+          radius: 4,
+        },
+        {
+          key: 'views',
+          label: 'Views',
+          color: '#06b6d4',
+          dash: '2 5',
+          radius: 3,
+        },
+      ];
+
       for (
-        const [label, color]
-        of [
-          ['Users', '#a855f7'],
-          ['Sessions', '#3b82f6'],
-          ['Views', '#06b6d4'],
-        ]
+        const item
+        of series
       ) {
-        const item =
+        const legendItem =
           element('span');
 
-        item.className =
+        legendItem.className =
           'inline-flex items-center gap-1.5';
 
-        const dot =
+        const sample =
           element('span');
 
-        dot.className =
-          'h-2 w-2 rounded-full';
+        sample.className =
+          'inline-block h-0.5 w-5 rounded';
 
-        dot.style.background =
-          color;
+        sample.style.background =
+          item.color;
 
-        item.append(
-          dot,
+        legendItem.append(
+          sample,
           document.createTextNode(
-            label
+            item.label
           )
         );
 
-        legend.append(item);
+        legend.append(
+          legendItem
+        );
       }
 
       header.append(
@@ -1418,15 +1433,34 @@
         legend
       );
 
+      const chartWrap =
+        element('div');
+
+      chartWrap.className =
+        'relative px-3 pt-3 text-muted-foreground';
+
       const chart =
         document.createElementNS(
           'http://www.w3.org/2000/svg',
           'svg'
         );
 
+      const width = 900;
+      const height = 280;
+      const left = 54;
+      const right = 20;
+      const top = 18;
+      const bottom = 44;
+
+      const plotWidth =
+        width - left - right;
+
+      const plotHeight =
+        height - top - bottom;
+
       chart.setAttribute(
         'viewBox',
-        '0 0 900 240'
+        `0 0 ${width} ${height}`
       );
 
       chart.setAttribute(
@@ -1436,30 +1470,14 @@
 
       chart.setAttribute(
         'aria-label',
-        'Users, sessions and views trend'
+        'Users, sessions and views by date'
       );
 
       chart.style.width =
         '100%';
 
-      chart.style.height =
-        'auto';
-
       chart.style.display =
         'block';
-
-      const width = 900;
-      const height = 240;
-      const left = 44;
-      const right = 18;
-      const top = 20;
-      const bottom = 34;
-
-      const plotWidth =
-        width - left - right;
-
-      const plotHeight =
-        height - top - bottom;
 
       const maxValue =
         Math.max(
@@ -1472,6 +1490,35 @@
             ]
           )
         );
+
+      const ns =
+        'http://www.w3.org/2000/svg';
+
+      const createSvg =
+        (
+          tag,
+          attributes = {}
+        ) => {
+          const node =
+            document.createElementNS(
+              ns,
+              tag
+            );
+
+          for (
+            const [key, value]
+            of Object.entries(
+              attributes
+            )
+          ) {
+            node.setAttribute(
+              key,
+              String(value)
+            );
+          }
+
+          return node;
+        };
 
       for (
         let index = 0;
@@ -1486,187 +1533,1128 @@
             / 4
           );
 
-        const line =
-          document.createElementNS(
-            'http://www.w3.org/2000/svg',
-            'line'
+        const value =
+          Math.round(
+            maxValue
+            * (
+              1
+              - index / 4
+            )
           );
 
-        line.setAttribute(
-          'x1',
-          String(left)
-        );
-        line.setAttribute(
-          'x2',
-          String(width - right)
-        );
-        line.setAttribute(
-          'y1',
-          String(y)
-        );
-        line.setAttribute(
-          'y2',
-          String(y)
-        );
-        line.setAttribute(
-          'stroke',
-          'currentColor'
-        );
-        line.setAttribute(
-          'opacity',
-          '0.10'
+        chart.append(
+          createSvg(
+            'line',
+            {
+              x1: left,
+              x2: width - right,
+              y1: y,
+              y2: y,
+              stroke: 'currentColor',
+              opacity: '0.10',
+            }
+          )
         );
 
-        chart.append(line);
+        const label =
+          createSvg(
+            'text',
+            {
+              x: left - 10,
+              y: y + 4,
+              'text-anchor': 'end',
+              fill: 'currentColor',
+              opacity: '0.65',
+              'font-size': 11,
+            }
+          );
+
+        label.textContent =
+          String(value);
+
+        chart.append(label);
       }
 
-      const series = [
-        [
-          'users',
-          '#a855f7',
-          '',
-        ],
-        [
-          'sessions',
-          '#3b82f6',
-          '10 6',
-        ],
-        [
-          'views',
-          '#06b6d4',
-          '2 6',
-        ],
-      ];
+      const xFor =
+        (index) =>
+          left
+          + (
+            normalized.length === 1
+              ? plotWidth / 2
+              : (
+                  plotWidth
+                  * index
+                  / (
+                    normalized.length
+                    - 1
+                  )
+                )
+          );
+
+      const yFor =
+        (value) =>
+          top
+          + plotHeight
+          - (
+              Number(value || 0)
+              / maxValue
+              * plotHeight
+            );
 
       for (
-        const [
-          key,
-          color,
-          dash,
-        ]
+        const item
         of series
       ) {
         const points =
           normalized.map(
-            (row, index) => {
-              const x =
-                left
-                + (
-                  normalized.length === 1
-                    ? plotWidth / 2
-                    : (
-                        plotWidth
-                        * index
-                        / (
-                          normalized.length
-                          - 1
-                        )
-                      )
-                );
-
-              const value =
-                Number(
-                  row[key]
-                  || 0
-                );
-
-              const y =
-                top
-                + plotHeight
-                - (
-                    value
-                    / maxValue
-                    * plotHeight
-                  );
-
-              return `${x},${y}`;
-            }
+            (row, index) =>
+              `${xFor(index)},${yFor(row[item.key])}`
           );
 
         const polyline =
-          document.createElementNS(
-            'http://www.w3.org/2000/svg',
-            'polyline'
+          createSvg(
+            'polyline',
+            {
+              points:
+                points.join(' '),
+              fill: 'none',
+              stroke: item.color,
+              'stroke-width': 2.5,
+              'stroke-linecap': 'round',
+              'stroke-linejoin': 'round',
+            }
           );
 
-        polyline.setAttribute(
-          'points',
-          points.join(' ')
-        );
-        polyline.setAttribute(
-          'fill',
-          'none'
-        );
-        polyline.setAttribute(
-          'stroke',
-          color
-        );
-        polyline.setAttribute(
-          'stroke-width',
-          '3'
-        );
-        polyline.setAttribute(
-          'stroke-linecap',
-          'round'
-        );
-        polyline.setAttribute(
-          'stroke-linejoin',
-          'round'
-        );
-
-        if (dash !== '') {
+        if (
+          item.dash !== ''
+        ) {
           polyline.setAttribute(
             'stroke-dasharray',
-            dash
+            item.dash
           );
         }
 
         chart.append(polyline);
+
+        normalized.forEach(
+          (row, index) => {
+            const outer =
+              createSvg(
+                'circle',
+                {
+                  cx: xFor(index),
+                  cy: yFor(
+                    row[item.key]
+                  ),
+                  r: item.radius + 2,
+                  fill: 'var(--card, #18181b)',
+                  stroke: item.color,
+                  'stroke-width': 1.5,
+                }
+              );
+
+            const point =
+              createSvg(
+                'circle',
+                {
+                  cx: xFor(index),
+                  cy: yFor(
+                    row[item.key]
+                  ),
+                  r: item.radius,
+                  fill: item.color,
+                }
+              );
+
+            chart.append(
+              outer,
+              point
+            );
+          }
+        );
       }
 
-      const labels =
+      const guide =
+        createSvg(
+          'line',
+          {
+            x1: left,
+            x2: left,
+            y1: top,
+            y2: top + plotHeight,
+            stroke: 'currentColor',
+            opacity: '0',
+            'stroke-width': 1,
+            'stroke-dasharray': '4 4',
+          }
+        );
+
+      chart.append(guide);
+
+      const tooltip =
         element('div');
 
-      labels.className =
-        'flex justify-between px-5 pb-4 text-xs text-muted-foreground';
+      tooltip.className =
+        'pointer-events-none absolute z-20 hidden min-w-44 rounded-md border border-border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-lg';
 
-      const first =
-        formatGaDate(
-          normalized[0]?.date
-          || ''
-        );
-
-      const last =
-        formatGaDate(
-          normalized[
-            normalized.length - 1
-          ]?.date
-          || ''
-        );
-
-      labels.append(
-        element(
-          'span',
-          first
-        ),
-        element(
-          'span',
-          last
-        )
+      chartWrap.append(
+        chart,
+        tooltip
       );
 
-      const chartWrap =
-        element('div');
+      normalized.forEach(
+        (row, index) => {
+          const previous =
+            index === 0
+              ? left
+              : (
+                  xFor(index - 1)
+                  + xFor(index)
+                ) / 2;
 
-      chartWrap.className =
-        'px-3 pt-3 text-muted-foreground';
+          const next =
+            index
+              === normalized.length - 1
+              ? width - right
+              : (
+                  xFor(index)
+                  + xFor(index + 1)
+                ) / 2;
 
-      chartWrap.append(chart);
+          const hit =
+            createSvg(
+              'rect',
+              {
+                x: previous,
+                y: top,
+                width:
+                  Math.max(
+                    1,
+                    next - previous
+                  ),
+                height: plotHeight,
+                fill: 'transparent',
+                style:
+                  'cursor:crosshair',
+              }
+            );
+
+          hit.addEventListener(
+            'mouseenter',
+            () => {
+              const x =
+                xFor(index);
+
+              guide.setAttribute(
+                'x1',
+                String(x)
+              );
+
+              guide.setAttribute(
+                'x2',
+                String(x)
+              );
+
+              guide.setAttribute(
+                'opacity',
+                '0.35'
+              );
+
+              tooltip.replaceChildren();
+
+              const date =
+                element(
+                  'strong',
+                  formatGaDate(
+                    row.date
+                  )
+                );
+
+              date.className =
+                'mb-2 block text-foreground';
+
+              tooltip.append(date);
+
+              for (
+                const item
+                of series
+              ) {
+                const line =
+                  element('div');
+
+                line.className =
+                  'flex items-center justify-between gap-5 py-0.5';
+
+                const label =
+                  element('span');
+
+                label.className =
+                  'inline-flex items-center gap-1.5 text-muted-foreground';
+
+                const dot =
+                  element('span');
+
+                dot.className =
+                  'h-2 w-2 rounded-full';
+
+                dot.style.background =
+                  item.color;
+
+                label.append(
+                  dot,
+                  document.createTextNode(
+                    item.label
+                  )
+                );
+
+                const value =
+                  element(
+                    'strong',
+                    formatInteger(
+                      row[item.key]
+                    )
+                  );
+
+                value.className =
+                  'tabular-nums text-foreground';
+
+                line.append(
+                  label,
+                  value
+                );
+
+                tooltip.append(line);
+              }
+
+              tooltip.classList.remove(
+                'hidden'
+              );
+
+              const percent =
+                x / width;
+
+              tooltip.style.left =
+                `${Math.min(
+                  82,
+                  Math.max(
+                    8,
+                    percent * 100
+                  )
+                )}%`;
+
+              tooltip.style.top =
+                '20px';
+
+              tooltip.style.transform =
+                percent > 0.65
+                  ? 'translateX(-100%)'
+                  : 'translateX(0)';
+            }
+          );
+
+          hit.addEventListener(
+            'mouseleave',
+            () => {
+              guide.setAttribute(
+                'opacity',
+                '0'
+              );
+
+              tooltip.classList.add(
+                'hidden'
+              );
+            }
+          );
+
+          chart.append(hit);
+        }
+      );
+
+      const xLabels =
+        createSvg(
+          'g'
+        );
+
+      const labelIndexes =
+        Array.from(
+          new Set([
+            0,
+            Math.floor(
+              (normalized.length - 1) / 2
+            ),
+            normalized.length - 1,
+          ])
+        );
+
+      for (
+        const index
+        of labelIndexes
+      ) {
+        const label =
+          createSvg(
+            'text',
+            {
+              x: xFor(index),
+              y: height - 12,
+              'text-anchor':
+                index === 0
+                  ? 'start'
+                  : (
+                      index
+                      === normalized.length - 1
+                        ? 'end'
+                        : 'middle'
+                    ),
+              fill: 'currentColor',
+              opacity: '0.65',
+              'font-size': 11,
+            }
+          );
+
+        label.textContent =
+          formatGaDate(
+            normalized[index].date
+          );
+
+        xLabels.append(label);
+      }
+
+      chart.append(xLabels);
 
       section.append(
         header,
-        chartWrap,
-        labels
+        chartWrap
+      );
+
+      root.append(section);
+    }
+
+    appendDonutBreakdown(
+      root,
+      title,
+      rows,
+      dimensionKey,
+      metricKey,
+      metricLabel
+    ) {
+      if (
+        !Array.isArray(rows)
+        || rows.length === 0
+      ) {
+        return;
+      }
+
+      const items =
+        rows
+          .map((row) => ({
+            label:
+              String(
+                row?.dimensions?.[
+                  dimensionKey
+                ]
+                || '(not set)'
+              ),
+            value:
+              Number(
+                row?.metrics?.[
+                  metricKey
+                ]
+                || 0
+              ),
+          }))
+          .filter(
+            (item) =>
+              item.value > 0
+          );
+
+      if (items.length === 0) {
+        return;
+      }
+
+      const total =
+        items.reduce(
+          (sum, item) =>
+            sum + item.value,
+          0
+        );
+
+      const colors = [
+        '#a855f7',
+        '#3b82f6',
+        '#06b6d4',
+        '#22c55e',
+        '#f59e0b',
+        '#ec4899',
+        '#f97316',
+      ];
+
+      const card =
+        element('article');
+
+      card.className =
+        'rounded-lg border border-border bg-card';
+
+      const heading =
+        element(
+          'h3',
+          title
+        );
+
+      heading.className =
+        'border-b border-border px-4 py-2.5 font-semibold';
+
+      const body =
+        element('div');
+
+      body.className =
+        'grid gap-5 p-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center';
+
+      const chart =
+        document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'svg'
+        );
+
+      chart.setAttribute(
+        'viewBox',
+        '0 0 180 180'
+      );
+
+      chart.classList.add(
+        'mx-auto',
+        'h-40',
+        'w-40'
+      );
+
+      const centerX = 90;
+      const centerY = 90;
+      const radius = 62;
+      const circumference =
+        2 * Math.PI * radius;
+
+      const background =
+        document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'circle'
+        );
+
+      background.setAttribute(
+        'cx',
+        String(centerX)
+      );
+      background.setAttribute(
+        'cy',
+        String(centerY)
+      );
+      background.setAttribute(
+        'r',
+        String(radius)
+      );
+      background.setAttribute(
+        'fill',
+        'none'
+      );
+      background.setAttribute(
+        'stroke',
+        'currentColor'
+      );
+      background.setAttribute(
+        'opacity',
+        '0.10'
+      );
+      background.setAttribute(
+        'stroke-width',
+        '22'
+      );
+
+      chart.append(background);
+
+      let offset = 0;
+
+      items.forEach(
+        (item, index) => {
+          const ratio =
+            item.value / total;
+
+          const segment =
+            document.createElementNS(
+              'http://www.w3.org/2000/svg',
+              'circle'
+            );
+
+          segment.setAttribute(
+            'cx',
+            String(centerX)
+          );
+          segment.setAttribute(
+            'cy',
+            String(centerY)
+          );
+          segment.setAttribute(
+            'r',
+            String(radius)
+          );
+          segment.setAttribute(
+            'fill',
+            'none'
+          );
+          segment.setAttribute(
+            'stroke',
+            colors[
+              index % colors.length
+            ]
+          );
+          segment.setAttribute(
+            'stroke-width',
+            '22'
+          );
+          segment.setAttribute(
+            'stroke-linecap',
+            'butt'
+          );
+          segment.setAttribute(
+            'stroke-dasharray',
+            `${ratio * circumference} ${circumference}`
+          );
+          segment.setAttribute(
+            'stroke-dashoffset',
+            String(
+              -offset * circumference
+            )
+          );
+          segment.setAttribute(
+            'transform',
+            'rotate(-90 90 90)'
+          );
+
+          chart.append(segment);
+
+          offset += ratio;
+        }
+      );
+
+      const totalLabel =
+        document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'text'
+        );
+
+      totalLabel.setAttribute(
+        'x',
+        '90'
+      );
+      totalLabel.setAttribute(
+        'y',
+        '86'
+      );
+      totalLabel.setAttribute(
+        'text-anchor',
+        'middle'
+      );
+      totalLabel.setAttribute(
+        'fill',
+        'currentColor'
+      );
+      totalLabel.setAttribute(
+        'font-size',
+        '24'
+      );
+      totalLabel.setAttribute(
+        'font-weight',
+        '700'
+      );
+
+      totalLabel.textContent =
+        formatInteger(total);
+
+      const totalCaption =
+        document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'text'
+        );
+
+      totalCaption.setAttribute(
+        'x',
+        '90'
+      );
+      totalCaption.setAttribute(
+        'y',
+        '106'
+      );
+      totalCaption.setAttribute(
+        'text-anchor',
+        'middle'
+      );
+      totalCaption.setAttribute(
+        'fill',
+        'currentColor'
+      );
+      totalCaption.setAttribute(
+        'opacity',
+        '0.65'
+      );
+      totalCaption.setAttribute(
+        'font-size',
+        '11'
+      );
+
+      totalCaption.textContent =
+        metricLabel;
+
+      chart.append(
+        totalLabel,
+        totalCaption
+      );
+
+      const legend =
+        element('div');
+
+      legend.className =
+        'space-y-2';
+
+      items.forEach(
+        (item, index) => {
+          const row =
+            element('div');
+
+          row.className =
+            'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 text-sm';
+
+          const label =
+            element('div');
+
+          label.className =
+            'flex min-w-0 items-center gap-2';
+
+          const dot =
+            element('span');
+
+          dot.className =
+            'h-2.5 w-2.5 shrink-0 rounded-full';
+
+          dot.style.background =
+            colors[
+              index % colors.length
+            ];
+
+          const name =
+            element(
+              'span',
+              item.label
+            );
+
+          name.className =
+            'truncate text-foreground';
+
+          label.append(
+            dot,
+            name
+          );
+
+          const value =
+            element(
+              'strong',
+              formatInteger(
+                item.value
+              )
+            );
+
+          value.className =
+            'tabular-nums';
+
+          const percent =
+            element(
+              'span',
+              `${(
+                item.value
+                / total
+                * 100
+              ).toFixed(1)}%`
+            );
+
+          percent.className =
+            'w-14 text-right tabular-nums text-muted-foreground';
+
+          row.append(
+            label,
+            value,
+            percent
+          );
+
+          legend.append(row);
+        }
+      );
+
+      body.append(
+        chart,
+        legend
+      );
+
+      card.append(
+        heading,
+        body
+      );
+
+      root.append(card);
+    }
+
+    appendCountryMap(
+      root,
+      rows
+    ) {
+      if (
+        !Array.isArray(rows)
+        || rows.length === 0
+      ) {
+        return;
+      }
+
+      const items =
+        rows
+          .map((row) => ({
+            country:
+              String(
+                row?.dimensions?.country
+                || ''
+              ),
+            users:
+              Number(
+                row?.metrics?.activeUsers
+                || 0
+              ),
+            sessions:
+              Number(
+                row?.metrics?.sessions
+                || 0
+              ),
+          }))
+          .filter(
+            (item) =>
+              item.country !== ''
+              && item.country
+                !== '(not set)'
+          );
+
+      if (items.length === 0) {
+        return;
+      }
+
+      const coordinates = {
+        'United States': [-100, 38],
+        'Canada': [-106, 56],
+        'Mexico': [-102, 23],
+        'Brazil': [-52, -10],
+        'Argentina': [-64, -34],
+        'United Kingdom': [-3, 55],
+        'Ireland': [-8, 53],
+        'France': [2, 46],
+        'Germany': [10, 51],
+        'Spain': [-4, 40],
+        'Portugal': [-8, 39],
+        'Italy': [12, 42],
+        'Greece': [22, 39],
+        'Cyprus': [33, 35],
+        'Netherlands': [5, 52],
+        'Belgium': [4, 51],
+        'Switzerland': [8, 47],
+        'Austria': [14, 47],
+        'Poland': [20, 52],
+        'Sweden': [15, 62],
+        'Norway': [8, 61],
+        'Finland': [26, 64],
+        'Denmark': [10, 56],
+        'Romania': [25, 46],
+        'Bulgaria': [25, 43],
+        'Türkiye': [35, 39],
+        'Turkey': [35, 39],
+        'Israel': [35, 31],
+        'United Arab Emirates': [54, 24],
+        'Saudi Arabia': [45, 24],
+        'South Africa': [24, -30],
+        'Egypt': [30, 27],
+        'Nigeria': [8, 9],
+        'Kenya': [38, 1],
+        'India': [79, 22],
+        'Pakistan': [69, 30],
+        'China': [104, 35],
+        'Japan': [138, 36],
+        'South Korea': [128, 36],
+        'Singapore': [104, 1],
+        'Thailand': [101, 15],
+        'Indonesia': [118, -2],
+        'Philippines': [122, 13],
+        'Australia': [134, -25],
+        'New Zealand': [174, -41],
+      };
+
+      const section =
+        element('section');
+
+      section.className =
+        'overflow-hidden rounded-lg border border-border bg-card';
+
+      const heading =
+        element(
+          'h3',
+          'Countries'
+        );
+
+      heading.className =
+        'border-b border-border px-4 py-2.5 font-semibold';
+
+      const body =
+        element('div');
+
+      body.className =
+        'grid gap-4 p-4 xl:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]';
+
+      const map =
+        document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'svg'
+        );
+
+      map.setAttribute(
+        'viewBox',
+        '0 0 900 420'
+      );
+
+      map.setAttribute(
+        'role',
+        'img'
+      );
+
+      map.setAttribute(
+        'aria-label',
+        'World traffic map'
+      );
+
+      map.style.width =
+        '100%';
+
+      map.style.display =
+        'block';
+
+      const ns =
+        'http://www.w3.org/2000/svg';
+
+      const continentPaths = [
+        'M60 95 L145 55 L230 75 L265 125 L220 165 L165 155 L130 195 L85 165 Z',
+        'M245 185 L295 205 L320 285 L290 375 L250 315 L230 245 Z',
+        'M385 80 L455 65 L485 95 L470 125 L420 125 L395 105 Z',
+        'M420 135 L485 140 L535 195 L520 290 L475 335 L435 265 L405 185 Z',
+        'M480 75 L620 55 L750 85 L825 145 L770 195 L680 175 L625 220 L545 180 L500 130 Z',
+        'M705 270 L785 255 L835 310 L810 360 L735 355 L690 315 Z',
+      ];
+
+      for (
+        const d
+        of continentPaths
+      ) {
+        const path =
+          document.createElementNS(
+            ns,
+            'path'
+          );
+
+        path.setAttribute(
+          'd',
+          d
+        );
+
+        path.setAttribute(
+          'fill',
+          'currentColor'
+        );
+
+        path.setAttribute(
+          'opacity',
+          '0.10'
+        );
+
+        path.setAttribute(
+          'stroke',
+          'currentColor'
+        );
+
+        path.setAttribute(
+          'stroke-opacity',
+          '0.10'
+        );
+
+        map.append(path);
+      }
+
+      const maxUsers =
+        Math.max(
+          1,
+          ...items.map(
+            (item) =>
+              item.users
+          )
+        );
+
+      for (
+        const item
+        of items
+      ) {
+        const coordinate =
+          coordinates[
+            item.country
+          ];
+
+        if (!coordinate) {
+          continue;
+        }
+
+        const [lon, lat] =
+          coordinate;
+
+        const x =
+          (
+            lon + 180
+          ) / 360 * 900;
+
+        const y =
+          (
+            90 - lat
+          ) / 180 * 420;
+
+        const radius =
+          5
+          + (
+              item.users
+              / maxUsers
+              * 9
+            );
+
+        const halo =
+          document.createElementNS(
+            ns,
+            'circle'
+          );
+
+        halo.setAttribute(
+          'cx',
+          String(x)
+        );
+        halo.setAttribute(
+          'cy',
+          String(y)
+        );
+        halo.setAttribute(
+          'r',
+          String(radius + 5)
+        );
+        halo.setAttribute(
+          'fill',
+          '#a855f7'
+        );
+        halo.setAttribute(
+          'opacity',
+          '0.14'
+        );
+
+        const marker =
+          document.createElementNS(
+            ns,
+            'circle'
+          );
+
+        marker.setAttribute(
+          'cx',
+          String(x)
+        );
+        marker.setAttribute(
+          'cy',
+          String(y)
+        );
+        marker.setAttribute(
+          'r',
+          String(radius)
+        );
+        marker.setAttribute(
+          'fill',
+          '#a855f7'
+        );
+        marker.setAttribute(
+          'stroke',
+          '#ffffff'
+        );
+        marker.setAttribute(
+          'stroke-opacity',
+          '0.75'
+        );
+        marker.setAttribute(
+          'stroke-width',
+          '1.5'
+        );
+
+        const title =
+          document.createElementNS(
+            ns,
+            'title'
+          );
+
+        title.textContent =
+          `${item.country}: ${formatInteger(item.users)} users`;
+
+        marker.append(title);
+
+        map.append(
+          halo,
+          marker
+        );
+      }
+
+      const list =
+        element('div');
+
+      list.className =
+        'space-y-1';
+
+      for (
+        const item
+        of items
+      ) {
+        const row =
+          element('div');
+
+        row.className =
+          'grid grid-cols-[minmax(0,1fr)_auto_auto] gap-3 rounded-md px-2 py-2 text-sm hover:bg-muted/40';
+
+        row.append(
+          element(
+            'span',
+            item.country
+          ),
+          element(
+            'strong',
+            formatInteger(
+              item.users
+            )
+          ),
+          element(
+            'span',
+            `${formatInteger(item.sessions)} sessions`
+          )
+        );
+
+        row.lastElementChild
+          .className =
+            'text-muted-foreground';
+
+        list.append(row);
+      }
+
+      body.append(
+        map,
+        list
+      );
+
+      section.append(
+        heading,
+        body
       );
 
       root.append(section);
@@ -1699,7 +2687,7 @@
         );
 
       heading.className =
-        'border-b border-border px-4 py-3 font-semibold';
+        'border-b border-border px-4 py-2.5 font-semibold';
 
       section.append(heading);
 
@@ -1735,7 +2723,7 @@
           );
 
         th.className =
-          'px-4 py-3 text-left text-sm font-medium';
+          'px-3 py-2 text-left text-xs font-medium';
 
         headRow.append(th);
       }
@@ -1765,7 +2753,7 @@
             );
 
           td.className =
-            'px-4 py-3';
+            'px-3 py-2';
 
           tr.append(td);
         }
@@ -1783,7 +2771,7 @@
             );
 
           td.className =
-            'px-4 py-3 text-right tabular-nums';
+            'px-3 py-2 text-right tabular-nums';
 
           tr.append(td);
         }
@@ -1824,7 +2812,7 @@
         );
 
       heading.className =
-        'border-b border-border px-4 py-3 font-semibold';
+        'border-b border-border px-4 py-2.5 font-semibold';
 
       section.append(heading);
 
@@ -1860,7 +2848,7 @@
           );
 
         th.className =
-          'px-4 py-3 text-left text-sm font-medium';
+          'px-3 py-2 text-left text-xs font-medium';
 
         headRow.append(th);
       }
@@ -1890,7 +2878,7 @@
             );
 
           td.className =
-            'px-4 py-3';
+            'px-3 py-2';
 
           tr.append(td);
         }
@@ -1913,7 +2901,7 @@
             );
 
           td.className =
-            'px-4 py-3 text-right tabular-nums';
+            'px-3 py-2 text-right tabular-nums';
 
           tr.append(td);
         }
