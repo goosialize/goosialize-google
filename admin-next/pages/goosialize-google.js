@@ -114,6 +114,72 @@
     return `${minutes}m ${rest}s`;
   }
 
+  function formatGaDate(value) {
+    const raw =
+      String(value || '');
+
+    if (!/^\d{8}$/.test(raw)) {
+      return raw;
+    }
+
+    const date =
+      new Date(
+        Number(raw.slice(0, 4)),
+        Number(raw.slice(4, 6)) - 1,
+        Number(raw.slice(6, 8))
+      );
+
+    return date.toLocaleDateString(
+      undefined,
+      {
+        day: '2-digit',
+        month: 'short',
+      }
+    );
+  }
+
+  function ensureDashboardStyles() {
+    const id =
+      'goosialize-google-dashboard-styles';
+
+    if (
+      document.getElementById(id)
+    ) {
+      return;
+    }
+
+    const style =
+      document.createElement('style');
+
+    style.id = id;
+
+    style.textContent = `
+      .goosialize-google-detail-grid {
+        display: grid;
+        grid-template-columns:
+          minmax(0, 1fr);
+        gap: 1rem;
+      }
+
+      @media (min-width: 1280px) {
+        .goosialize-google-detail-grid {
+          grid-template-columns:
+            repeat(
+              2,
+              minmax(0, 1fr)
+            );
+        }
+      }
+
+      .goosialize-google-detail-grid
+      > .goosialize-google-full-width {
+        grid-column: 1 / -1;
+      }
+    `;
+
+    document.head.append(style);
+  }
+
   class GoosializeGooglePage
     extends HTMLElement {
     constructor() {
@@ -130,6 +196,7 @@
     }
 
     connectedCallback() {
+      ensureDashboardStyles();
       this.render();
       this.load();
     }
@@ -922,151 +989,153 @@
       const definitions =
         this.product === 'search_console'
           ? [
-              [
-                'Clicks',
-                formatInteger(
+              {
+                label: 'Clicks',
+                value: formatInteger(
                   metrics.clicks
                 ),
-              ],
-              [
-                'Impressions',
-                formatInteger(
+                icon: '↗',
+                accent: '#a855f7',
+              },
+              {
+                label: 'Impressions',
+                value: formatInteger(
                   metrics.impressions
                 ),
-              ],
-              [
-                'CTR',
-                formatPercent(
+                icon: '◉',
+                accent: '#3b82f6',
+              },
+              {
+                label: 'CTR',
+                value: formatPercent(
                   metrics.ctr
                 ),
-              ],
-              [
-                'Average position',
-                formatDecimal(
+                icon: '%',
+                accent: '#22c55e',
+              },
+              {
+                label: 'Average position',
+                value: formatDecimal(
                   metrics.position,
                   1
                 ),
-              ],
+                icon: '#',
+                accent: '#f59e0b',
+              },
             ]
           : [
-              [
-                'Active users',
-                formatInteger(
+              {
+                label: 'Active users',
+                value: formatInteger(
                   metrics.activeUsers
                 ),
-                '👥',
-                '#a855f7',
-              ],
-              [
-                'New users',
-                formatInteger(
+                icon: '●',
+                accent: '#a855f7',
+              },
+              {
+                label: 'New users',
+                value: formatInteger(
                   metrics.newUsers
                 ),
-                '✚',
-                '#8b5cf6',
-              ],
-              [
-                'Sessions',
-                formatInteger(
+                icon: '+',
+                accent: '#8b5cf6',
+              },
+              {
+                label: 'Sessions',
+                value: formatInteger(
                   metrics.sessions
                 ),
-                '↻',
-                '#3b82f6',
-              ],
-              [
-                'Views',
-                formatInteger(
+                icon: '↻',
+                accent: '#3b82f6',
+              },
+              {
+                label: 'Views',
+                value: formatInteger(
                   metrics.screenPageViews
                 ),
-                '◉',
-                '#06b6d4',
-              ],
-              [
-                'Engagement',
-                formatPercent(
+                icon: '◉',
+                accent: '#06b6d4',
+              },
+              {
+                label: 'Engagement',
+                value: formatPercent(
                   metrics.engagementRate
                 ),
-                '◆',
-                '#22c55e',
-              ],
-              [
-                'Avg. session',
-                formatDuration(
+                icon: '◆',
+                accent: '#22c55e',
+              },
+              {
+                label: 'Avg. session',
+                value: formatDuration(
                   metrics.averageSessionDuration
                 ),
-                '◷',
-                '#f59e0b',
-              ],
-              [
-                'Events',
-                formatInteger(
+                icon: '◷',
+                accent: '#f59e0b',
+              },
+              {
+                label: 'Events',
+                value: formatInteger(
                   metrics.eventCount
                 ),
-                '⚡',
-                '#ec4899',
-              ],
-              [
-                'Key events',
-                formatInteger(
+                icon: 'ϟ',
+                accent: '#ec4899',
+              },
+              {
+                label: 'Key events',
+                value: formatInteger(
                   metrics.keyEvents
                 ),
-                '★',
-                '#f97316',
-              ],
+                icon: '★',
+                accent: '#f97316',
+              },
             ];
 
       for (
         const definition
         of definitions
       ) {
-        const [
-          label,
-          value,
-          icon = '•',
-          accent = '#8b5cf6',
-        ] = definition;
-
         const card =
           element('article');
 
         card.className =
           'relative overflow-hidden rounded-lg border border-border bg-card p-5';
 
-        card.style.borderTopColor =
-          accent;
-
-        card.style.borderTopWidth =
-          '2px';
+        card.style.borderTop =
+          `2px solid ${definition.accent}`;
 
         const top =
           element('div');
 
         top.className =
-          'flex items-center justify-between gap-3';
+          'flex min-h-8 items-center justify-between gap-3';
 
         const labelNode =
           element(
             'div',
-            label
+            definition.label
           );
 
         labelNode.className =
-          'text-sm text-muted-foreground';
+          'block text-sm font-medium text-muted-foreground';
+
+        labelNode.style.opacity = '1';
+        labelNode.style.visibility =
+          'visible';
 
         const iconNode =
           element(
             'span',
-            icon
+            definition.icon
           );
 
         iconNode.className =
-          'inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-semibold';
+          'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sm font-semibold';
 
         iconNode.style.color =
-          accent;
+          definition.accent;
 
         iconNode.style.background =
-          `${accent}18`;
+          `${definition.accent}18`;
 
         top.append(
           labelNode,
@@ -1076,11 +1145,11 @@
         const valueNode =
           element(
             'strong',
-            value
+            definition.value
           );
 
         valueNode.className =
-          'mt-2 block text-2xl font-semibold tabular-nums';
+          'mt-2 block text-2xl font-semibold tabular-nums text-foreground';
 
         card.append(
           top,
@@ -1096,7 +1165,7 @@
         element('section');
 
       tables.className =
-        'grid gap-4 xl:grid-cols-2';
+        'goosialize-google-detail-grid';
 
       if (
         this.product === 'search_console'
@@ -1220,7 +1289,7 @@
         ) {
           tables.lastElementChild
             .classList.add(
-              'xl:col-span-2'
+              'goosialize-google-full-width'
             );
         }
       }
@@ -1452,13 +1521,29 @@
       }
 
       const series = [
-        ['users', '#a855f7'],
-        ['sessions', '#3b82f6'],
-        ['views', '#06b6d4'],
+        [
+          'users',
+          '#a855f7',
+          '',
+        ],
+        [
+          'sessions',
+          '#3b82f6',
+          '10 6',
+        ],
+        [
+          'views',
+          '#06b6d4',
+          '2 6',
+        ],
       ];
 
       for (
-        const [key, color]
+        const [
+          key,
+          color,
+          dash,
+        ]
         of series
       ) {
         const points =
@@ -1529,6 +1614,13 @@
           'round'
         );
 
+        if (dash !== '') {
+          polyline.setAttribute(
+            'stroke-dasharray',
+            dash
+          );
+        }
+
         chart.append(polyline);
       }
 
@@ -1539,14 +1631,18 @@
         'flex justify-between px-5 pb-4 text-xs text-muted-foreground';
 
       const first =
-        normalized[0]?.date
-        || '';
+        formatGaDate(
+          normalized[0]?.date
+          || ''
+        );
 
       const last =
-        normalized[
-          normalized.length - 1
-        ]?.date
-        || '';
+        formatGaDate(
+          normalized[
+            normalized.length - 1
+          ]?.date
+          || ''
+        );
 
       labels.append(
         element(
