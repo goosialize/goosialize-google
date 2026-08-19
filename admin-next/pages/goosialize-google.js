@@ -414,7 +414,19 @@
       }
 
       .goosialize-google-geo-body {
+        display: grid;
+        grid-template-columns:
+          minmax(0, 1fr);
         align-items: start;
+        gap: 0.75rem;
+      }
+
+      @media (min-width: 1100px) {
+        .goosialize-google-geo-body {
+          grid-template-columns:
+            minmax(0, 2fr)
+            minmax(220px, 0.7fr);
+        }
       }
     `;
 
@@ -2640,7 +2652,7 @@
         element('div');
 
       body.className =
-        'goosialize-google-geo-body grid gap-3 p-4 pt-2 xl:grid-cols-[minmax(0,2fr)_minmax(220px,0.7fr)]';
+        'goosialize-google-geo-body p-4 pt-2';
 
       const ns =
         'http://www.w3.org/2000/svg';
