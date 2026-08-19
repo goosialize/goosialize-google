@@ -893,6 +893,15 @@
         return;
       }
 
+      if (
+        this.product === 'analytics'
+      ) {
+        this.appendAnalyticsTrendChart(
+          root,
+          this.data.trend
+        );
+      }
+
       const metrics =
         this.data.overview
         || {};
@@ -945,60 +954,95 @@
                 formatInteger(
                   metrics.activeUsers
                 ),
+                '👥',
+                '#a855f7',
               ],
               [
                 'New users',
                 formatInteger(
                   metrics.newUsers
                 ),
+                '✚',
+                '#8b5cf6',
               ],
               [
                 'Sessions',
                 formatInteger(
                   metrics.sessions
                 ),
+                '↻',
+                '#3b82f6',
               ],
               [
                 'Views',
                 formatInteger(
                   metrics.screenPageViews
                 ),
+                '◉',
+                '#06b6d4',
               ],
               [
                 'Engagement',
                 formatPercent(
                   metrics.engagementRate
                 ),
+                '◆',
+                '#22c55e',
               ],
               [
                 'Avg. session',
                 formatDuration(
                   metrics.averageSessionDuration
                 ),
+                '◷',
+                '#f59e0b',
               ],
               [
                 'Events',
                 formatInteger(
                   metrics.eventCount
                 ),
+                '⚡',
+                '#ec4899',
               ],
               [
                 'Key events',
                 formatInteger(
                   metrics.keyEvents
                 ),
+                '★',
+                '#f97316',
               ],
             ];
 
       for (
-        const [label, value]
+        const definition
         of definitions
       ) {
+        const [
+          label,
+          value,
+          icon = '•',
+          accent = '#8b5cf6',
+        ] = definition;
+
         const card =
           element('article');
 
         card.className =
-          'rounded-lg border border-border bg-card p-5';
+          'relative overflow-hidden rounded-lg border border-border bg-card p-5';
+
+        card.style.borderTopColor =
+          accent;
+
+        card.style.borderTopWidth =
+          '2px';
+
+        const top =
+          element('div');
+
+        top.className =
+          'flex items-center justify-between gap-3';
 
         const labelNode =
           element(
@@ -1009,6 +1053,26 @@
         labelNode.className =
           'text-sm text-muted-foreground';
 
+        const iconNode =
+          element(
+            'span',
+            icon
+          );
+
+        iconNode.className =
+          'inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-semibold';
+
+        iconNode.style.color =
+          accent;
+
+        iconNode.style.background =
+          `${accent}18`;
+
+        top.append(
+          labelNode,
+          iconNode
+        );
+
         const valueNode =
           element(
             'strong',
@@ -1016,10 +1080,10 @@
           );
 
         valueNode.className =
-          'mt-1 block text-2xl font-semibold tabular-nums';
+          'mt-2 block text-2xl font-semibold tabular-nums';
 
         card.append(
-          labelNode,
+          top,
           valueNode
         );
 
@@ -1150,6 +1214,15 @@
             ['totalUsers', 'Users'],
           ]
         );
+
+        if (
+          tables.lastElementChild
+        ) {
+          tables.lastElementChild
+            .classList.add(
+              'xl:col-span-2'
+            );
+        }
       }
 
       if (
@@ -1159,6 +1232,348 @@
       }
 
       this.append(root);
+    }
+
+    appendAnalyticsTrendChart(
+      root,
+      rows
+    ) {
+      if (
+        !Array.isArray(rows)
+        || rows.length === 0
+      ) {
+        return;
+      }
+
+      const normalized =
+        rows
+          .map((row) => ({
+            date:
+              String(
+                row?.dimensions?.date
+                || ''
+              ),
+            users:
+              Number(
+                row?.metrics?.activeUsers
+                || 0
+              ),
+            sessions:
+              Number(
+                row?.metrics?.sessions
+                || 0
+              ),
+            views:
+              Number(
+                row?.metrics?.screenPageViews
+                || 0
+              ),
+          }))
+          .filter(
+            (row) =>
+              row.date !== ''
+          )
+          .sort(
+            (a, b) =>
+              a.date.localeCompare(
+                b.date
+              )
+          );
+
+      if (normalized.length === 0) {
+        return;
+      }
+
+      const section =
+        element('section');
+
+      section.className =
+        'overflow-hidden rounded-lg border border-border bg-card';
+
+      const header =
+        element('div');
+
+      header.className =
+        'flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between';
+
+      const heading =
+        element(
+          'h3',
+          'Analytics trend'
+        );
+
+      heading.className =
+        'font-semibold text-foreground';
+
+      const legend =
+        element('div');
+
+      legend.className =
+        'flex flex-wrap items-center gap-4 text-xs text-muted-foreground';
+
+      for (
+        const [label, color]
+        of [
+          ['Users', '#a855f7'],
+          ['Sessions', '#3b82f6'],
+          ['Views', '#06b6d4'],
+        ]
+      ) {
+        const item =
+          element('span');
+
+        item.className =
+          'inline-flex items-center gap-1.5';
+
+        const dot =
+          element('span');
+
+        dot.className =
+          'h-2 w-2 rounded-full';
+
+        dot.style.background =
+          color;
+
+        item.append(
+          dot,
+          document.createTextNode(
+            label
+          )
+        );
+
+        legend.append(item);
+      }
+
+      header.append(
+        heading,
+        legend
+      );
+
+      const chart =
+        document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'svg'
+        );
+
+      chart.setAttribute(
+        'viewBox',
+        '0 0 900 240'
+      );
+
+      chart.setAttribute(
+        'role',
+        'img'
+      );
+
+      chart.setAttribute(
+        'aria-label',
+        'Users, sessions and views trend'
+      );
+
+      chart.style.width =
+        '100%';
+
+      chart.style.height =
+        'auto';
+
+      chart.style.display =
+        'block';
+
+      const width = 900;
+      const height = 240;
+      const left = 44;
+      const right = 18;
+      const top = 20;
+      const bottom = 34;
+
+      const plotWidth =
+        width - left - right;
+
+      const plotHeight =
+        height - top - bottom;
+
+      const maxValue =
+        Math.max(
+          1,
+          ...normalized.flatMap(
+            (row) => [
+              row.users,
+              row.sessions,
+              row.views,
+            ]
+          )
+        );
+
+      for (
+        let index = 0;
+        index <= 4;
+        index += 1
+      ) {
+        const y =
+          top
+          + (
+            plotHeight
+            * index
+            / 4
+          );
+
+        const line =
+          document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'line'
+          );
+
+        line.setAttribute(
+          'x1',
+          String(left)
+        );
+        line.setAttribute(
+          'x2',
+          String(width - right)
+        );
+        line.setAttribute(
+          'y1',
+          String(y)
+        );
+        line.setAttribute(
+          'y2',
+          String(y)
+        );
+        line.setAttribute(
+          'stroke',
+          'currentColor'
+        );
+        line.setAttribute(
+          'opacity',
+          '0.10'
+        );
+
+        chart.append(line);
+      }
+
+      const series = [
+        ['users', '#a855f7'],
+        ['sessions', '#3b82f6'],
+        ['views', '#06b6d4'],
+      ];
+
+      for (
+        const [key, color]
+        of series
+      ) {
+        const points =
+          normalized.map(
+            (row, index) => {
+              const x =
+                left
+                + (
+                  normalized.length === 1
+                    ? plotWidth / 2
+                    : (
+                        plotWidth
+                        * index
+                        / (
+                          normalized.length
+                          - 1
+                        )
+                      )
+                );
+
+              const value =
+                Number(
+                  row[key]
+                  || 0
+                );
+
+              const y =
+                top
+                + plotHeight
+                - (
+                    value
+                    / maxValue
+                    * plotHeight
+                  );
+
+              return `${x},${y}`;
+            }
+          );
+
+        const polyline =
+          document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'polyline'
+          );
+
+        polyline.setAttribute(
+          'points',
+          points.join(' ')
+        );
+        polyline.setAttribute(
+          'fill',
+          'none'
+        );
+        polyline.setAttribute(
+          'stroke',
+          color
+        );
+        polyline.setAttribute(
+          'stroke-width',
+          '3'
+        );
+        polyline.setAttribute(
+          'stroke-linecap',
+          'round'
+        );
+        polyline.setAttribute(
+          'stroke-linejoin',
+          'round'
+        );
+
+        chart.append(polyline);
+      }
+
+      const labels =
+        element('div');
+
+      labels.className =
+        'flex justify-between px-5 pb-4 text-xs text-muted-foreground';
+
+      const first =
+        normalized[0]?.date
+        || '';
+
+      const last =
+        normalized[
+          normalized.length - 1
+        ]?.date
+        || '';
+
+      labels.append(
+        element(
+          'span',
+          first
+        ),
+        element(
+          'span',
+          last
+        )
+      );
+
+      const chartWrap =
+        element('div');
+
+      chartWrap.className =
+        'px-3 pt-3 text-muted-foreground';
+
+      chartWrap.append(chart);
+
+      section.append(
+        header,
+        chartWrap,
+        labels
+      );
+
+      root.append(section);
     }
 
     appendTable(

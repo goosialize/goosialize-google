@@ -61,6 +61,13 @@ final class AnalyticsDashboardService
                     ->metrics();
         }
 
+        $trend =
+            $this->reporting->run(
+                $selected->propertyId(),
+                'trend',
+                $range
+            );
+
         $topPages =
             $this->reporting->run(
                 $selected->propertyId(),
@@ -164,6 +171,13 @@ final class AnalyticsDashboardService
                     $metrics['keyEvents']
                     ?? 0,
             ],
+
+            'trend' =>
+                $this->rows(
+                    $trend
+                        ->result()
+                        ->rows()
+                ),
 
             'top_pages' =>
                 $this->rows(

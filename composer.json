@@ -4,6 +4,7 @@
   "type": "grav-plugin",
   "license": "MIT",
   "require": {
+    "ext-bcmath": "*",
     "google/analytics-admin": "^0.32",
     "google/analytics-data": "^0.24",
     "google/auth": "^1.53",

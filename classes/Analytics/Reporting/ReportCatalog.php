@@ -15,6 +15,7 @@ final class ReportCatalog
     {
         return [
             $this->overview(),
+            $this->trend(),
             $this->topPages(),
             $this->trafficChannels(),
             $this->devices(),
@@ -53,6 +54,22 @@ final class ReportCatalog
                 'keyEvents',
             ],
             1
+        );
+    }
+
+    public function trend(): ReportDefinition
+    {
+        return new ReportDefinition(
+            'trend',
+            [
+                'date',
+            ],
+            [
+                'activeUsers',
+                'sessions',
+                'screenPageViews',
+            ],
+            100
         );
     }
 
