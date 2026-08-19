@@ -1098,7 +1098,7 @@
           element('article');
 
         card.className =
-          'relative overflow-hidden rounded-lg border border-border bg-card p-5';
+          'relative min-h-24 overflow-hidden rounded-lg border border-border bg-card p-4';
 
         card.style.borderTop =
           `2px solid ${definition.accent}`;
@@ -1116,11 +1116,25 @@
           );
 
         labelNode.className =
-          'block text-sm font-medium text-muted-foreground';
+          'block text-sm font-medium';
 
-        labelNode.style.opacity = '1';
+        labelNode.textContent =
+          definition.label;
+
+        labelNode.style.display =
+          'block';
+
+        labelNode.style.minHeight =
+          '20px';
+
+        labelNode.style.opacity =
+          '0.78';
+
         labelNode.style.visibility =
           'visible';
+
+        labelNode.style.color =
+          'currentColor';
 
         const iconNode =
           element(
@@ -2007,7 +2021,7 @@
         element('div');
 
       body.className =
-        'grid gap-5 p-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center';
+        'grid gap-4 p-4 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center';
 
       const chart =
         document.createElementNS(
@@ -2022,8 +2036,8 @@
 
       chart.classList.add(
         'mx-auto',
-        'h-40',
-        'w-40'
+        'h-32',
+        'w-32'
       );
 
       const centerX = 90;
@@ -2331,8 +2345,7 @@
           .filter(
             (item) =>
               item.country !== ''
-              && item.country
-                !== '(not set)'
+              && item.country !== '(not set)'
           );
 
       if (items.length === 0) {
@@ -2406,17 +2419,20 @@
         element('div');
 
       body.className =
-        'grid gap-4 p-4 xl:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]';
+        'grid gap-4 p-4 xl:grid-cols-[minmax(0,2fr)_minmax(220px,0.8fr)]';
+
+      const ns =
+        'http://www.w3.org/2000/svg';
 
       const map =
         document.createElementNS(
-          'http://www.w3.org/2000/svg',
+          ns,
           'svg'
         );
 
       map.setAttribute(
         'viewBox',
-        '0 0 900 420'
+        '0 0 960 460'
       );
 
       map.setAttribute(
@@ -2426,7 +2442,7 @@
 
       map.setAttribute(
         'aria-label',
-        'World traffic map'
+        'World map showing analytics users by country'
       );
 
       map.style.width =
@@ -2435,55 +2451,110 @@
       map.style.display =
         'block';
 
-      const ns =
-        'http://www.w3.org/2000/svg';
+      const project =
+        (lon, lat) => [
+          (
+            lon + 180
+          ) / 360 * 960,
+          (
+            90 - lat
+          ) / 180 * 460,
+        ];
 
-      const continentPaths = [
-        'M60 95 L145 55 L230 75 L265 125 L220 165 L165 155 L130 195 L85 165 Z',
-        'M245 185 L295 205 L320 285 L290 375 L250 315 L230 245 Z',
-        'M385 80 L455 65 L485 95 L470 125 L420 125 L395 105 Z',
-        'M420 135 L485 140 L535 195 L520 290 L475 335 L435 265 L405 185 Z',
-        'M480 75 L620 55 L750 85 L825 145 L770 195 L680 175 L625 220 L545 180 L500 130 Z',
-        'M705 270 L785 255 L835 310 L810 360 L735 355 L690 315 Z',
+      const continentShapes = [
+        [
+          [-168,72],[-140,70],[-125,58],[-110,52],
+          [-95,50],[-82,43],[-65,47],[-55,55],
+          [-60,38],[-80,25],[-97,18],[-110,25],
+          [-120,34],[-132,50],[-160,58],
+        ],
+        [
+          [-82,12],[-70,8],[-60,-5],[-52,-15],
+          [-48,-28],[-58,-42],[-68,-55],[-76,-38],
+          [-80,-20],
+        ],
+        [
+          [-11,36],[0,44],[15,48],[28,45],
+          [40,50],[52,58],[66,60],[88,72],
+          [115,70],[145,58],[170,52],[150,40],
+          [120,30],[105,18],[80,8],[60,22],
+          [42,35],[28,38],[14,35],
+        ],
+        [
+          [-18,35],[0,37],[20,32],[32,20],
+          [42,5],[38,-15],[25,-34],[12,-36],
+          [2,-25],[-8,-5],[-15,15],
+        ],
+        [
+          [112,-10],[130,-12],[145,-20],[153,-32],
+          [143,-43],[124,-38],[114,-28],
+        ],
+        [
+          [-52,82],[-25,80],[-18,70],[-42,60],
+          [-58,68],
+        ],
       ];
 
-      for (
-        const d
-        of continentPaths
-      ) {
-        const path =
-          document.createElementNS(
-            ns,
-            'path'
-          );
-
-        path.setAttribute(
-          'd',
-          d
+      const shapeGroup =
+        document.createElementNS(
+          ns,
+          'g'
         );
 
-        path.setAttribute(
+      for (
+        const polygon
+        of continentShapes
+      ) {
+        const points =
+          polygon
+            .map(([lon, lat]) => {
+              const [x, y] =
+                project(lon, lat);
+
+              return `${x},${y}`;
+            })
+            .join(' ');
+
+        const shape =
+          document.createElementNS(
+            ns,
+            'polygon'
+          );
+
+        shape.setAttribute(
+          'points',
+          points
+        );
+
+        shape.setAttribute(
           'fill',
           'currentColor'
         );
 
-        path.setAttribute(
+        shape.setAttribute(
           'opacity',
-          '0.10'
+          '0.12'
         );
 
-        path.setAttribute(
+        shape.setAttribute(
           'stroke',
           'currentColor'
         );
 
-        path.setAttribute(
+        shape.setAttribute(
           'stroke-opacity',
-          '0.10'
+          '0.18'
         );
 
-        map.append(path);
+        shape.setAttribute(
+          'stroke-width',
+          '1'
+        );
+
+        shapeGroup.append(shape);
       }
+
+      map.append(shapeGroup);
 
       const maxUsers =
         Math.max(
@@ -2507,25 +2578,18 @@
           continue;
         }
 
-        const [lon, lat] =
-          coordinate;
-
-        const x =
-          (
-            lon + 180
-          ) / 360 * 900;
-
-        const y =
-          (
-            90 - lat
-          ) / 180 * 420;
+        const [x, y] =
+          project(
+            coordinate[0],
+            coordinate[1]
+          );
 
         const radius =
           5
           + (
               item.users
               / maxUsers
-              * 9
+              * 8
             );
 
         const halo =
@@ -2544,7 +2608,7 @@
         );
         halo.setAttribute(
           'r',
-          String(radius + 5)
+          String(radius + 6)
         );
         halo.setAttribute(
           'fill',
@@ -2552,7 +2616,7 @@
         );
         halo.setAttribute(
           'opacity',
-          '0.14'
+          '0.16'
         );
 
         const marker =
@@ -2583,7 +2647,7 @@
         );
         marker.setAttribute(
           'stroke-opacity',
-          '0.75'
+          '0.85'
         );
         marker.setAttribute(
           'stroke-width',
@@ -2597,7 +2661,7 @@
           );
 
         title.textContent =
-          `${item.country}: ${formatInteger(item.users)} users`;
+          `${item.country}: ${formatInteger(item.users)} users, ${formatInteger(item.sessions)} sessions`;
 
         marker.append(title);
 
@@ -2611,7 +2675,7 @@
         element('div');
 
       list.className =
-        'space-y-1';
+        'space-y-1 self-start';
 
       for (
         const item
@@ -2621,28 +2685,50 @@
           element('div');
 
         row.className =
-          'grid grid-cols-[minmax(0,1fr)_auto_auto] gap-3 rounded-md px-2 py-2 text-sm hover:bg-muted/40';
+          'grid grid-cols-[minmax(0,1fr)_auto] gap-3 rounded-md px-2 py-2 text-sm hover:bg-muted/40';
 
-        row.append(
+        const country =
           element(
             'span',
             item.country
-          ),
+          );
+
+        country.className =
+          'truncate font-medium';
+
+        const metrics =
+          element('div');
+
+        metrics.className =
+          'text-right';
+
+        const users =
           element(
             'strong',
-            formatInteger(
-              item.users
-            )
-          ),
+            `${formatInteger(item.users)} users`
+          );
+
+        users.className =
+          'block tabular-nums';
+
+        const sessions =
           element(
             'span',
             `${formatInteger(item.sessions)} sessions`
-          )
+          );
+
+        sessions.className =
+          'block text-xs text-muted-foreground';
+
+        metrics.append(
+          users,
+          sessions
         );
 
-        row.lastElementChild
-          .className =
-            'text-muted-foreground';
+        row.append(
+          country,
+          metrics
+        );
 
         list.append(row);
       }
