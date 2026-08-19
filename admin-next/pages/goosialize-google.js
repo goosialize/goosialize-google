@@ -138,6 +138,207 @@
     );
   }
 
+  function googleMetricIcon(
+    iconClass,
+    tone,
+    fallback
+  ) {
+    const box =
+      element('div');
+
+    box.style.display = 'flex';
+    box.style.alignItems = 'center';
+    box.style.justifyContent = 'center';
+    box.style.width = '3rem';
+    box.style.height = '3rem';
+    box.style.flexShrink = '0';
+    box.style.borderRadius = '0.75rem';
+
+    const tones = {
+      blue: [
+        'color-mix(in srgb, #3b82f6 10%, transparent)',
+        '#3b82f6',
+      ],
+      violet: [
+        'color-mix(in srgb, #8b5cf6 10%, transparent)',
+        '#8b5cf6',
+      ],
+      teal: [
+        'color-mix(in srgb, #14b8a6 10%, transparent)',
+        '#14b8a6',
+      ],
+      amber: [
+        'color-mix(in srgb, #f59e0b 10%, transparent)',
+        '#f59e0b',
+      ],
+      green: [
+        'color-mix(in srgb, #22c55e 10%, transparent)',
+        '#22c55e',
+      ],
+      pink: [
+        'color-mix(in srgb, #ec4899 10%, transparent)',
+        '#ec4899',
+      ],
+      orange: [
+        'color-mix(in srgb, #f97316 10%, transparent)',
+        '#f97316',
+      ],
+      cyan: [
+        'color-mix(in srgb, #06b6d4 10%, transparent)',
+        '#06b6d4',
+      ],
+    };
+
+    const selected =
+      tones[tone]
+      || tones.violet;
+
+    box.style.background =
+      selected[0];
+
+    box.style.color =
+      selected[1];
+
+    const icon =
+      document.createElement('i');
+
+    icon.className =
+      `fa-solid ${iconClass}`;
+
+    icon.setAttribute(
+      'aria-hidden',
+      'true'
+    );
+
+    icon.style.fontSize =
+      '1.1rem';
+
+    const fallbackNode =
+      element(
+        'span',
+        fallback
+      );
+
+    fallbackNode.style.display =
+      'none';
+
+    fallbackNode.style.fontSize =
+      '1rem';
+
+    fallbackNode.style.fontWeight =
+      '700';
+
+    box.append(
+      icon,
+      fallbackNode
+    );
+
+    requestAnimationFrame(
+      () => {
+        const style =
+          window.getComputedStyle(icon);
+
+        const hasIcon =
+          style
+          && style.fontFamily
+          && style.fontFamily
+            .toLowerCase()
+            .includes('awesome');
+
+        if (!hasIcon) {
+          icon.style.display =
+            'none';
+
+          fallbackNode.style.display =
+            'inline';
+        }
+      }
+    );
+
+    return box;
+  }
+
+  function googleMetricCard(
+    label,
+    value,
+    iconClass,
+    tone,
+    fallback
+  ) {
+    const article =
+      element('article');
+
+    article.style.display = 'flex';
+    article.style.alignItems = 'center';
+    article.style.gap = '0.875rem';
+    article.style.padding = '0.7rem 0.9rem';
+    article.style.border =
+      '1px solid var(--border)';
+    article.style.background =
+      'var(--card)';
+    article.style.borderRadius =
+      '0.5rem';
+    article.style.minWidth = '0';
+
+    const content =
+      element('div');
+
+    content.style.minWidth =
+      '0';
+
+    const metric =
+      element(
+        'div',
+        value
+      );
+
+    metric.style.fontSize =
+      '1.75rem';
+
+    metric.style.fontWeight =
+      '600';
+
+    metric.style.lineHeight =
+      '1.2';
+
+    metric.style.fontVariantNumeric =
+      'tabular-nums';
+
+    metric.style.color =
+      'var(--foreground)';
+
+    const caption =
+      element(
+        'div',
+        label
+      );
+
+    caption.style.marginTop =
+      '0.1rem';
+
+    caption.style.fontSize =
+      '0.72rem';
+
+    caption.style.color =
+      'var(--muted-foreground)';
+
+    content.append(
+      metric,
+      caption
+    );
+
+    article.append(
+      googleMetricIcon(
+        iconClass,
+        tone,
+        fallback
+      ),
+      content
+    );
+
+    return article;
+  }
+
   function ensureDashboardStyles() {
     const id =
       'goosialize-google-dashboard-styles';
@@ -989,188 +1190,149 @@
       const definitions =
         this.product === 'search_console'
           ? [
-              {
-                label: 'Clicks',
-                value: formatInteger(
+              [
+                'Clicks',
+                formatInteger(
                   metrics.clicks
                 ),
-                icon: '↗',
-                accent: '#a855f7',
-              },
-              {
-                label: 'Impressions',
-                value: formatInteger(
+                'fa-arrow-pointer',
+                'violet',
+                '↗',
+              ],
+              [
+                'Impressions',
+                formatInteger(
                   metrics.impressions
                 ),
-                icon: '◉',
-                accent: '#3b82f6',
-              },
-              {
-                label: 'CTR',
-                value: formatPercent(
+                'fa-eye',
+                'blue',
+                '◉',
+              ],
+              [
+                'CTR',
+                formatPercent(
                   metrics.ctr
                 ),
-                icon: '%',
-                accent: '#22c55e',
-              },
-              {
-                label: 'Average position',
-                value: formatDecimal(
+                'fa-percent',
+                'teal',
+                '%',
+              ],
+              [
+                'Average position',
+                formatDecimal(
                   metrics.position,
                   1
                 ),
-                icon: '#',
-                accent: '#f59e0b',
-              },
+                'fa-ranking-star',
+                'amber',
+                '#',
+              ],
             ]
           : [
-              {
-                label: 'Active users',
-                value: formatInteger(
+              [
+                'Active users',
+                formatInteger(
                   metrics.activeUsers
                 ),
-                icon: '●',
-                accent: '#a855f7',
-              },
-              {
-                label: 'New users',
-                value: formatInteger(
+                'fa-users',
+                'violet',
+                '●',
+              ],
+              [
+                'New users',
+                formatInteger(
                   metrics.newUsers
                 ),
-                icon: '+',
-                accent: '#8b5cf6',
-              },
-              {
-                label: 'Sessions',
-                value: formatInteger(
+                'fa-user-plus',
+                'violet',
+                '+',
+              ],
+              [
+                'Sessions',
+                formatInteger(
                   metrics.sessions
                 ),
-                icon: '↻',
-                accent: '#3b82f6',
-              },
-              {
-                label: 'Views',
-                value: formatInteger(
+                'fa-rotate',
+                'blue',
+                '↻',
+              ],
+              [
+                'Views',
+                formatInteger(
                   metrics.screenPageViews
                 ),
-                icon: '◉',
-                accent: '#06b6d4',
-              },
-              {
-                label: 'Engagement',
-                value: formatPercent(
+                'fa-eye',
+                'cyan',
+                '◉',
+              ],
+              [
+                'Engagement',
+                formatPercent(
                   metrics.engagementRate
                 ),
-                icon: '◆',
-                accent: '#22c55e',
-              },
-              {
-                label: 'Avg. session',
-                value: formatDuration(
+                'fa-bullseye',
+                'green',
+                '◆',
+              ],
+              [
+                'Avg. session',
+                formatDuration(
                   metrics.averageSessionDuration
                 ),
-                icon: '◷',
-                accent: '#f59e0b',
-              },
-              {
-                label: 'Events',
-                value: formatInteger(
+                'fa-clock',
+                'amber',
+                '◷',
+              ],
+              [
+                'Events',
+                formatInteger(
                   metrics.eventCount
                 ),
-                icon: 'ϟ',
-                accent: '#ec4899',
-              },
-              {
-                label: 'Key events',
-                value: formatInteger(
+                'fa-bolt',
+                'pink',
+                'ϟ',
+              ],
+              [
+                'Key events',
+                formatInteger(
                   metrics.keyEvents
                 ),
-                icon: '★',
-                accent: '#f97316',
-              },
+                'fa-star',
+                'orange',
+                '★',
+              ],
             ];
 
+      cards.replaceChildren();
+
+      cards.style.display =
+        'grid';
+
+      cards.style.gridTemplateColumns =
+        'repeat(auto-fit, minmax(210px, 1fr))';
+
+      cards.style.gap =
+        '0.75rem';
+
       for (
-        const definition
+        const [
+          label,
+          value,
+          iconClass,
+          tone,
+          fallback,
+        ]
         of definitions
       ) {
-        const card =
-          element('article');
-
-        card.className =
-          'relative min-h-24 overflow-hidden rounded-lg border border-border bg-card p-4';
-
-        card.style.borderTop =
-          `2px solid ${definition.accent}`;
-
-        const top =
-          element('div');
-
-        top.className =
-          'flex min-h-8 items-center justify-between gap-3';
-
-        const labelNode =
-          element(
-            'div',
-            definition.label
-          );
-
-        labelNode.className =
-          'block text-sm font-medium';
-
-        labelNode.textContent =
-          definition.label;
-
-        labelNode.style.display =
-          'block';
-
-        labelNode.style.minHeight =
-          '20px';
-
-        labelNode.style.opacity =
-          '0.78';
-
-        labelNode.style.visibility =
-          'visible';
-
-        labelNode.style.color =
-          'currentColor';
-
-        const iconNode =
-          element(
-            'span',
-            definition.icon
-          );
-
-        iconNode.className =
-          'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sm font-semibold';
-
-        iconNode.style.color =
-          definition.accent;
-
-        iconNode.style.background =
-          `${definition.accent}18`;
-
-        top.append(
-          labelNode,
-          iconNode
+        cards.append(
+          googleMetricCard(
+            label,
+            value,
+            iconClass,
+            tone,
+            fallback
+          )
         );
-
-        const valueNode =
-          element(
-            'strong',
-            definition.value
-          );
-
-        valueNode.className =
-          'mt-2 block text-2xl font-semibold tabular-nums text-foreground';
-
-        card.append(
-          top,
-          valueNode
-        );
-
-        cards.append(card);
       }
 
       root.append(cards);
@@ -1364,13 +1526,19 @@
         element('section');
 
       section.className =
-        'overflow-hidden rounded-lg border border-border bg-card';
+        'overflow-hidden border border-border bg-card';
+
+      section.style.borderRadius =
+        '0.5rem';
 
       const header =
         element('div');
 
       header.className =
-        'flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between';
+        'flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between';
+
+      header.style.padding =
+        '1rem 1.1rem 0.5rem';
 
       const heading =
         element(
@@ -1380,6 +1548,9 @@
 
       heading.className =
         'font-semibold text-foreground';
+
+      heading.style.fontSize =
+        '0.875rem';
 
       const legend =
         element('div');
@@ -2006,7 +2177,10 @@
         element('article');
 
       card.className =
-        'rounded-lg border border-border bg-card';
+        'border border-border bg-card';
+
+      card.style.borderRadius =
+        '0.5rem';
 
       const heading =
         element(
@@ -2015,13 +2189,16 @@
         );
 
       heading.className =
-        'border-b border-border px-4 py-2.5 font-semibold';
+        'px-4 pt-3 font-semibold';
+
+      heading.style.fontSize =
+        '0.875rem';
 
       const body =
         element('div');
 
       body.className =
-        'grid gap-4 p-4 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center';
+        'grid gap-3 p-4 pt-2 sm:grid-cols-[120px_minmax(0,1fr)] sm:items-center';
 
       const chart =
         document.createElementNS(
@@ -2036,8 +2213,8 @@
 
       chart.classList.add(
         'mx-auto',
-        'h-32',
-        'w-32'
+        'h-28',
+        'w-28'
       );
 
       const centerX = 90;
@@ -2404,7 +2581,10 @@
         element('section');
 
       section.className =
-        'overflow-hidden rounded-lg border border-border bg-card';
+        'overflow-hidden border border-border bg-card';
+
+      section.style.borderRadius =
+        '0.5rem';
 
       const heading =
         element(
@@ -2413,13 +2593,16 @@
         );
 
       heading.className =
-        'border-b border-border px-4 py-2.5 font-semibold';
+        'px-4 pt-3 font-semibold';
+
+      heading.style.fontSize =
+        '0.875rem';
 
       const body =
         element('div');
 
       body.className =
-        'grid gap-4 p-4 xl:grid-cols-[minmax(0,2fr)_minmax(220px,0.8fr)]';
+        'grid gap-3 p-4 pt-2 xl:grid-cols-[minmax(0,2fr)_minmax(220px,0.7fr)]';
 
       const ns =
         'http://www.w3.org/2000/svg';
@@ -2764,7 +2947,10 @@
         element('article');
 
       section.className =
-        'overflow-hidden rounded-lg border border-border bg-card';
+        'overflow-hidden border border-border bg-card';
+
+      section.style.borderRadius =
+        '0.5rem';
 
       const heading =
         element(
@@ -2774,6 +2960,9 @@
 
       heading.className =
         'border-b border-border px-4 py-2.5 font-semibold';
+
+      heading.style.fontSize =
+        '0.875rem';
 
       section.append(heading);
 
