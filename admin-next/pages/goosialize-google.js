@@ -279,6 +279,7 @@
     article.style.borderRadius =
       '0.5rem';
     article.style.minWidth = '0';
+    article.style.minHeight = '4.75rem';
 
     const content =
       element('div');
@@ -375,6 +376,45 @@
       .goosialize-google-detail-grid
       > .goosialize-google-full-width {
         grid-column: 1 / -1;
+      }
+
+      .goosialize-google-kpi-grid {
+        display: grid;
+        grid-template-columns:
+          minmax(0, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+
+      @media (min-width: 640px) {
+        .goosialize-google-kpi-grid {
+          grid-template-columns:
+            repeat(
+              2,
+              minmax(0, 1fr)
+            );
+        }
+      }
+
+      @media (min-width: 1280px) {
+        .goosialize-google-kpi-grid {
+          grid-template-columns:
+            repeat(
+              4,
+              minmax(0, 1fr)
+            );
+        }
+      }
+
+      .goosialize-google-geo-map {
+        width: 100%;
+        height: auto;
+        max-height: 300px;
+        display: block;
+      }
+
+      .goosialize-google-geo-body {
+        align-items: start;
       }
     `;
 
@@ -1305,14 +1345,12 @@
 
       cards.replaceChildren();
 
-      cards.style.display =
-        'grid';
+      cards.className =
+        'goosialize-google-kpi-grid';
 
-      cards.style.gridTemplateColumns =
-        'repeat(auto-fit, minmax(210px, 1fr))';
-
-      cards.style.gap =
-        '0.75rem';
+      cards.style.display = '';
+      cards.style.gridTemplateColumns = '';
+      cards.style.gap = '';
 
       for (
         const [
@@ -2602,7 +2640,7 @@
         element('div');
 
       body.className =
-        'grid gap-3 p-4 pt-2 xl:grid-cols-[minmax(0,2fr)_minmax(220px,0.7fr)]';
+        'goosialize-google-geo-body grid gap-3 p-4 pt-2 xl:grid-cols-[minmax(0,2fr)_minmax(220px,0.7fr)]';
 
       const ns =
         'http://www.w3.org/2000/svg';
@@ -2628,11 +2666,12 @@
         'World map showing analytics users by country'
       );
 
-      map.style.width =
-        '100%';
+      map.classList.add(
+        'goosialize-google-geo-map'
+      );
 
-      map.style.display =
-        'block';
+      map.style.width = '';
+      map.style.display = '';
 
       const project =
         (lon, lat) => [
