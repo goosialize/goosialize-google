@@ -279,7 +279,7 @@
     article.style.borderRadius =
       '0.5rem';
     article.style.minWidth = '0';
-    article.style.minHeight = '4.75rem';
+    article.style.minHeight = '4.4rem';
 
     const content =
       element('div');
@@ -400,7 +400,7 @@
         .goosialize-google-kpi-grid {
           grid-template-columns:
             repeat(
-              4,
+              8,
               minmax(0, 1fr)
             );
         }
@@ -411,6 +411,185 @@
         height: auto;
         max-height: 300px;
         display: block;
+      }
+
+      .goosialize-google-admin-insight-grid {
+        display: grid;
+        grid-template-columns:
+          minmax(0, 1fr);
+        gap: 0.75rem;
+      }
+
+      @media (min-width: 900px) {
+        .goosialize-google-admin-insight-grid {
+          grid-template-columns:
+            repeat(
+              2,
+              minmax(0, 1fr)
+            );
+        }
+      }
+
+      @media (min-width: 1280px) {
+        .goosialize-google-admin-insight-grid {
+          grid-template-columns:
+            repeat(
+              4,
+              minmax(0, 1fr)
+            );
+        }
+      }
+
+      .goosialize-google-insight-card {
+        border: 1px solid var(--border);
+        background: var(--card);
+        border-radius: 0.5rem;
+        padding: 0.8rem 0.9rem;
+      }
+
+      .goosialize-google-insight-card h3 {
+        margin: 0 0 0.75rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--foreground);
+      }
+
+      .goosialize-google-insight-list {
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      .goosialize-google-insight-row > div:first-child {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        font-size: 0.72rem;
+      }
+
+      .goosialize-google-insight-track {
+        height: 0.28rem;
+        margin-top: 0.3rem;
+        overflow: hidden;
+        border-radius: 999px;
+        background:
+          color-mix(
+            in srgb,
+            var(--muted-foreground)
+            12%,
+            transparent
+          );
+      }
+
+      .goosialize-google-insight-track span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--primary);
+      }
+
+      .goosialize-google-insight-row small {
+        display: block;
+        margin-top: 0.18rem;
+        font-size: 0.62rem;
+        color: var(--muted-foreground);
+      }
+
+      .goosialize-google-section-intro h3 {
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      .goosialize-google-section-intro p {
+        margin: 0.15rem 0 0;
+        font-size: 0.7rem;
+        color: var(--muted-foreground);
+      }
+
+      .goosialize-google-links-chart {
+        min-height: 270px;
+        padding: 1rem 1.1rem;
+        border: 1px solid var(--border);
+        background: var(--card);
+        border-radius: 0.5rem;
+      }
+
+      .goosialize-google-links-chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .goosialize-google-links-chart-header h3 {
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      .goosialize-google-links-chart-header p {
+        margin: 0.125rem 0 0;
+        font-size: 0.6875rem;
+        color: var(--muted-foreground);
+      }
+
+      .goosialize-google-chart-legend {
+        display: flex;
+        gap: 0.75rem;
+        font-size: 0.65rem;
+        color: var(--muted-foreground);
+      }
+
+      .goosialize-google-chart-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .goosialize-google-chart-legend i {
+        display: inline-block;
+        width: 1rem;
+        height: 2px;
+      }
+
+      .goosialize-google-links-chart-shell {
+        position: relative;
+        height: 230px;
+      }
+
+      .goosialize-google-links-chart-shell svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .goosialize-google-chart-tooltip {
+        position: absolute;
+        display: none;
+        z-index: 20;
+        min-width: 9rem;
+        padding: 0.55rem 0.65rem;
+        border: 1px solid var(--border);
+        background: var(--popover);
+        border-radius: 0.4rem;
+        box-shadow:
+          0 8px 24px
+          rgba(0,0,0,.18);
+        font-size: 0.65rem;
+        pointer-events: none;
+      }
+
+      .goosialize-google-chart-tooltip strong {
+        display: block;
+        margin-bottom: 0.35rem;
+      }
+
+      .goosialize-google-chart-tooltip div {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.08rem 0;
       }
 
       .goosialize-google-geo-body {
@@ -1455,14 +1634,14 @@
           searchMetrics
         );
       } else {
-        const visualGrid =
+        const audience =
           element('section');
 
-        visualGrid.className =
-          'goosialize-google-detail-grid';
+        audience.className =
+          'goosialize-google-admin-insight-grid';
 
-        this.appendDonutBreakdown(
-          visualGrid,
+        this.appendAdminInsight(
+          audience,
           'Traffic channels',
           this.data.traffic_channels,
           'sessionDefaultChannelGroup',
@@ -1470,8 +1649,8 @@
           'Sessions'
         );
 
-        this.appendDonutBreakdown(
-          visualGrid,
+        this.appendAdminInsight(
+          audience,
           'Devices',
           this.data.devices,
           'deviceCategory',
@@ -1479,16 +1658,111 @@
           'Sessions'
         );
 
+        this.appendAdminInsight(
+          audience,
+          'Operating systems',
+          this.data.operating_systems,
+          'operatingSystem',
+          'sessions',
+          'Sessions'
+        );
+
+        this.appendAdminInsight(
+          audience,
+          'Top countries',
+          this.data.countries,
+          'country',
+          'activeUsers',
+          'Users'
+        );
+
         if (
-          visualGrid.childElementCount > 0
+          audience.childElementCount > 0
         ) {
-          root.append(visualGrid);
+          root.append(audience);
         }
 
-        this.appendCountryMap(
-          root,
-          this.data.countries
+        const timing =
+          element('section');
+
+        timing.className =
+          'goosialize-google-admin-insight-grid';
+
+        this.appendAdminInsight(
+          timing,
+          'Busiest days',
+          this.data.busy_days,
+          'dayOfWeekName',
+          'sessions',
+          'Sessions'
         );
+
+        this.appendAdminInsight(
+          timing,
+          'Busiest hours',
+          this.data.busy_hours,
+          'hour',
+          'sessions',
+          'Sessions',
+          (value) =>
+            `${String(value).padStart(2, '0')}:00`
+        );
+
+        if (
+          timing.childElementCount > 0
+        ) {
+          root.append(timing);
+        }
+
+        const demographics =
+          element('section');
+
+        demographics.className =
+          'goosialize-google-admin-insight-grid';
+
+        this.appendAdminInsight(
+          demographics,
+          'Gender',
+          this.data.gender,
+          'userGender',
+          'activeUsers',
+          'Users'
+        );
+
+        this.appendAdminInsight(
+          demographics,
+          'Age',
+          this.data.ages,
+          'userAgeBracket',
+          'activeUsers',
+          'Users'
+        );
+
+        if (
+          demographics.childElementCount > 0
+        ) {
+          const demoTitle =
+            element('div');
+
+          demoTitle.className =
+            'goosialize-google-section-intro';
+
+          demoTitle.append(
+            element(
+              'h3',
+              'Audience demographics'
+            ),
+            element(
+              'p',
+              'Shown only when Google Analytics makes demographic data available.'
+            )
+          );
+
+          root.append(
+            demoTitle,
+            demographics
+          );
+        }
 
         this.appendTable(
           tables,
@@ -1501,16 +1775,9 @@
           ]
         );
 
-        this.appendTable(
-          tables,
-          'Events',
-          this.data.events,
-          [['eventName', 'Event']],
-          [
-            ['eventCount', 'Count'],
-            ['totalUsers', 'Users'],
-          ]
-        );
+        // Events remain available in the backend
+        // but are intentionally not emphasized
+        // on the simple site-admin dashboard.
       }
 
       if (
@@ -1533,7 +1800,7 @@
         return;
       }
 
-      const normalized =
+      const data =
         rows
           .map((row) => ({
             date:
@@ -1568,67 +1835,72 @@
               )
           );
 
-      if (normalized.length === 0) {
+      if (data.length === 0) {
         return;
       }
 
-      const section =
+      const wrapper =
         element('section');
 
-      section.className =
-        'overflow-hidden border border-border bg-card';
-
-      section.style.borderRadius =
-        '0.5rem';
+      wrapper.className =
+        'goosialize-google-links-chart';
 
       const header =
         element('div');
 
       header.className =
-        'flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between';
+        'goosialize-google-links-chart-header';
 
-      header.style.padding =
-        '1rem 1.1rem 0.5rem';
+      const headingBlock =
+        element('div');
 
       const heading =
         element(
           'h3',
-          'Analytics trend'
+          'Visitors over time'
         );
 
-      heading.className =
-        'font-semibold text-foreground';
+      const period =
+        element(
+          'p',
+          `${formatGaDate(data[0].date)} — ${formatGaDate(data[data.length - 1].date)}`
+        );
 
-      heading.style.fontSize =
-        '0.875rem';
+      headingBlock.append(
+        heading,
+        period
+      );
 
       const legend =
         element('div');
 
       legend.className =
-        'flex flex-wrap items-center gap-4 text-xs text-muted-foreground';
+        'goosialize-google-chart-legend';
 
       const series = [
         {
           key: 'users',
           label: 'Users',
-          color: '#a855f7',
+          color: '#8b5cf6',
+          width: 2.3,
           dash: '',
-          radius: 5,
+          area: true,
         },
         {
           key: 'sessions',
           label: 'Sessions',
           color: '#3b82f6',
-          dash: '9 5',
-          radius: 4,
+          width: 1.7,
+          dash: '6 4',
+          area: false,
         },
         {
           key: 'views',
           label: 'Views',
-          color: '#06b6d4',
-          dash: '2 5',
-          radius: 3,
+          color: '#14b8a6',
+          width: 1.7,
+          dash: '2 4',
+          area: false,
         },
       ];
 
@@ -1639,14 +1911,8 @@
         const legendItem =
           element('span');
 
-        legendItem.className =
-          'inline-flex items-center gap-1.5';
-
         const sample =
-          element('span');
-
-        sample.className =
-          'inline-block h-0.5 w-5 rounded';
+          element('i');
 
         sample.style.background =
           item.color;
@@ -1664,28 +1930,41 @@
       }
 
       header.append(
-        heading,
+        headingBlock,
         legend
       );
 
-      const chartWrap =
+      const chartShell =
         element('div');
 
-      chartWrap.className =
-        'relative px-3 pt-3 text-muted-foreground';
+      chartShell.className =
+        'goosialize-google-links-chart-shell';
 
-      const chart =
+      const ns =
+        'http://www.w3.org/2000/svg';
+
+      const svg =
         document.createElementNS(
-          'http://www.w3.org/2000/svg',
+          ns,
           'svg'
         );
 
       const width = 900;
       const height = 280;
-      const left = 54;
-      const right = 20;
+      const left = 45;
+      const right = 15;
       const top = 18;
-      const bottom = 44;
+      const bottom = 35;
+
+      svg.setAttribute(
+        'viewBox',
+        `0 0 ${width} ${height}`
+      );
+
+      svg.setAttribute(
+        'preserveAspectRatio',
+        'none'
+      );
 
       const plotWidth =
         width - left - right;
@@ -1693,31 +1972,10 @@
       const plotHeight =
         height - top - bottom;
 
-      chart.setAttribute(
-        'viewBox',
-        `0 0 ${width} ${height}`
-      );
-
-      chart.setAttribute(
-        'role',
-        'img'
-      );
-
-      chart.setAttribute(
-        'aria-label',
-        'Users, sessions and views by date'
-      );
-
-      chart.style.width =
-        '100%';
-
-      chart.style.display =
-        'block';
-
-      const maxValue =
+      const max =
         Math.max(
           1,
-          ...normalized.flatMap(
+          ...data.flatMap(
             (row) => [
               row.users,
               row.sessions,
@@ -1726,105 +1984,20 @@
           )
         );
 
-      const ns =
-        'http://www.w3.org/2000/svg';
-
-      const createSvg =
-        (
-          tag,
-          attributes = {}
-        ) => {
-          const node =
-            document.createElementNS(
-              ns,
-              tag
-            );
-
-          for (
-            const [key, value]
-            of Object.entries(
-              attributes
-            )
-          ) {
-            node.setAttribute(
-              key,
-              String(value)
-            );
-          }
-
-          return node;
-        };
-
-      for (
-        let index = 0;
-        index <= 4;
-        index += 1
-      ) {
-        const y =
-          top
-          + (
-            plotHeight
-            * index
-            / 4
-          );
-
-        const value =
-          Math.round(
-            maxValue
-            * (
-              1
-              - index / 4
-            )
-          );
-
-        chart.append(
-          createSvg(
-            'line',
-            {
-              x1: left,
-              x2: width - right,
-              y1: y,
-              y2: y,
-              stroke: 'currentColor',
-              opacity: '0.10',
-            }
-          )
-        );
-
-        const label =
-          createSvg(
-            'text',
-            {
-              x: left - 10,
-              y: y + 4,
-              'text-anchor': 'end',
-              fill: 'currentColor',
-              opacity: '0.65',
-              'font-size': 11,
-            }
-          );
-
-        label.textContent =
-          String(value);
-
-        chart.append(label);
-      }
-
       const xFor =
         (index) =>
           left
           + (
-            normalized.length === 1
-              ? plotWidth / 2
-              : (
-                  plotWidth
-                  * index
-                  / (
-                    normalized.length
-                    - 1
+              data.length === 1
+                ? plotWidth / 2
+                : (
+                    plotWidth
+                    * index
+                    / (
+                      data.length - 1
+                    )
                   )
-                )
-          );
+            );
 
       const yFor =
         (value) =>
@@ -1832,172 +2005,393 @@
           + plotHeight
           - (
               Number(value || 0)
-              / maxValue
+              / max
               * plotHeight
             );
+
+      for (
+        let tick = 0;
+        tick <= 4;
+        tick += 1
+      ) {
+        const y =
+          top
+          + plotHeight
+          * tick / 4;
+
+        const line =
+          document.createElementNS(
+            ns,
+            'line'
+          );
+
+        line.setAttribute(
+          'x1',
+          String(left)
+        );
+        line.setAttribute(
+          'x2',
+          String(width - right)
+        );
+        line.setAttribute(
+          'y1',
+          String(y)
+        );
+        line.setAttribute(
+          'y2',
+          String(y)
+        );
+        line.setAttribute(
+          'stroke',
+          'currentColor'
+        );
+        line.setAttribute(
+          'stroke-opacity',
+          '0.08'
+        );
+        line.setAttribute(
+          'stroke-dasharray',
+          '3 3'
+        );
+
+        svg.append(line);
+      }
+
+      const curve =
+        (points) =>
+          points
+            .map(
+              (point, index) => {
+                if (index === 0) {
+                  return (
+                    `M ${point.x},${point.y}`
+                  );
+                }
+
+                const previous =
+                  points[index - 1];
+
+                const control =
+                  (
+                    previous.x
+                    + point.x
+                  ) / 2;
+
+                return (
+                  `C ${control},${previous.y} ` +
+                  `${control},${point.y} ` +
+                  `${point.x},${point.y}`
+                );
+              }
+            )
+            .join(' ');
+
+      const defs =
+        document.createElementNS(
+          ns,
+          'defs'
+        );
+
+      const gradient =
+        document.createElementNS(
+          ns,
+          'linearGradient'
+        );
+
+      gradient.id =
+        'goosialize-google-admin-area';
+
+      gradient.setAttribute(
+        'x1',
+        '0'
+      );
+      gradient.setAttribute(
+        'x2',
+        '0'
+      );
+      gradient.setAttribute(
+        'y1',
+        '0'
+      );
+      gradient.setAttribute(
+        'y2',
+        '1'
+      );
+
+      for (
+        const [
+          offset,
+          opacity,
+        ]
+        of [
+          ['0%', '0.22'],
+          ['100%', '0.01'],
+        ]
+      ) {
+        const stop =
+          document.createElementNS(
+            ns,
+            'stop'
+          );
+
+        stop.setAttribute(
+          'offset',
+          offset
+        );
+        stop.setAttribute(
+          'stop-color',
+          '#8b5cf6'
+        );
+        stop.setAttribute(
+          'stop-opacity',
+          opacity
+        );
+
+        gradient.append(stop);
+      }
+
+      defs.append(gradient);
+      svg.append(defs);
+
+      const allPoints = [];
 
       for (
         const item
         of series
       ) {
         const points =
-          normalized.map(
-            (row, index) =>
-              `${xFor(index)},${yFor(row[item.key])}`
+          data.map(
+            (row, index) => ({
+              x: xFor(index),
+              y: yFor(
+                row[item.key]
+              ),
+              row,
+              value:
+                row[item.key],
+            })
           );
 
-        const polyline =
-          createSvg(
-            'polyline',
-            {
-              points:
-                points.join(' '),
-              fill: 'none',
-              stroke: item.color,
-              'stroke-width': 2.5,
-              'stroke-linecap': 'round',
-              'stroke-linejoin': 'round',
-            }
-          );
+        const d =
+          curve(points);
 
         if (
-          item.dash !== ''
+          item.area
+          && points.length > 0
         ) {
-          polyline.setAttribute(
+          const area =
+            document.createElementNS(
+              ns,
+              'path'
+            );
+
+          area.setAttribute(
+            'd',
+            (
+              `${d} ` +
+              `L ${points[points.length - 1].x},${top + plotHeight} ` +
+              `L ${points[0].x},${top + plotHeight} Z`
+            )
+          );
+
+          area.setAttribute(
+            'fill',
+            'url(#goosialize-google-admin-area)'
+          );
+
+          svg.append(area);
+        }
+
+        const path =
+          document.createElementNS(
+            ns,
+            'path'
+          );
+
+        path.setAttribute(
+          'd',
+          d
+        );
+        path.setAttribute(
+          'fill',
+          'none'
+        );
+        path.setAttribute(
+          'stroke',
+          item.color
+        );
+        path.setAttribute(
+          'stroke-width',
+          String(item.width)
+        );
+        path.setAttribute(
+          'vector-effect',
+          'non-scaling-stroke'
+        );
+
+        if (item.dash) {
+          path.setAttribute(
             'stroke-dasharray',
             item.dash
           );
         }
 
-        chart.append(polyline);
+        svg.append(path);
 
-        normalized.forEach(
-          (row, index) => {
-            const outer =
-              createSvg(
-                'circle',
-                {
-                  cx: xFor(index),
-                  cy: yFor(
-                    row[item.key]
-                  ),
-                  r: item.radius + 2,
-                  fill: 'var(--card, #18181b)',
-                  stroke: item.color,
-                  'stroke-width': 1.5,
-                }
+        points.forEach(
+          (point, index) => {
+            const circle =
+              document.createElementNS(
+                ns,
+                'circle'
               );
 
-            const point =
-              createSvg(
-                'circle',
-                {
-                  cx: xFor(index),
-                  cy: yFor(
-                    row[item.key]
-                  ),
-                  r: item.radius,
-                  fill: item.color,
-                }
-              );
-
-            chart.append(
-              outer,
-              point
+            circle.setAttribute(
+              'cx',
+              String(point.x)
             );
+            circle.setAttribute(
+              'cy',
+              String(point.y)
+            );
+            circle.setAttribute(
+              'r',
+              '3.5'
+            );
+            circle.setAttribute(
+              'fill',
+              item.color
+            );
+            circle.setAttribute(
+              'stroke',
+              'var(--card)'
+            );
+            circle.setAttribute(
+              'stroke-width',
+              '2'
+            );
+
+            svg.append(circle);
+
+            allPoints.push({
+              index,
+              point,
+              item,
+            });
           }
         );
       }
 
       const guide =
-        createSvg(
-          'line',
-          {
-            x1: left,
-            x2: left,
-            y1: top,
-            y2: top + plotHeight,
-            stroke: 'currentColor',
-            opacity: '0',
-            'stroke-width': 1,
-            'stroke-dasharray': '4 4',
-          }
+        document.createElementNS(
+          ns,
+          'line'
         );
 
-      chart.append(guide);
+      guide.setAttribute(
+        'y1',
+        String(top)
+      );
+      guide.setAttribute(
+        'y2',
+        String(top + plotHeight)
+      );
+      guide.setAttribute(
+        'stroke',
+        'currentColor'
+      );
+      guide.setAttribute(
+        'stroke-opacity',
+        '0'
+      );
+      guide.setAttribute(
+        'stroke-dasharray',
+        '3 3'
+      );
+
+      svg.append(guide);
 
       const tooltip =
         element('div');
 
       tooltip.className =
-        'pointer-events-none absolute z-20 hidden min-w-44 rounded-md border border-border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-lg';
+        'goosialize-google-chart-tooltip';
 
-      chartWrap.append(
-        chart,
-        tooltip
-      );
-
-      normalized.forEach(
+      data.forEach(
         (row, index) => {
+          const x =
+            xFor(index);
+
           const previous =
             index === 0
               ? left
               : (
                   xFor(index - 1)
-                  + xFor(index)
+                  + x
                 ) / 2;
 
           const next =
-            index
-              === normalized.length - 1
+            index === data.length - 1
               ? width - right
               : (
-                  xFor(index)
+                  x
                   + xFor(index + 1)
                 ) / 2;
 
           const hit =
-            createSvg(
-              'rect',
-              {
-                x: previous,
-                y: top,
-                width:
-                  Math.max(
-                    1,
-                    next - previous
-                  ),
-                height: plotHeight,
-                fill: 'transparent',
-                style:
-                  'cursor:crosshair',
-              }
+            document.createElementNS(
+              ns,
+              'rect'
             );
+
+          hit.setAttribute(
+            'x',
+            String(previous)
+          );
+          hit.setAttribute(
+            'y',
+            String(top)
+          );
+          hit.setAttribute(
+            'width',
+            String(
+              Math.max(
+                1,
+                next - previous
+              )
+            )
+          );
+          hit.setAttribute(
+            'height',
+            String(plotHeight)
+          );
+          hit.setAttribute(
+            'fill',
+            'transparent'
+          );
+
+          hit.style.cursor =
+            'crosshair';
 
           hit.addEventListener(
             'mouseenter',
             () => {
-              const x =
-                xFor(index);
-
               guide.setAttribute(
                 'x1',
                 String(x)
               );
-
               guide.setAttribute(
                 'x2',
                 String(x)
               );
-
               guide.setAttribute(
-                'opacity',
-                '0.35'
+                'stroke-opacity',
+                '0.25'
               );
 
               tooltip.replaceChildren();
 
-              const date =
+              const title =
                 element(
                   'strong',
                   formatGaDate(
@@ -2005,10 +2399,7 @@
                   )
                 );
 
-              date.className =
-                'mb-2 block text-foreground';
-
-              tooltip.append(date);
+              tooltip.append(title);
 
               for (
                 const item
@@ -2017,41 +2408,22 @@
                 const line =
                   element('div');
 
-                line.className =
-                  'flex items-center justify-between gap-5 py-0.5';
-
                 const label =
-                  element('span');
-
-                label.className =
-                  'inline-flex items-center gap-1.5 text-muted-foreground';
-
-                const dot =
-                  element('span');
-
-                dot.className =
-                  'h-2 w-2 rounded-full';
-
-                dot.style.background =
-                  item.color;
-
-                label.append(
-                  dot,
-                  document.createTextNode(
+                  element(
+                    'span',
                     item.label
-                  )
-                );
+                  );
 
                 const value =
                   element(
-                    'strong',
+                    'b',
                     formatInteger(
                       row[item.key]
                     )
                   );
 
-                value.className =
-                  'tabular-nums text-foreground';
+                label.style.color =
+                  item.color;
 
                 line.append(
                   label,
@@ -2061,29 +2433,20 @@
                 tooltip.append(line);
               }
 
-              tooltip.classList.remove(
-                'hidden'
-              );
-
-              const percent =
-                x / width;
+              tooltip.style.display =
+                'block';
 
               tooltip.style.left =
                 `${Math.min(
-                  82,
+                  80,
                   Math.max(
-                    8,
-                    percent * 100
+                    7,
+                    x / width * 100
                   )
                 )}%`;
 
               tooltip.style.top =
-                '20px';
-
-              tooltip.style.transform =
-                percent > 0.65
-                  ? 'translateX(-100%)'
-                  : 'translateX(0)';
+                '1rem';
             }
           );
 
@@ -2091,86 +2454,40 @@
             'mouseleave',
             () => {
               guide.setAttribute(
-                'opacity',
+                'stroke-opacity',
                 '0'
               );
 
-              tooltip.classList.add(
-                'hidden'
-              );
+              tooltip.style.display =
+                'none';
             }
           );
 
-          chart.append(hit);
+          svg.append(hit);
         }
       );
 
-      const xLabels =
-        createSvg(
-          'g'
-        );
-
-      const labelIndexes =
-        Array.from(
-          new Set([
-            0,
-            Math.floor(
-              (normalized.length - 1) / 2
-            ),
-            normalized.length - 1,
-          ])
-        );
-
-      for (
-        const index
-        of labelIndexes
-      ) {
-        const label =
-          createSvg(
-            'text',
-            {
-              x: xFor(index),
-              y: height - 12,
-              'text-anchor':
-                index === 0
-                  ? 'start'
-                  : (
-                      index
-                      === normalized.length - 1
-                        ? 'end'
-                        : 'middle'
-                    ),
-              fill: 'currentColor',
-              opacity: '0.65',
-              'font-size': 11,
-            }
-          );
-
-        label.textContent =
-          formatGaDate(
-            normalized[index].date
-          );
-
-        xLabels.append(label);
-      }
-
-      chart.append(xLabels);
-
-      section.append(
-        header,
-        chartWrap
+      chartShell.append(
+        svg,
+        tooltip
       );
 
-      root.append(section);
+      wrapper.append(
+        header,
+        chartShell
+      );
+
+      root.append(wrapper);
     }
 
-    appendDonutBreakdown(
+    appendAdminInsight(
       root,
       title,
       rows,
       dimensionKey,
       metricKey,
-      metricLabel
+      metricLabel,
+      labelFormatter = null
     ) {
       if (
         !Array.isArray(rows)
@@ -2179,7 +2496,7 @@
         return;
       }
 
-      const items =
+      const values =
         rows
           .map((row) => ({
             label:
@@ -2200,37 +2517,39 @@
           .filter(
             (item) =>
               item.value > 0
-          );
+              && item.label !== '(not set)'
+          )
+          .sort(
+            (a, b) =>
+              b.value - a.value
+          )
+          .slice(0, 8);
 
-      if (items.length === 0) {
+      if (values.length === 0) {
         return;
       }
 
+      const max =
+        Math.max(
+          1,
+          ...values.map(
+            (item) =>
+              item.value
+          )
+        );
+
       const total =
-        items.reduce(
+        values.reduce(
           (sum, item) =>
             sum + item.value,
           0
         );
 
-      const colors = [
-        '#a855f7',
-        '#3b82f6',
-        '#06b6d4',
-        '#22c55e',
-        '#f59e0b',
-        '#ec4899',
-        '#f97316',
-      ];
-
       const card =
         element('article');
 
       card.className =
-        'border border-border bg-card';
-
-      card.style.borderRadius =
-        '0.5rem';
+        'goosialize-google-insight-card';
 
       const heading =
         element(
@@ -2238,746 +2557,91 @@
           title
         );
 
-      heading.className =
-        'px-4 pt-3 font-semibold';
-
-      heading.style.fontSize =
-        '0.875rem';
-
-      const body =
-        element('div');
-
-      body.className =
-        'grid gap-3 p-4 pt-2 sm:grid-cols-[120px_minmax(0,1fr)] sm:items-center';
-
-      const chart =
-        document.createElementNS(
-          'http://www.w3.org/2000/svg',
-          'svg'
-        );
-
-      chart.setAttribute(
-        'viewBox',
-        '0 0 180 180'
-      );
-
-      chart.classList.add(
-        'mx-auto',
-        'h-28',
-        'w-28'
-      );
-
-      const centerX = 90;
-      const centerY = 90;
-      const radius = 62;
-      const circumference =
-        2 * Math.PI * radius;
-
-      const background =
-        document.createElementNS(
-          'http://www.w3.org/2000/svg',
-          'circle'
-        );
-
-      background.setAttribute(
-        'cx',
-        String(centerX)
-      );
-      background.setAttribute(
-        'cy',
-        String(centerY)
-      );
-      background.setAttribute(
-        'r',
-        String(radius)
-      );
-      background.setAttribute(
-        'fill',
-        'none'
-      );
-      background.setAttribute(
-        'stroke',
-        'currentColor'
-      );
-      background.setAttribute(
-        'opacity',
-        '0.10'
-      );
-      background.setAttribute(
-        'stroke-width',
-        '22'
-      );
-
-      chart.append(background);
-
-      let offset = 0;
-
-      items.forEach(
-        (item, index) => {
-          const ratio =
-            item.value / total;
-
-          const segment =
-            document.createElementNS(
-              'http://www.w3.org/2000/svg',
-              'circle'
-            );
-
-          segment.setAttribute(
-            'cx',
-            String(centerX)
-          );
-          segment.setAttribute(
-            'cy',
-            String(centerY)
-          );
-          segment.setAttribute(
-            'r',
-            String(radius)
-          );
-          segment.setAttribute(
-            'fill',
-            'none'
-          );
-          segment.setAttribute(
-            'stroke',
-            colors[
-              index % colors.length
-            ]
-          );
-          segment.setAttribute(
-            'stroke-width',
-            '22'
-          );
-          segment.setAttribute(
-            'stroke-linecap',
-            'butt'
-          );
-          segment.setAttribute(
-            'stroke-dasharray',
-            `${ratio * circumference} ${circumference}`
-          );
-          segment.setAttribute(
-            'stroke-dashoffset',
-            String(
-              -offset * circumference
-            )
-          );
-          segment.setAttribute(
-            'transform',
-            'rotate(-90 90 90)'
-          );
-
-          chart.append(segment);
-
-          offset += ratio;
-        }
-      );
-
-      const totalLabel =
-        document.createElementNS(
-          'http://www.w3.org/2000/svg',
-          'text'
-        );
-
-      totalLabel.setAttribute(
-        'x',
-        '90'
-      );
-      totalLabel.setAttribute(
-        'y',
-        '86'
-      );
-      totalLabel.setAttribute(
-        'text-anchor',
-        'middle'
-      );
-      totalLabel.setAttribute(
-        'fill',
-        'currentColor'
-      );
-      totalLabel.setAttribute(
-        'font-size',
-        '24'
-      );
-      totalLabel.setAttribute(
-        'font-weight',
-        '700'
-      );
-
-      totalLabel.textContent =
-        formatInteger(total);
-
-      const totalCaption =
-        document.createElementNS(
-          'http://www.w3.org/2000/svg',
-          'text'
-        );
-
-      totalCaption.setAttribute(
-        'x',
-        '90'
-      );
-      totalCaption.setAttribute(
-        'y',
-        '106'
-      );
-      totalCaption.setAttribute(
-        'text-anchor',
-        'middle'
-      );
-      totalCaption.setAttribute(
-        'fill',
-        'currentColor'
-      );
-      totalCaption.setAttribute(
-        'opacity',
-        '0.65'
-      );
-      totalCaption.setAttribute(
-        'font-size',
-        '11'
-      );
-
-      totalCaption.textContent =
-        metricLabel;
-
-      chart.append(
-        totalLabel,
-        totalCaption
-      );
-
-      const legend =
-        element('div');
-
-      legend.className =
-        'space-y-2';
-
-      items.forEach(
-        (item, index) => {
-          const row =
-            element('div');
-
-          row.className =
-            'grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 text-sm';
-
-          const label =
-            element('div');
-
-          label.className =
-            'flex min-w-0 items-center gap-2';
-
-          const dot =
-            element('span');
-
-          dot.className =
-            'h-2.5 w-2.5 shrink-0 rounded-full';
-
-          dot.style.background =
-            colors[
-              index % colors.length
-            ];
-
-          const name =
-            element(
-              'span',
-              item.label
-            );
-
-          name.className =
-            'truncate text-foreground';
-
-          label.append(
-            dot,
-            name
-          );
-
-          const value =
-            element(
-              'strong',
-              formatInteger(
-                item.value
-              )
-            );
-
-          value.className =
-            'tabular-nums';
-
-          const percent =
-            element(
-              'span',
-              `${(
-                item.value
-                / total
-                * 100
-              ).toFixed(1)}%`
-            );
-
-          percent.className =
-            'w-14 text-right tabular-nums text-muted-foreground';
-
-          row.append(
-            label,
-            value,
-            percent
-          );
-
-          legend.append(row);
-        }
-      );
-
-      body.append(
-        chart,
-        legend
-      );
-
-      card.append(
-        heading,
-        body
-      );
-
-      root.append(card);
-    }
-
-    appendCountryMap(
-      root,
-      rows
-    ) {
-      if (
-        !Array.isArray(rows)
-        || rows.length === 0
-      ) {
-        return;
-      }
-
-      const items =
-        rows
-          .map((row) => ({
-            country:
-              String(
-                row?.dimensions?.country
-                || ''
-              ),
-            users:
-              Number(
-                row?.metrics?.activeUsers
-                || 0
-              ),
-            sessions:
-              Number(
-                row?.metrics?.sessions
-                || 0
-              ),
-          }))
-          .filter(
-            (item) =>
-              item.country !== ''
-              && item.country !== '(not set)'
-          );
-
-      if (items.length === 0) {
-        return;
-      }
-
-      const coordinates = {
-        'United States': [-100, 38],
-        'Canada': [-106, 56],
-        'Mexico': [-102, 23],
-        'Brazil': [-52, -10],
-        'Argentina': [-64, -34],
-        'United Kingdom': [-3, 55],
-        'Ireland': [-8, 53],
-        'France': [2, 46],
-        'Germany': [10, 51],
-        'Spain': [-4, 40],
-        'Portugal': [-8, 39],
-        'Italy': [12, 42],
-        'Greece': [22, 39],
-        'Cyprus': [33, 35],
-        'Netherlands': [5, 52],
-        'Belgium': [4, 51],
-        'Switzerland': [8, 47],
-        'Austria': [14, 47],
-        'Poland': [20, 52],
-        'Sweden': [15, 62],
-        'Norway': [8, 61],
-        'Finland': [26, 64],
-        'Denmark': [10, 56],
-        'Romania': [25, 46],
-        'Bulgaria': [25, 43],
-        'Türkiye': [35, 39],
-        'Turkey': [35, 39],
-        'Israel': [35, 31],
-        'United Arab Emirates': [54, 24],
-        'Saudi Arabia': [45, 24],
-        'South Africa': [24, -30],
-        'Egypt': [30, 27],
-        'Nigeria': [8, 9],
-        'Kenya': [38, 1],
-        'India': [79, 22],
-        'Pakistan': [69, 30],
-        'China': [104, 35],
-        'Japan': [138, 36],
-        'South Korea': [128, 36],
-        'Singapore': [104, 1],
-        'Thailand': [101, 15],
-        'Indonesia': [118, -2],
-        'Philippines': [122, 13],
-        'Australia': [134, -25],
-        'New Zealand': [174, -41],
-      };
-
-      const section =
-        element('section');
-
-      section.className =
-        'overflow-hidden border border-border bg-card';
-
-      section.style.borderRadius =
-        '0.5rem';
-
-      const heading =
-        element(
-          'h3',
-          'Countries'
-        );
-
-      heading.className =
-        'px-4 pt-3 font-semibold';
-
-      heading.style.fontSize =
-        '0.875rem';
-
-      const body =
-        element('div');
-
-      body.className =
-        'goosialize-google-geo-body p-4 pt-2';
-
-      const ns =
-        'http://www.w3.org/2000/svg';
-
-      const map =
-        document.createElementNS(
-          ns,
-          'svg'
-        );
-
-      map.setAttribute(
-        'viewBox',
-        '0 0 960 460'
-      );
-
-      map.setAttribute(
-        'role',
-        'img'
-      );
-
-      map.setAttribute(
-        'aria-label',
-        'World map showing analytics users by country'
-      );
-
-      map.classList.add(
-        'goosialize-google-geo-map'
-      );
-
-      map.style.width = '';
-      map.style.display = '';
-
-      const project =
-        (lon, lat) => [
-          (
-            lon + 180
-          ) / 360 * 960,
-          (
-            90 - lat
-          ) / 180 * 460,
-        ];
-
-      const continentShapes = [
-        [
-          [-168,72],[-140,70],[-125,58],[-110,52],
-          [-95,50],[-82,43],[-65,47],[-55,55],
-          [-60,38],[-80,25],[-97,18],[-110,25],
-          [-120,34],[-132,50],[-160,58],
-        ],
-        [
-          [-82,12],[-70,8],[-60,-5],[-52,-15],
-          [-48,-28],[-58,-42],[-68,-55],[-76,-38],
-          [-80,-20],
-        ],
-        [
-          [-11,36],[0,44],[15,48],[28,45],
-          [40,50],[52,58],[66,60],[88,72],
-          [115,70],[145,58],[170,52],[150,40],
-          [120,30],[105,18],[80,8],[60,22],
-          [42,35],[28,38],[14,35],
-        ],
-        [
-          [-18,35],[0,37],[20,32],[32,20],
-          [42,5],[38,-15],[25,-34],[12,-36],
-          [2,-25],[-8,-5],[-15,15],
-        ],
-        [
-          [112,-10],[130,-12],[145,-20],[153,-32],
-          [143,-43],[124,-38],[114,-28],
-        ],
-        [
-          [-52,82],[-25,80],[-18,70],[-42,60],
-          [-58,68],
-        ],
-      ];
-
-      const shapeGroup =
-        document.createElementNS(
-          ns,
-          'g'
-        );
-
-      for (
-        const polygon
-        of continentShapes
-      ) {
-        const points =
-          polygon
-            .map(([lon, lat]) => {
-              const [x, y] =
-                project(lon, lat);
-
-              return `${x},${y}`;
-            })
-            .join(' ');
-
-        const shape =
-          document.createElementNS(
-            ns,
-            'polygon'
-          );
-
-        shape.setAttribute(
-          'points',
-          points
-        );
-
-        shape.setAttribute(
-          'fill',
-          'currentColor'
-        );
-
-        shape.setAttribute(
-          'opacity',
-          '0.12'
-        );
-
-        shape.setAttribute(
-          'stroke',
-          'currentColor'
-        );
-
-        shape.setAttribute(
-          'stroke-opacity',
-          '0.18'
-        );
-
-        shape.setAttribute(
-          'stroke-width',
-          '1'
-        );
-
-        shapeGroup.append(shape);
-      }
-
-      map.append(shapeGroup);
-
-      const maxUsers =
-        Math.max(
-          1,
-          ...items.map(
-            (item) =>
-              item.users
-          )
-        );
-
-      for (
-        const item
-        of items
-      ) {
-        const coordinate =
-          coordinates[
-            item.country
-          ];
-
-        if (!coordinate) {
-          continue;
-        }
-
-        const [x, y] =
-          project(
-            coordinate[0],
-            coordinate[1]
-          );
-
-        const radius =
-          5
-          + (
-              item.users
-              / maxUsers
-              * 8
-            );
-
-        const halo =
-          document.createElementNS(
-            ns,
-            'circle'
-          );
-
-        halo.setAttribute(
-          'cx',
-          String(x)
-        );
-        halo.setAttribute(
-          'cy',
-          String(y)
-        );
-        halo.setAttribute(
-          'r',
-          String(radius + 6)
-        );
-        halo.setAttribute(
-          'fill',
-          '#a855f7'
-        );
-        halo.setAttribute(
-          'opacity',
-          '0.16'
-        );
-
-        const marker =
-          document.createElementNS(
-            ns,
-            'circle'
-          );
-
-        marker.setAttribute(
-          'cx',
-          String(x)
-        );
-        marker.setAttribute(
-          'cy',
-          String(y)
-        );
-        marker.setAttribute(
-          'r',
-          String(radius)
-        );
-        marker.setAttribute(
-          'fill',
-          '#a855f7'
-        );
-        marker.setAttribute(
-          'stroke',
-          '#ffffff'
-        );
-        marker.setAttribute(
-          'stroke-opacity',
-          '0.85'
-        );
-        marker.setAttribute(
-          'stroke-width',
-          '1.5'
-        );
-
-        const title =
-          document.createElementNS(
-            ns,
-            'title'
-          );
-
-        title.textContent =
-          `${item.country}: ${formatInteger(item.users)} users, ${formatInteger(item.sessions)} sessions`;
-
-        marker.append(title);
-
-        map.append(
-          halo,
-          marker
-        );
-      }
-
       const list =
         element('div');
 
       list.className =
-        'space-y-1 self-start';
+        'goosialize-google-insight-list';
 
       for (
         const item
-        of items
+        of values
       ) {
         const row =
           element('div');
 
         row.className =
-          'grid grid-cols-[minmax(0,1fr)_auto] gap-3 rounded-md px-2 py-2 text-sm hover:bg-muted/40';
+          'goosialize-google-insight-row';
 
-        const country =
-          element(
-            'span',
-            item.country
-          );
-
-        country.className =
-          'truncate font-medium';
-
-        const metrics =
+        const top =
           element('div');
 
-        metrics.className =
-          'text-right';
-
-        const users =
-          element(
-            'strong',
-            `${formatInteger(item.users)} users`
-          );
-
-        users.className =
-          'block tabular-nums';
-
-        const sessions =
+        const label =
           element(
             'span',
-            `${formatInteger(item.sessions)} sessions`
+            labelFormatter
+              ? labelFormatter(
+                  item.label
+                )
+              : item.label
           );
 
-        sessions.className =
-          'block text-xs text-muted-foreground';
+        const number =
+          element(
+            'strong',
+            formatInteger(
+              item.value
+            )
+          );
 
-        metrics.append(
-          users,
-          sessions
+        top.append(
+          label,
+          number
         );
 
+        const track =
+          element('div');
+
+        track.className =
+          'goosialize-google-insight-track';
+
+        const fill =
+          element('span');
+
+        fill.style.width =
+          `${
+            item.value
+            / max
+            * 100
+          }%`;
+
+        track.append(fill);
+
+        const meta =
+          element(
+            'small',
+            `${(
+              item.value
+              / total
+              * 100
+            ).toFixed(1)}% · ${metricLabel}`
+          );
+
         row.append(
-          country,
-          metrics
+          top,
+          track,
+          meta
         );
 
         list.append(row);
       }
 
-      body.append(
-        map,
+      card.append(
+        heading,
         list
       );
 
-      section.append(
-        heading,
-        body
-      );
-
-      root.append(section);
+      root.append(card);
     }
 
     appendTable(

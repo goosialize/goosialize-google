@@ -19,7 +19,12 @@ final class ReportCatalog
             $this->topPages(),
             $this->trafficChannels(),
             $this->devices(),
+            $this->operatingSystems(),
             $this->countries(),
+            $this->busyDays(),
+            $this->busyHours(),
+            $this->gender(),
+            $this->ages(),
             $this->events(),
         ];
     }
@@ -119,6 +124,79 @@ final class ReportCatalog
                 'activeUsers',
             ],
             20
+        );
+    }
+
+    public function operatingSystems(): ReportDefinition
+    {
+        return new ReportDefinition(
+            'operating_systems',
+            [
+                'operatingSystem',
+            ],
+            [
+                'sessions',
+                'activeUsers',
+            ],
+            20
+        );
+    }
+
+    public function busyDays(): ReportDefinition
+    {
+        return new ReportDefinition(
+            'busy_days',
+            [
+                'dayOfWeekName',
+            ],
+            [
+                'sessions',
+                'activeUsers',
+            ],
+            7
+        );
+    }
+
+    public function busyHours(): ReportDefinition
+    {
+        return new ReportDefinition(
+            'busy_hours',
+            [
+                'hour',
+            ],
+            [
+                'sessions',
+                'activeUsers',
+            ],
+            24
+        );
+    }
+
+    public function gender(): ReportDefinition
+    {
+        return new ReportDefinition(
+            'gender',
+            [
+                'userGender',
+            ],
+            [
+                'activeUsers',
+            ],
+            10
+        );
+    }
+
+    public function ages(): ReportDefinition
+    {
+        return new ReportDefinition(
+            'ages',
+            [
+                'userAgeBracket',
+            ],
+            [
+                'activeUsers',
+            ],
+            10
         );
     }
 

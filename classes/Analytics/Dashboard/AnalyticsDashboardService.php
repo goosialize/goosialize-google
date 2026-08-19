@@ -11,6 +11,7 @@ use Goosialize\Google\Analytics\Reporting\AnalyticsReportingService;
 use Goosialize\Google\Analytics\Reporting\DateRange;
 use Goosialize\Google\Analytics\Reporting\DateRangeFactory;
 use RuntimeException;
+use Throwable;
 
 final class AnalyticsDashboardService
 {
@@ -100,6 +101,41 @@ final class AnalyticsDashboardService
             $this->reporting->run(
                 $selected->propertyId(),
                 'events',
+                $range
+            );
+
+        $operatingSystems =
+            $this->optionalRows(
+                $selected->propertyId(),
+                'operating_systems',
+                $range
+            );
+
+        $busyDays =
+            $this->optionalRows(
+                $selected->propertyId(),
+                'busy_days',
+                $range
+            );
+
+        $busyHours =
+            $this->optionalRows(
+                $selected->propertyId(),
+                'busy_hours',
+                $range
+            );
+
+        $gender =
+            $this->optionalRows(
+                $selected->propertyId(),
+                'gender',
+                $range
+            );
+
+        $ages =
+            $this->optionalRows(
+                $selected->propertyId(),
+                'ages',
                 $range
             );
 
@@ -207,6 +243,21 @@ final class AnalyticsDashboardService
                         ->rows()
                 ),
 
+            'operating_systems' =>
+                $operatingSystems,
+
+            'busy_days' =>
+                $busyDays,
+
+            'busy_hours' =>
+                $busyHours,
+
+            'gender' =>
+                $gender,
+
+            'ages' =>
+                $ages,
+
             'events' =>
                 $this->rows(
                     $events
@@ -214,6 +265,27 @@ final class AnalyticsDashboardService
                         ->rows()
                 ),
         ];
+    }
+
+    private function optionalRows(
+        AnalyticsPropertyId $propertyId,
+        string $reportId,
+        DateRange $range
+    ): array {
+        try {
+            return $this->rows(
+                $this->reporting
+                    ->run(
+                        $propertyId,
+                        $reportId,
+                        $range
+                    )
+                    ->result()
+                    ->rows()
+            );
+        } catch (Throwable) {
+            return [];
+        }
     }
 
     private function findProperty(
