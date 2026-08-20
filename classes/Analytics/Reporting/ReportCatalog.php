@@ -21,6 +21,7 @@ final class ReportCatalog
             $this->devices(),
             $this->operatingSystems(),
             $this->countries(),
+            $this->cities(),
             $this->busyDays(),
             $this->busyHours(),
             $this->gender(),
@@ -141,6 +142,22 @@ final class ReportCatalog
                 'activeUsers',
             ],
             20
+        );
+    }
+
+    public function cities(): ReportDefinition
+    {
+        return new ReportDefinition(
+            'cities',
+            [
+                'country',
+                'city',
+            ],
+            [
+                'activeUsers',
+                'sessions',
+            ],
+            100
         );
     }
 

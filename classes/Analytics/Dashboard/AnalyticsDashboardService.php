@@ -111,6 +111,13 @@ final class AnalyticsDashboardService
                 $range
             );
 
+        $cities =
+            $this->optionalRows(
+                $selected->propertyId(),
+                'cities',
+                $range
+            );
+
         $busyDays =
             $this->optionalRows(
                 $selected->propertyId(),
@@ -245,6 +252,9 @@ final class AnalyticsDashboardService
 
             'operating_systems' =>
                 $operatingSystems,
+
+            'cities' =>
+                $cities,
 
             'busy_days' =>
                 $busyDays,

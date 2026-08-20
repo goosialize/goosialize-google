@@ -83,7 +83,7 @@ foreach (
         'repeat(',
         '8,',
         'Top pages',
-        'Events remain available in the backend',
+        "'Events'",
     ]
     as $needle
 ) {

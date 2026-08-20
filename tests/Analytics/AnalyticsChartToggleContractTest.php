@@ -49,7 +49,7 @@ foreach (
         'new Set(',
         "addEventListener(\n          'click'",
         "'aria-pressed'",
-        "marker.setAttribute(\n                  'fill',\n                  '#ffffff'",
+        "marker.setAttribute(\n                  'fill',\n                  item.color",
         "marker.setAttribute(\n                  'r',\n                  '4'",
         'active.size === 1',
         'goosialize-google-chart-toggle',

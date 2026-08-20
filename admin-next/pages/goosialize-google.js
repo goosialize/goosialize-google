@@ -138,6 +138,78 @@
     );
   }
 
+  const GOOGLE_METRIC_HELP = {
+    'Active users':
+      'Unique users who actively engaged with the site during the selected period.',
+    'New users':
+      'Users visiting the site for the first time during the selected period.',
+    'Sessions':
+      'Visits started on the site. One visitor may create multiple sessions.',
+    'Views':
+      'Total page and screen views recorded by Google Analytics.',
+    'Engagement':
+      'Percentage of sessions that were meaningfully engaged.',
+    'Avg. session':
+      'Average active time visitors spent during a session.',
+    'Events':
+      'Tracked interactions recorded by Google Analytics.',
+    'Key events':
+      'Important events marked as key events in Google Analytics.',
+    'Top pages':
+      'Pages receiving the most views during the selected period.',
+    'Traffic channels':
+      'How visitors arrived at the site, such as Direct or Organic Search.',
+    'Devices':
+      'Device categories visitors used to access the site.',
+    'Operating systems':
+      'Operating systems used by visitors.',
+    'Top countries':
+      'Countries with the most active visitors.',
+    'Busiest days':
+      'Days of the week with the highest number of sessions.',
+    'Busiest hours':
+      'Hours of the day with the highest number of sessions.',
+    'Visitor locations':
+      'Visitor location information reported by Google Analytics.',
+    'Gender':
+      'Available demographic gender groups reported by Google Analytics.',
+    'Age':
+      'Available demographic age groups reported by Google Analytics.'
+  };
+
+  function googleMetricHelp(label) {
+    return (
+      GOOGLE_METRIC_HELP[label]
+      || `Information about ${label}.`
+    );
+  }
+
+  function googleInfoIcon(
+    help,
+    label = 'Metric information'
+  ) {
+    const icon =
+      element('span', 'i');
+
+    icon.className =
+      'goosialize-google-info-icon';
+
+    icon.setAttribute(
+      'role',
+      'img'
+    );
+
+    icon.setAttribute(
+      'aria-label',
+      label
+    );
+
+    icon.title =
+      String(help || '');
+
+    return icon;
+  }
+
   function googleMetricIcon(
     iconClass,
     tone,
@@ -376,6 +448,263 @@
       .goosialize-google-detail-grid
       > .goosialize-google-full-width {
         grid-column: 1 / -1;
+      }
+
+      .goosialize-google-info-icon {
+        display: inline-flex;
+        width: 0.9rem;
+        height: 0.9rem;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.35rem;
+        border: 1px solid
+          color-mix(
+            in srgb,
+            var(--muted-foreground)
+            55%,
+            transparent
+          );
+        border-radius: 999px;
+        color: var(--muted-foreground);
+        font-size: 0.58rem;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 1;
+        cursor: help;
+        vertical-align: middle;
+      }
+
+      .goosialize-google-kpi-info {
+        position: absolute;
+        top: 0.35rem;
+        left: 0.4rem;
+        z-index: 2;
+        margin: 0;
+      }
+
+      .goosialize-google-refresh-button {
+        display: inline-flex;
+        width: 2.45rem;
+        height: 2.45rem;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        background: var(--card);
+        color: var(--foreground);
+        cursor: pointer;
+      }
+
+      .goosialize-google-refresh-icon {
+        display: inline-block;
+        font-size: 1.05rem;
+        line-height: 1;
+      }
+
+      @keyframes goosialize-google-refresh-rotate {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes goosialize-google-refresh-pulse {
+        0%, 100% {
+          opacity: 0.45;
+        }
+
+        50% {
+          opacity: 1;
+          filter:
+            drop-shadow(
+              0 0 0.42rem
+              color-mix(
+                in srgb,
+                var(--primary)
+                70%,
+                transparent
+              )
+            );
+        }
+      }
+
+      .goosialize-google-refresh-button.is-loading
+      .goosialize-google-refresh-icon {
+        color: var(--primary);
+        animation:
+          goosialize-google-refresh-rotate
+          0.8s linear infinite,
+          goosialize-google-refresh-pulse
+          0.9s ease-in-out infinite;
+      }
+
+      .goosialize-google-day-bars {
+        display: grid;
+        grid-template-columns:
+          repeat(7, minmax(0, 1fr));
+        min-height: 150px;
+        gap: 0.45rem;
+        align-items: end;
+      }
+
+      .goosialize-google-day-column {
+        display: grid;
+        grid-template-rows:
+          auto 105px auto;
+        gap: 0.25rem;
+        text-align: center;
+      }
+
+      .goosialize-google-day-column > div {
+        display: flex;
+        align-items: end;
+        overflow: hidden;
+        border-radius: 0.28rem;
+        background:
+          color-mix(
+            in srgb,
+            var(--muted-foreground)
+            10%,
+            transparent
+          );
+      }
+
+      .goosialize-google-day-column > div span {
+        display: block;
+        width: 100%;
+        border-radius: inherit;
+        background:
+          linear-gradient(
+            to top,
+            color-mix(
+              in srgb,
+              var(--primary)
+              92%,
+              transparent
+            ),
+            color-mix(
+              in srgb,
+              var(--primary)
+              48%,
+              transparent
+            )
+          );
+      }
+
+      .goosialize-google-day-column strong,
+      .goosialize-google-day-column small {
+        font-size: 0.65rem;
+      }
+
+      .goosialize-google-hour-donut-layout {
+        display: grid;
+        grid-template-columns:
+          130px minmax(0, 1fr);
+        gap: 0.85rem;
+        align-items: center;
+      }
+
+      .goosialize-google-hour-donut {
+        width: 125px;
+        height: 125px;
+      }
+
+      .goosialize-google-hour-legend {
+        display: grid;
+        gap: 0.3rem;
+      }
+
+      .goosialize-google-hour-legend > div {
+        display: grid;
+        grid-template-columns:
+          0.55rem minmax(0,1fr) auto;
+        gap: 0.4rem;
+        align-items: center;
+        font-size: 0.66rem;
+      }
+
+      .goosialize-google-hour-legend i {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 999px;
+      }
+
+      .goosialize-google-geo-card {
+        padding: 0.8rem 0.9rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        background: var(--card);
+      }
+
+      .goosialize-google-geo-card h3 {
+        margin: 0 0 0.7rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .goosialize-google-geo-body {
+        display: grid;
+        grid-template-columns:
+          minmax(0, 2fr)
+          minmax(180px, 1fr);
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .goosialize-google-map-stage {
+        position: relative;
+        min-height: 220px;
+      }
+
+      .goosialize-google-map-stage
+      .goosialize-google-geo-map {
+        width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+        opacity: 0.32;
+      }
+
+      .goosialize-google-map-dot {
+        position: absolute;
+        width: 0.62rem;
+        height: 0.62rem;
+        transform:
+          translate(-50%, -50%);
+        border: 2px solid #fff;
+        border-radius: 999px;
+        background: var(--primary);
+        box-shadow:
+          0 0 0 0.22rem
+          color-mix(
+            in srgb,
+            var(--primary)
+            22%,
+            transparent
+          );
+        cursor: help;
+      }
+
+      .goosialize-google-city-list {
+        display: grid;
+        gap: 0.4rem;
+      }
+
+      .goosialize-google-city-list > strong {
+        margin-bottom: 0.2rem;
+        font-size: 0.72rem;
+      }
+
+      .goosialize-google-city-list > div {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        font-size: 0.66rem;
+      }
+
+      @media (max-width: 799px) {
+        .goosialize-google-geo-body {
+          grid-template-columns:
+            minmax(0, 1fr);
+        }
       }
 
       .goosialize-google-kpi-grid {
@@ -1134,12 +1463,7 @@
       );
 
       const refreshButton =
-        element(
-          'button',
-          this.loading
-            ? 'Refreshing…'
-            : 'Refresh'
-        );
+        element('button');
 
       refreshButton.type =
         'button';
@@ -1149,14 +1473,40 @@
         || this.propertyId === '';
 
       refreshButton.className =
-        'mt-1 inline-flex h-10 items-center justify-center rounded-md border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50';
+        'goosialize-google-refresh-button';
 
       refreshButton.setAttribute(
         'aria-label',
-        this.product === 'search_console'
-          ? 'Refresh Search Console data'
-          : 'Refresh Google Analytics data'
+        this.loading
+          ? 'Refreshing data'
+          : 'Refresh data'
       );
+
+      refreshButton.title =
+        this.loading
+          ? 'Refreshing data…'
+          : 'Refresh data';
+
+      const refreshIcon =
+        element('span', '↻');
+
+      refreshIcon.className =
+        'goosialize-google-refresh-icon';
+
+      refreshIcon.setAttribute(
+        'aria-hidden',
+        'true'
+      );
+
+      refreshButton.append(
+        refreshIcon
+      );
+
+      if (this.loading) {
+        refreshButton.classList.add(
+          'is-loading'
+        );
+      }
 
       refreshButton.addEventListener(
         'click',
@@ -1597,7 +1947,62 @@
         );
       }
 
+      for (
+        const card
+        of Array.from(
+          cards.children
+        )
+      ) {
+        const raw =
+          String(
+            card.textContent
+            || ''
+          );
+
+        const label =
+          Object.keys(
+            GOOGLE_METRIC_HELP
+          ).find(
+            (candidate) =>
+              raw.includes(candidate)
+          );
+
+        if (!label) {
+          continue;
+        }
+
+        card.style.position =
+          'relative';
+
+        const info =
+          googleInfoIcon(
+            googleMetricHelp(label),
+            `${label} information`
+          );
+
+        info.classList.add(
+          'goosialize-google-kpi-info'
+        );
+
+        card.append(info);
+      }
+
       root.append(cards);
+
+      if (
+        this.product === 'analytics'
+      ) {
+        this.appendTable(
+          root,
+          'Top pages',
+          this.data.top_pages,
+          [['pagePath', 'Page']],
+          [
+            ['screenPageViews', 'Views'],
+            ['activeUsers', 'Users'],
+          ]
+        );
+      }
 
       const tables =
         element('section');
@@ -1715,30 +2120,26 @@
           root.append(audience);
         }
 
+        this.appendGeoMap(
+          root,
+          this.data.countries,
+          this.data.cities
+        );
+
         const timing =
           element('section');
 
         timing.className =
           'goosialize-google-admin-insight-grid';
 
-        this.appendAdminInsight(
+        this.appendBusiestDaysBars(
           timing,
-          'Busiest days',
-          this.data.busy_days,
-          'dayOfWeekName',
-          'sessions',
-          'Sessions'
+          this.data.busy_days
         );
 
-        this.appendAdminInsight(
+        this.appendBusiestHoursDonut(
           timing,
-          'Busiest hours',
-          this.data.busy_hours,
-          'hour',
-          'sessions',
-          'Sessions',
-          (value) =>
-            `${String(value).padStart(2, '0')}:00`
+          this.data.busy_hours
         );
 
         if (
@@ -1799,18 +2200,14 @@
 
         this.appendTable(
           tables,
-          'Top pages',
-          this.data.top_pages,
-          [['pagePath', 'Page']],
+          'Events',
+          this.data.events,
+          [['eventName', 'Event']],
           [
-            ['screenPageViews', 'Views'],
-            ['activeUsers', 'Users'],
+            ['eventCount', 'Count'],
+            ['totalUsers', 'Users'],
           ]
         );
-
-        // Events remain available in the backend
-        // but are intentionally not emphasized
-        // on the simple site-admin dashboard.
       }
 
       if (
@@ -2014,7 +2411,7 @@
 
           svg.setAttribute(
             'preserveAspectRatio',
-            'none'
+            'xMidYMid meet'
           );
 
           svg.style.width =
@@ -2255,7 +2652,7 @@
 
                 marker.setAttribute(
                   'fill',
-                  '#ffffff'
+                  item.color
                 );
 
                 marker.setAttribute(
@@ -2265,7 +2662,7 @@
 
                 marker.setAttribute(
                   'stroke-width',
-                  '2'
+                  '1.5'
                 );
 
                 marker.setAttribute(
@@ -2603,6 +3000,638 @@
       root.append(wrapper);
     }
 
+    appendBusiestDaysBars(
+      root,
+      rows
+    ) {
+      if (
+        !Array.isArray(rows)
+        || rows.length === 0
+      ) {
+        return;
+      }
+
+      const order = [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday',
+      ];
+
+      const data =
+        rows
+          .map((row) => ({
+            label:
+              String(
+                row?.dimensions
+                  ?.dayOfWeekName
+                || ''
+              ),
+            value:
+              Number(
+                row?.metrics
+                  ?.sessions
+                || 0
+              ),
+          }))
+          .filter(
+            (item) =>
+              item.label !== ''
+          )
+          .sort(
+            (a, b) =>
+              order.indexOf(a.label)
+              - order.indexOf(b.label)
+          );
+
+      if (data.length === 0) {
+        return;
+      }
+
+      const card =
+        element('article');
+
+      card.className =
+        'goosialize-google-insight-card';
+
+      const heading =
+        element('h3');
+
+      heading.append(
+        googleInfoIcon(
+          googleMetricHelp(
+            'Busiest days'
+          )
+        ),
+        document.createTextNode(
+          'Busiest days'
+        )
+      );
+
+      const chart =
+        element('div');
+
+      chart.className =
+        'goosialize-google-day-bars';
+
+      const max =
+        Math.max(
+          1,
+          ...data.map(
+            (item) =>
+              item.value
+          )
+        );
+
+      for (const item of data) {
+        const column =
+          element('div');
+
+        column.className =
+          'goosialize-google-day-column';
+
+        const value =
+          element(
+            'strong',
+            formatInteger(
+              item.value
+            )
+          );
+
+        const track =
+          element('div');
+
+        const fill =
+          element('span');
+
+        fill.style.height =
+          `${
+            Math.max(
+              4,
+              (
+                item.value
+                / max
+              ) * 100
+            )
+          }%`;
+
+        track.append(fill);
+
+        const label =
+          element(
+            'small',
+            item.label.slice(0, 3)
+          );
+
+        column.append(
+          value,
+          track,
+          label
+        );
+
+        chart.append(column);
+      }
+
+      card.append(
+        heading,
+        chart
+      );
+
+      root.append(card);
+    }
+
+    appendBusiestHoursDonut(
+      root,
+      rows
+    ) {
+      if (
+        !Array.isArray(rows)
+        || rows.length === 0
+      ) {
+        return;
+      }
+
+      const data =
+        rows
+          .map((row) => ({
+            hour:
+              String(
+                row?.dimensions?.hour
+                || ''
+              ),
+            value:
+              Number(
+                row?.metrics?.sessions
+                || 0
+              ),
+          }))
+          .filter(
+            (item) =>
+              item.hour !== ''
+              && item.value > 0
+          )
+          .sort(
+            (a, b) =>
+              b.value - a.value
+          )
+          .slice(0, 8);
+
+      if (data.length === 0) {
+        return;
+      }
+
+      const total =
+        data.reduce(
+          (sum, item) =>
+            sum + item.value,
+          0
+        );
+
+      const colors = [
+        '#8b5cf6',
+        '#3b82f6',
+        '#14b8a6',
+        '#ec4899',
+        '#f59e0b',
+        '#22c55e',
+        '#f97316',
+        '#6366f1',
+      ];
+
+      const card =
+        element('article');
+
+      card.className =
+        'goosialize-google-insight-card';
+
+      const heading =
+        element('h3');
+
+      heading.append(
+        googleInfoIcon(
+          googleMetricHelp(
+            'Busiest hours'
+          )
+        ),
+        document.createTextNode(
+          'Busiest hours'
+        )
+      );
+
+      const body =
+        element('div');
+
+      body.className =
+        'goosialize-google-hour-donut-layout';
+
+      const ns =
+        'http://www.w3.org/2000/svg';
+
+      const svg =
+        document.createElementNS(
+          ns,
+          'svg'
+        );
+
+      svg.setAttribute(
+        'viewBox',
+        '0 0 140 140'
+      );
+
+      svg.classList.add(
+        'goosialize-google-hour-donut'
+      );
+
+      const radius = 45;
+      const circumference =
+        2 * Math.PI * radius;
+
+      let offset = 0;
+
+      data.forEach(
+        (item, index) => {
+          const ratio =
+            item.value / total;
+
+          const circle =
+            document.createElementNS(
+              ns,
+              'circle'
+            );
+
+          circle.setAttribute(
+            'cx',
+            '70'
+          );
+
+          circle.setAttribute(
+            'cy',
+            '70'
+          );
+
+          circle.setAttribute(
+            'r',
+            String(radius)
+          );
+
+          circle.setAttribute(
+            'fill',
+            'none'
+          );
+
+          circle.setAttribute(
+            'stroke',
+            colors[
+              index % colors.length
+            ]
+          );
+
+          circle.setAttribute(
+            'stroke-width',
+            '16'
+          );
+
+          circle.setAttribute(
+            'stroke-dasharray',
+            `${ratio * circumference} ${circumference}`
+          );
+
+          circle.setAttribute(
+            'stroke-dashoffset',
+            String(
+              -offset
+              * circumference
+            )
+          );
+
+          circle.setAttribute(
+            'transform',
+            'rotate(-90 70 70)'
+          );
+
+          const title =
+            document.createElementNS(
+              ns,
+              'title'
+            );
+
+          title.textContent =
+            `${String(item.hour).padStart(2, '0')}:00 — ${formatInteger(item.value)} sessions`;
+
+          circle.append(title);
+          svg.append(circle);
+
+          offset += ratio;
+        }
+      );
+
+      const center =
+        document.createElementNS(
+          ns,
+          'text'
+        );
+
+      center.setAttribute(
+        'x',
+        '70'
+      );
+
+      center.setAttribute(
+        'y',
+        '74'
+      );
+
+      center.setAttribute(
+        'text-anchor',
+        'middle'
+      );
+
+      center.setAttribute(
+        'fill',
+        'currentColor'
+      );
+
+      center.setAttribute(
+        'font-size',
+        '18'
+      );
+
+      center.setAttribute(
+        'font-weight',
+        '700'
+      );
+
+      center.textContent =
+        formatInteger(total);
+
+      svg.append(center);
+
+      const legend =
+        element('div');
+
+      legend.className =
+        'goosialize-google-hour-legend';
+
+      data.forEach(
+        (item, index) => {
+          const row =
+            element('div');
+
+          const dot =
+            element('i');
+
+          dot.style.background =
+            colors[
+              index % colors.length
+            ];
+
+          const label =
+            element(
+              'span',
+              `${String(item.hour).padStart(2, '0')}:00`
+            );
+
+          const value =
+            element(
+              'strong',
+              formatInteger(
+                item.value
+              )
+            );
+
+          row.append(
+            dot,
+            label,
+            value
+          );
+
+          legend.append(row);
+        }
+      );
+
+      body.append(
+        svg,
+        legend
+      );
+
+      card.append(
+        heading,
+        body
+      );
+
+      root.append(card);
+    }
+
+    appendGeoMap(
+      root,
+      countryRows,
+      cityRows
+    ) {
+      const countries =
+        Array.isArray(countryRows)
+          ? countryRows
+          : [];
+
+      const cities =
+        Array.isArray(cityRows)
+          ? cityRows
+          : [];
+
+      if (
+        countries.length === 0
+        && cities.length === 0
+      ) {
+        return;
+      }
+
+      const countryPoints = {
+        Cyprus: [59.2, 30.6],
+        Greece: [56.1, 29.1],
+        Germany: [52.8, 21.8],
+        France: [50.6, 24.0],
+        Italy: [53.5, 27.4],
+        Spain: [47.9, 26.1],
+        'United Kingdom': [49.2, 19.4],
+        Netherlands: [51.4, 20.5],
+        Poland: [55.6, 20.9],
+        Romania: [57.2, 24.1],
+        Bulgaria: [57.2, 26.3],
+        Türkiye: [60.0, 27.2],
+        Israel: [59.8, 32.9],
+        India: [71.8, 43.6],
+        China: [79.0, 35.0],
+        Japan: [87.8, 38.4],
+        Australia: [84.8, 75.8],
+        Canada: [20.7, 18.9],
+        'United States': [22.6, 35.4],
+        Mexico: [21.8, 47.7],
+        Brazil: [35.6, 66.3],
+        Argentina: [32.0, 82.0],
+      };
+
+      const card =
+        element('section');
+
+      card.className =
+        'goosialize-google-geo-card';
+
+      const heading =
+        element('h3');
+
+      heading.append(
+        googleInfoIcon(
+          googleMetricHelp(
+            'Visitor locations'
+          )
+        ),
+        document.createTextNode(
+          'Visitor locations'
+        )
+      );
+
+      const body =
+        element('div');
+
+      body.className =
+        'goosialize-google-geo-body';
+
+      const map =
+        element('div');
+
+      map.className =
+        'goosialize-google-map-stage';
+
+      const image =
+        element('img');
+
+      image.src =
+        '/user/plugins/goosialize-google/admin-next/assets/world.svg';
+
+      image.alt =
+        'World map';
+
+      image.className =
+        'goosialize-google-geo-map';
+
+      map.append(image);
+
+      for (
+        const row
+        of countries
+      ) {
+        const country =
+          String(
+            row?.dimensions?.country
+            || ''
+          );
+
+        const point =
+          countryPoints[country];
+
+        if (!point) {
+          continue;
+        }
+
+        const marker =
+          element('span');
+
+        marker.className =
+          'goosialize-google-map-dot';
+
+        marker.style.left =
+          `${point[0]}%`;
+
+        marker.style.top =
+          `${point[1]}%`;
+
+        marker.title =
+          `${country}: ${formatInteger(
+            row?.metrics?.activeUsers
+            || 0
+          )} users`;
+
+        map.append(marker);
+      }
+
+      const cityList =
+        element('div');
+
+      cityList.className =
+        'goosialize-google-city-list';
+
+      const cityTitle =
+        element(
+          'strong',
+          'Top cities'
+        );
+
+      cityList.append(cityTitle);
+
+      cities
+        .slice(0, 8)
+        .forEach(
+          (row) => {
+            const city =
+              String(
+                row?.dimensions?.city
+                || ''
+              );
+
+            const country =
+              String(
+                row?.dimensions?.country
+                || ''
+              );
+
+            if (!city) {
+              return;
+            }
+
+            const item =
+              element('div');
+
+            const label =
+              element(
+                'span',
+                country
+                  ? `${city}, ${country}`
+                  : city
+              );
+
+            const value =
+              element(
+                'strong',
+                formatInteger(
+                  row?.metrics?.activeUsers
+                  || 0
+                )
+              );
+
+            item.append(
+              label,
+              value
+            );
+
+            cityList.append(item);
+          }
+        );
+
+      body.append(
+        map,
+        cityList
+      );
+
+      card.append(
+        heading,
+        body
+      );
+
+      root.append(card);
+    }
+
     appendAdminInsight(
       root,
       title,
@@ -2675,10 +3704,17 @@
         'goosialize-google-insight-card';
 
       const heading =
-        element(
-          'h3',
+        element('h3');
+
+      heading.append(
+        googleInfoIcon(
+          googleMetricHelp(title),
+          `${title} information`
+        ),
+        document.createTextNode(
           title
-        );
+        )
+      );
 
       const list =
         element('div');
@@ -2791,10 +3827,17 @@
         '0.5rem';
 
       const heading =
-        element(
-          'h3',
+        element('h3');
+
+      heading.append(
+        googleInfoIcon(
+          googleMetricHelp(title),
+          `${title} information`
+        ),
+        document.createTextNode(
           title
-        );
+        )
+      );
 
       heading.className =
         'border-b border-border px-4 py-2.5 font-semibold';
