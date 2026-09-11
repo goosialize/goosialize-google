@@ -44,8 +44,8 @@ foreach (
         'duration: 520',
         "'cubic-bezier(0.22, 1, 0.36, 1)'",
         "% complete",
-        "'shrink-0 self-end'",
-        "refreshGroup.append(\n        refreshButton",
+        "refreshGroup.className =\n        'shrink-0'",
+        "refreshGroup.append(\n        refreshSpacer,\n        refreshButton",
     ]
     as $needle
 ) {

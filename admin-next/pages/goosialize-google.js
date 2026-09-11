@@ -788,6 +788,14 @@
         font-size: 0.72rem;
       }
 
+      .goosialize-google-city-note {
+        display: block;
+        margin-top: 0.35rem;
+        color: var(--muted-foreground);
+        font-size: 0.62rem;
+        line-height: 1.4;
+      }
+
       .goosialize-google-city-list > div {
         display: flex;
         justify-content: space-between;
@@ -1747,7 +1755,7 @@
         element('div');
 
       refreshGroup.className =
-        'shrink-0 self-end';
+        'shrink-0';
 
       const refreshSpacer =
         element(
@@ -1824,6 +1832,7 @@
       );
 
       refreshGroup.append(
+        refreshSpacer,
         refreshButton
       );
 
@@ -3979,68 +3988,139 @@
       cityList.className =
         'goosialize-google-city-list';
 
-      const cityTitle =
-        element(
-          'strong',
-          'Top cities'
-        );
-
-      cityList.append(cityTitle);
-
-      cities
-        .slice(0, 8)
-        .forEach(
+      const validCities =
+        cities.filter(
           (row) => {
             const city =
               String(
                 row?.dimensions?.city
                 || ''
+              ).trim();
+
+            const normalized =
+              city.toLowerCase();
+
+            return (
+              city !== ''
+              && normalized !== '(not set)'
+              && normalized !== 'not set'
+            );
+          }
+        );
+
+      if (
+        validCities.length > 0
+      ) {
+        cityList.append(
+          element(
+            'strong',
+            'Top cities'
+          )
+        );
+
+        validCities
+          .slice(0, 8)
+          .forEach(
+            (row) => {
+              const city =
+                String(
+                  row?.dimensions?.city
+                  || ''
+                );
+
+              const country =
+                String(
+                  row?.dimensions?.country
+                  || ''
+                );
+
+              const item =
+                element('div');
+
+              const label =
+                element(
+                  'span',
+                  country
+                    ? `${city}, ${country}`
+                    : city
+                );
+
+              const value =
+                element(
+                  'strong',
+                  formatInteger(
+                    row?.metrics?.activeUsers
+                    || 0
+                  )
+                );
+
+              item.append(
+                label,
+                value
               );
 
+              cityList.append(item);
+            }
+          );
+      } else {
+        cityList.append(
+          element(
+            'strong',
+            'City data unavailable'
+          )
+        );
+
+        const fallbackCountries =
+          countries
+            .filter(
+              (row) =>
+                String(
+                  row?.dimensions?.country
+                  || ''
+                ).trim() !== ''
+            )
+            .slice(0, 5);
+
+        fallbackCountries.forEach(
+          (row) => {
             const country =
               String(
                 row?.dimensions?.country
                 || ''
               );
 
-            if (
-              !city
-              || city.toLowerCase()
-                === '(not set)'
-              || city.toLowerCase()
-                === 'not set'
-            ) {
-              return;
-            }
-
             const item =
               element('div');
 
-            const label =
+            item.append(
               element(
                 'span',
                 country
-                  ? `${city}, ${country}`
-                  : city
-              );
-
-            const value =
+              ),
               element(
                 'strong',
                 formatInteger(
                   row?.metrics?.activeUsers
                   || 0
                 )
-              );
-
-            item.append(
-              label,
-              value
+              )
             );
 
             cityList.append(item);
           }
         );
+
+        const note =
+          element(
+            'small',
+            'Google Analytics did not report city-level data for this period.'
+          );
+
+        note.className =
+          'goosialize-google-city-note';
+
+        cityList.append(note);
+      }
 
       body.append(
         map,

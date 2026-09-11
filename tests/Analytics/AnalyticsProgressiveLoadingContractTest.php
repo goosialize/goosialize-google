@@ -87,7 +87,7 @@ foreach (
         'aria-valuenow',
         'goosialize-google-timing-grid',
         "city.toLowerCase()",
-        "=== '(not set)'",
+        "normalized !== '(not set)'",
         "this.appendTable(\n          root,\n          'Events'",
     ]
     as $needle
