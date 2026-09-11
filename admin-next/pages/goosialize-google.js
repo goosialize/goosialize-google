@@ -693,7 +693,13 @@
 
       .goosialize-google-search-chart
       .goosialize-google-links-chart-shell {
-        height: 210px;
+        height: 190px;
+      }
+
+      .goosialize-google-search-chart {
+        min-height: 245px;
+        padding-top: 0.85rem;
+        padding-bottom: 0.85rem;
       }
 
       .goosialize-google-search-insight-layout {
@@ -701,15 +707,16 @@
         grid-template-columns:
           minmax(0, 1fr);
         gap: 0.75rem;
+        align-items: stretch;
       }
 
       @media (min-width: 1000px) {
         .goosialize-google-search-insight-layout {
           grid-template-columns:
-            minmax(0, 1.45fr)
-            minmax(220px, 0.75fr);
+            minmax(0, 1.55fr)
+            minmax(280px, 0.75fr);
           grid-template-rows:
-            auto auto;
+            repeat(2, minmax(0, auto));
         }
 
         .goosialize-google-search-insight-card.is-query {
@@ -726,8 +733,85 @@
         min-height: 0;
       }
 
+      .goosialize-google-search-insight-card.is-query {
+        height: 100%;
+      }
+
       .goosialize-google-search-insight-card.is-compact {
-        align-self: start;
+        align-self: stretch;
+      }
+
+      .goosialize-google-search-donut-layout {
+        display: grid;
+        grid-template-columns:
+          108px minmax(0, 1fr);
+        gap: 0.8rem;
+        align-items: center;
+        min-height: 108px;
+      }
+
+      .goosialize-google-search-donut {
+        display: block;
+        width: 104px;
+        height: 104px;
+      }
+
+      .goosialize-google-search-donut-legend {
+        display: grid;
+        gap: 0.4rem;
+        min-width: 0;
+      }
+
+      .goosialize-google-search-donut-legend > div {
+        display: grid;
+        grid-template-columns:
+          0.55rem minmax(0, 1fr) auto;
+        gap: 0.4rem;
+        align-items: center;
+        font-size: 0.66rem;
+      }
+
+      .goosialize-google-search-donut-legend i {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 999px;
+      }
+
+      .goosialize-google-search-donut-legend span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .goosialize-google-search-country-single {
+        display: flex;
+        min-height: 108px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.25rem;
+      }
+
+      .goosialize-google-search-country-single strong {
+        font-size: 1.15rem;
+        line-height: 1.15;
+      }
+
+      .goosialize-google-search-country-single span,
+      .goosialize-google-search-country-single small {
+        color: var(--muted-foreground);
+        font-size: 0.66rem;
+      }
+
+      @media (max-width: 480px) {
+        .goosialize-google-search-donut-layout {
+          grid-template-columns:
+            minmax(0, 1fr);
+          justify-items: center;
+        }
+
+        .goosialize-google-search-donut-legend {
+          width: 100%;
+        }
       }
 
       .goosialize-google-search-pages-table table {
@@ -791,8 +875,8 @@
       .goosialize-google-search-highlight {
         display: grid;
         min-width: 0;
-        gap: 0.3rem;
-        padding: 0.75rem 0.85rem;
+        gap: 0.2rem;
+        padding: 0.6rem 0.75rem;
         border: 1px solid var(--border);
         border-radius: 0.5rem;
         background: var(--card);
@@ -3064,18 +3148,20 @@
           'query'
         );
 
-        this.appendSearchConsoleInsight(
+        this.appendSearchConsoleDimensionVisual(
           searchInsights,
           'Search devices',
           this.data.devices,
-          'device'
+          'device',
+          true
         );
 
-        this.appendSearchConsoleInsight(
+        this.appendSearchConsoleDimensionVisual(
           searchInsights,
           'Search countries',
           this.data.countries,
-          'country'
+          'country',
+          false
         );
 
         if (
@@ -5904,6 +5990,448 @@
       scroll.append(table);
       section.append(scroll);
       root.append(section);
+    }
+
+    appendSearchConsoleDimensionVisual(
+      root,
+      title,
+      rows,
+      dimensionKey,
+      forceDonut = false
+    ) {
+      if (
+        !Array.isArray(rows)
+        || rows.length === 0
+      ) {
+        return;
+      }
+
+      const data =
+        rows
+          .map(
+            (row) => ({
+              label:
+                dimensionKey === 'device'
+                  ? formatSearchDevice(
+                      row?.[dimensionKey]
+                    )
+                  : formatSearchCountry(
+                      row?.[dimensionKey]
+                    ),
+              clicks:
+                Number(
+                  row?.clicks
+                  || 0
+                ),
+              impressions:
+                Number(
+                  row?.impressions
+                  || 0
+                ),
+            })
+          )
+          .filter(
+            (item) =>
+              item.label !== ''
+              && item.label !== '(not set)'
+              && item.impressions > 0
+          )
+          .sort(
+            (a, b) =>
+              b.impressions
+              - a.impressions
+          )
+          .slice(0, 6);
+
+      if (data.length === 0) {
+        return;
+      }
+
+      const total =
+        data.reduce(
+          (sum, item) =>
+            sum + item.impressions,
+          0
+        );
+
+      const card =
+        element('article');
+
+      card.className =
+        'goosialize-google-insight-card goosialize-google-search-insight-card is-compact';
+
+      const heading =
+        element('h3');
+
+      heading.append(
+        googleInfoIcon(
+          googleMetricHelp(title),
+          `${title} information`
+        ),
+        document.createTextNode(
+          title
+        )
+      );
+
+      if (
+        !forceDonut
+        && data.length === 1
+      ) {
+        const item =
+          data[0];
+
+        const body =
+          element('div');
+
+        body.className =
+          'goosialize-google-search-country-single';
+
+        body.append(
+          element(
+            'strong',
+            item.label
+          ),
+          element(
+            'span',
+            `${formatInteger(
+              item.impressions
+            )} impressions`
+          ),
+          element(
+            'small',
+            `${formatInteger(
+              item.clicks
+            )} clicks · 100% share`
+          )
+        );
+
+        card.append(
+          heading,
+          body
+        );
+
+        root.append(card);
+        return;
+      }
+
+      const colors = [
+        '#8b5cf6',
+        '#3b82f6',
+        '#14b8a6',
+        '#f59e0b',
+        '#ec4899',
+        '#22c55e',
+      ];
+
+      const body =
+        element('div');
+
+      body.className =
+        'goosialize-google-search-donut-layout';
+
+      const ns =
+        'http://www.w3.org/2000/svg';
+
+      const svg =
+        document.createElementNS(
+          ns,
+          'svg'
+        );
+
+      svg.setAttribute(
+        'viewBox',
+        '0 0 120 120'
+      );
+
+      svg.classList.add(
+        'goosialize-google-search-donut'
+      );
+
+      const radius = 38;
+      const circumference =
+        2 * Math.PI * radius;
+
+      const background =
+        document.createElementNS(
+          ns,
+          'circle'
+        );
+
+      background.setAttribute(
+        'cx',
+        '60'
+      );
+
+      background.setAttribute(
+        'cy',
+        '60'
+      );
+
+      background.setAttribute(
+        'r',
+        String(radius)
+      );
+
+      background.setAttribute(
+        'fill',
+        'none'
+      );
+
+      background.setAttribute(
+        'stroke',
+        'currentColor'
+      );
+
+      background.setAttribute(
+        'stroke-opacity',
+        '0.08'
+      );
+
+      background.setAttribute(
+        'stroke-width',
+        '14'
+      );
+
+      svg.append(background);
+
+      let offset = 0;
+
+      data.forEach(
+        (item, index) => {
+          const ratio =
+            item.impressions
+            / total;
+
+          const circle =
+            document.createElementNS(
+              ns,
+              'circle'
+            );
+
+          circle.setAttribute(
+            'cx',
+            '60'
+          );
+
+          circle.setAttribute(
+            'cy',
+            '60'
+          );
+
+          circle.setAttribute(
+            'r',
+            String(radius)
+          );
+
+          circle.setAttribute(
+            'fill',
+            'none'
+          );
+
+          circle.setAttribute(
+            'stroke',
+            colors[
+              index % colors.length
+            ]
+          );
+
+          circle.setAttribute(
+            'stroke-width',
+            '14'
+          );
+
+          circle.setAttribute(
+            'stroke-dasharray',
+            `${
+              ratio * circumference
+            } ${circumference}`
+          );
+
+          circle.setAttribute(
+            'stroke-dashoffset',
+            String(
+              -offset
+              * circumference
+            )
+          );
+
+          circle.setAttribute(
+            'transform',
+            'rotate(-90 60 60)'
+          );
+
+          const tooltip =
+            document.createElementNS(
+              ns,
+              'title'
+            );
+
+          tooltip.textContent =
+            `${item.label} — ${
+              formatInteger(
+                item.impressions
+              )
+            } impressions (${
+              (
+                ratio * 100
+              ).toFixed(1)
+            }%)`;
+
+          circle.append(tooltip);
+          svg.append(circle);
+
+          offset += ratio;
+        }
+      );
+
+      const center =
+        document.createElementNS(
+          ns,
+          'text'
+        );
+
+      center.setAttribute(
+        'x',
+        '60'
+      );
+
+      center.setAttribute(
+        'y',
+        '58'
+      );
+
+      center.setAttribute(
+        'text-anchor',
+        'middle'
+      );
+
+      center.setAttribute(
+        'fill',
+        'currentColor'
+      );
+
+      center.setAttribute(
+        'font-size',
+        '17'
+      );
+
+      center.setAttribute(
+        'font-weight',
+        '700'
+      );
+
+      center.textContent =
+        formatInteger(total);
+
+      const centerLabel =
+        document.createElementNS(
+          ns,
+          'text'
+        );
+
+      centerLabel.setAttribute(
+        'x',
+        '60'
+      );
+
+      centerLabel.setAttribute(
+        'y',
+        '72'
+      );
+
+      centerLabel.setAttribute(
+        'text-anchor',
+        'middle'
+      );
+
+      centerLabel.setAttribute(
+        'fill',
+        'currentColor'
+      );
+
+      centerLabel.setAttribute(
+        'fill-opacity',
+        '0.55'
+      );
+
+      centerLabel.setAttribute(
+        'font-size',
+        '7'
+      );
+
+      centerLabel.textContent =
+        'impressions';
+
+      svg.append(
+        center,
+        centerLabel
+      );
+
+      const legend =
+        element('div');
+
+      legend.className =
+        'goosialize-google-search-donut-legend';
+
+      data.forEach(
+        (item, index) => {
+          const row =
+            element('div');
+
+          const dot =
+            element('i');
+
+          dot.style.background =
+            colors[
+              index % colors.length
+            ];
+
+          const label =
+            element(
+              'span',
+              item.label
+            );
+
+          const value =
+            element(
+              'strong',
+              formatInteger(
+                item.impressions
+              )
+            );
+
+          row.title =
+            `${item.label}: ${
+              formatInteger(
+                item.clicks
+              )
+            } clicks · ${
+              formatInteger(
+                item.impressions
+              )
+            } impressions`;
+
+          row.append(
+            dot,
+            label,
+            value
+          );
+
+          legend.append(row);
+        }
+      );
+
+      body.append(
+        svg,
+        legend
+      );
+
+      card.append(
+        heading,
+        body
+      );
+
+      root.append(card);
     }
 
     appendSearchConsoleInsight(

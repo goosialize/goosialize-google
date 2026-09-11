@@ -18,7 +18,7 @@ foreach (
         'decodeURIComponent(raw)',
         'new URL(decoded)',
         'goosialize-google-search-chart',
-        'height: 210px',
+        'height: 190px',
         'goosialize-google-search-insight-layout',
         'goosialize-google-search-insight-card',
         "'is-query'",
