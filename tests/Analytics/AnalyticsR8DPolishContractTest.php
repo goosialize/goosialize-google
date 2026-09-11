@@ -11,8 +11,6 @@ $ui = file_get_contents(
 
 foreach (
     [
-        "refreshGroup.className =\n        'shrink-0'",
-        "refreshGroup.append(\n        refreshSpacer,\n        refreshButton",
         "'Top cities'",
         "'City data unavailable'",
         "'Google Analytics did not report city-level data for this period.'",
@@ -33,15 +31,6 @@ foreach (
             . $needle
         );
     }
-}
-
-if (str_contains(
-    $ui,
-    "'shrink-0 self-end'"
-)) {
-    throw new RuntimeException(
-        'Obsolete refresh alignment remains.'
-    );
 }
 
 echo "ANALYTICS_R8D_POLISH_CONTRACT=PASS\n";

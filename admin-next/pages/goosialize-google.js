@@ -577,6 +577,19 @@
         margin: 0;
       }
 
+      .goosialize-google-period-row {
+        display: flex;
+        align-items: stretch;
+        gap: 0.5rem;
+      }
+
+      .goosialize-google-period-refresh {
+        flex: 0 0 auto;
+        height: auto;
+        min-height: 100%;
+        align-self: stretch;
+      }
+
       .goosialize-google-refresh-button {
         display: inline-flex;
         width: 2.45rem;
@@ -1751,26 +1764,6 @@
         periodControls
       );
 
-      const refreshGroup =
-        element('div');
-
-      refreshGroup.className =
-        'shrink-0';
-
-      const refreshSpacer =
-        element(
-          'div',
-          'Refresh'
-        );
-
-      refreshSpacer.className =
-        'invisible text-xs font-medium text-muted-foreground';
-
-      refreshSpacer.setAttribute(
-        'aria-hidden',
-        'true'
-      );
-
       const refreshButton =
         element('button');
 
@@ -1831,15 +1824,29 @@
         }
       );
 
-      refreshGroup.append(
-        refreshSpacer,
+      refreshButton.classList.add(
+        'goosialize-google-period-refresh'
+      );
+
+      const periodRow =
+        element('div');
+
+      periodRow.className =
+        'goosialize-google-period-row';
+
+      periodRow.append(
+        periodControls,
         refreshButton
+      );
+
+      periodGroup.replaceChildren(
+        periodLabel,
+        periodRow
       );
 
       toolbar.append(
         propertyGroup,
-        periodGroup,
-        refreshGroup
+        periodGroup
       );
 
       root.append(toolbar);
