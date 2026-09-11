@@ -839,6 +839,26 @@
         white-space: nowrap;
       }
 
+
+      .goosialize-google-search-pages-table
+      th:not(:first-child) {
+        text-align: right;
+      }
+
+      .goosialize-google-search-pages-table
+      th:first-child,
+      .goosialize-google-search-pages-table
+      td:first-child {
+        vertical-align: middle;
+      }
+
+      .goosialize-google-search-pages-table
+      td:not(:first-child) {
+        vertical-align: middle;
+        text-align: right;
+      }
+
+
       .goosialize-google-search-pages-table
       td {
         padding-top: 0.45rem !important;
@@ -1120,6 +1140,16 @@
       }
 
       .goosialize-google-map-stage
+      @media (min-width: 1280px) {
+        .goosialize-google-search-kpi-grid {
+          grid-template-columns:
+            repeat(
+              4,
+              minmax(0, 1fr)
+            );
+        }
+      }
+
       .goosialize-google-geo-map {
         width: 100%;
         max-height: 300px;
@@ -3006,7 +3036,9 @@
       cards.replaceChildren();
 
       cards.className =
-        'goosialize-google-kpi-grid';
+        this.product === 'search_console'
+          ? 'goosialize-google-kpi-grid goosialize-google-search-kpi-grid'
+          : 'goosialize-google-kpi-grid';
 
       cards.style.display = '';
       cards.style.gridTemplateColumns = '';
