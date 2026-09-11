@@ -201,7 +201,68 @@ final class GoosializeGooglePlugin extends Plugin
             $injector->inject(
                 $output,
                 true,
-                $measurementId
+                $measurementId,
+                [
+                    'send_page_view' =>
+                        (bool) $config->get(
+                            'plugins.goosialize-google.tracking.send_page_view',
+                            true
+                        ),
+
+                    'allow_google_signals' =>
+                        (bool) $config->get(
+                            'plugins.goosialize-google.tracking.allow_google_signals',
+                            false
+                        ),
+
+                    'allow_ad_personalization_signals' =>
+                        (bool) $config->get(
+                            'plugins.goosialize-google.tracking.allow_ad_personalization_signals',
+                            false
+                        ),
+
+                    'debug_mode' =>
+                        (bool) $config->get(
+                            'plugins.goosialize-google.tracking.debug_mode',
+                            false
+                        ),
+
+                    'cookie_domain' =>
+                        (string) $config->get(
+                            'plugins.goosialize-google.tracking.cookie_domain',
+                            ''
+                        ),
+
+                    'cookie_prefix' =>
+                        (string) $config->get(
+                            'plugins.goosialize-google.tracking.cookie_prefix',
+                            ''
+                        ),
+
+                    'cookie_expires' =>
+                        (int) $config->get(
+                            'plugins.goosialize-google.tracking.cookie_expires',
+                            0
+                        ),
+
+                    'linker_domains' =>
+                        $config->get(
+                            'plugins.goosialize-google.tracking.linker_domains',
+                            []
+                        ),
+
+                    'user_properties' =>
+                        $config->get(
+                            'plugins.goosialize-google.tracking.user_properties',
+                            []
+                        ),
+
+                    'event_parameters' =>
+                        $config->get(
+                            'plugins.goosialize-google.tracking.event_parameters',
+                            []
+                        ),
+                ]
             );
     }
 

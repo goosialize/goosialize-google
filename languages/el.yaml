@@ -31,3 +31,25 @@ PLUGIN_GOOSIALIZE_GOOGLE:
   CONSENT: Consent
   CONSENT_CONSUMER_ENABLED: Χρήση consent από Goosialize Cookies
   CONSENT_CONSUMER_HELP: Το Google Analytics δεν ξεκινά πριν δοθεί analytics consent από το Goosialize Cookies.
+  TRACKING_ADVANCED: Προχωρημένο Tracking
+  TRACKING_ADVANCED_HELP: Προαιρετικές ρυθμίσεις συμπεριφοράς και privacy για GA4. Τα defaults είναι συντηρητικά και δεν επιτρέπεται custom JavaScript.
+  TRACKING_SEND_PAGE_VIEW: Αυτόματο page view
+  TRACKING_SEND_PAGE_VIEW_HELP: Αποστολή του αρχικού GA4 page_view όταν δοθεί analytics consent.
+  TRACKING_GOOGLE_SIGNALS: Google Signals
+  TRACKING_GOOGLE_SIGNALS_HELP: Ενεργοποίηση Google Signals όπου υποστηρίζεται. Απενεργοποιημένο από προεπιλογή.
+  TRACKING_AD_PERSONALIZATION: Ad personalization signals
+  TRACKING_AD_PERSONALIZATION_HELP: Επιτρέπονται μόνο όταν είναι ενεργά εδώ και υπάρχει marketing consent.
+  TRACKING_DEBUG_MODE: Debug mode
+  TRACKING_DEBUG_MODE_HELP: Ενεργοποίηση GA4 debug_mode για development και validation.
+  TRACKING_COOKIE_DOMAIN: Cookie domain
+  TRACKING_COOKIE_DOMAIN_HELP: Κενό για χρήση του default του Google tag.
+  TRACKING_COOKIE_PREFIX: Cookie prefix
+  TRACKING_COOKIE_PREFIX_HELP: Προαιρετικό prefix για τα Google Analytics cookies.
+  TRACKING_COOKIE_EXPIRES: Διάρκεια cookie
+  TRACKING_COOKIE_EXPIRES_HELP: Διάρκεια σε δευτερόλεπτα. 0 σημαίνει ότι δεν αλλάζουμε το Google default.
+  TRACKING_LINKER_DOMAINS: Cross-domain linker domains
+  TRACKING_LINKER_DOMAINS_HELP: Domains που συμμετέχουν στο GA4 cross-domain measurement.
+  TRACKING_USER_PROPERTIES: User properties
+  TRACKING_USER_PROPERTIES_HELP: Στατικά GA4 user properties. Τα keys και values ελέγχονται πριν αποδοθούν.
+  TRACKING_EVENT_PARAMETERS: Default event parameters
+  TRACKING_EVENT_PARAMETERS_HELP: Στατικές παράμετροι για επόμενα GA4 events. Reserved ή μη ασφαλή keys απορρίπτονται.

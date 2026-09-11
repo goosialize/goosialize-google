@@ -78,16 +78,37 @@ ok(
 
 ok(
   source.includes(
-    "analytics_storage:\n          next\n            ? 'granted'\n            : 'denied'"
+    "analytics_storage:\n          analyticsGranted\n            ? 'granted'\n            : 'denied'"
   ),
-  'WITHDRAWAL_UPDATES_DENIED'
+  'ANALYTICS_WITHDRAWAL_UPDATES_DENIED'
 );
 
 ok(
   source.includes(
-    "if (\n      started\n      || granted !== true"
+    "ad_storage:\n          marketingGranted\n            ? 'granted'\n            : 'denied'"
   ),
-  'NO_START_WITHOUT_GRANT'
+  'MARKETING_AD_STORAGE_MAPPING'
+);
+
+ok(
+  source.includes(
+    "ad_user_data:\n          marketingGranted\n            ? 'granted'\n            : 'denied'"
+  ),
+  'MARKETING_AD_USER_DATA_MAPPING'
+);
+
+ok(
+  source.includes(
+    "ad_personalization:\n          marketingGranted\n            ? 'granted'\n            : 'denied'"
+  ),
+  'MARKETING_AD_PERSONALIZATION_MAPPING'
+);
+
+ok(
+  source.includes(
+    "if (\n      started\n      || analyticsGranted !== true"
+  ),
+  'NO_START_WITHOUT_ANALYTICS_GRANT'
 );
 
 console.log(

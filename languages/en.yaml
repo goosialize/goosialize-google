@@ -31,3 +31,25 @@ PLUGIN_GOOSIALIZE_GOOGLE:
   CONSENT: Consent
   CONSENT_CONSUMER_ENABLED: Use Goosialize Cookies consent
   CONSENT_CONSUMER_HELP: Fail closed and start Google Analytics only after analytics consent is granted by Goosialize Cookies.
+  TRACKING_ADVANCED: Advanced Tracking
+  TRACKING_ADVANCED_HELP: Optional GA4 behavior and privacy controls. Defaults are conservative and no custom JavaScript is accepted.
+  TRACKING_SEND_PAGE_VIEW: Send automatic page view
+  TRACKING_SEND_PAGE_VIEW_HELP: Send the initial GA4 page_view automatically when analytics consent is granted.
+  TRACKING_GOOGLE_SIGNALS: Google Signals
+  TRACKING_GOOGLE_SIGNALS_HELP: Allow Google Signals when available. Disabled by default.
+  TRACKING_AD_PERSONALIZATION: Ad personalization signals
+  TRACKING_AD_PERSONALIZATION_HELP: Allow ad personalization signals only when enabled here and marketing consent permits them.
+  TRACKING_DEBUG_MODE: Debug mode
+  TRACKING_DEBUG_MODE_HELP: Enable GA4 debug_mode for development and validation.
+  TRACKING_COOKIE_DOMAIN: Cookie domain
+  TRACKING_COOKIE_DOMAIN_HELP: Leave empty to use the Google tag default.
+  TRACKING_COOKIE_PREFIX: Cookie prefix
+  TRACKING_COOKIE_PREFIX_HELP: Optional prefix used for Google Analytics cookies.
+  TRACKING_COOKIE_EXPIRES: Cookie lifetime
+  TRACKING_COOKIE_EXPIRES_HELP: Lifetime in seconds. Use 0 to leave the Google default unchanged.
+  TRACKING_LINKER_DOMAINS: Cross-domain linker domains
+  TRACKING_LINKER_DOMAINS_HELP: Domains that participate in GA4 cross-domain measurement.
+  TRACKING_USER_PROPERTIES: User properties
+  TRACKING_USER_PROPERTIES_HELP: Static GA4 user properties. Keys and values are validated before output.
+  TRACKING_EVENT_PARAMETERS: Default event parameters
+  TRACKING_EVENT_PARAMETERS_HELP: Static parameters applied to subsequent GA4 events. Reserved or unsafe keys are rejected.

@@ -119,6 +119,106 @@ form:
       validate:
         pattern: '^(G-[A-Za-z0-9]+)?$'
 
+    tracking.advanced:
+      type: fieldset
+      title: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_ADVANCED
+      text: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_ADVANCED_HELP
+      collapsible: true
+      collapsed: true
+      fields:
+
+        tracking.send_page_view:
+          type: toggle
+          label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_SEND_PAGE_VIEW
+          help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_SEND_PAGE_VIEW_HELP
+          highlight: 1
+          default: 1
+          options:
+            1: PLUGIN_ADMIN.ENABLED
+            0: PLUGIN_ADMIN.DISABLED
+          validate:
+            type: bool
+
+        tracking.allow_google_signals:
+          type: toggle
+          label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_GOOGLE_SIGNALS
+          help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_GOOGLE_SIGNALS_HELP
+          highlight: 0
+          default: 0
+          options:
+            1: PLUGIN_ADMIN.ENABLED
+            0: PLUGIN_ADMIN.DISABLED
+          validate:
+            type: bool
+
+        tracking.allow_ad_personalization_signals:
+          type: toggle
+          label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_AD_PERSONALIZATION
+          help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_AD_PERSONALIZATION_HELP
+          highlight: 0
+          default: 0
+          options:
+            1: PLUGIN_ADMIN.ENABLED
+            0: PLUGIN_ADMIN.DISABLED
+          validate:
+            type: bool
+
+        tracking.debug_mode:
+          type: toggle
+          label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_DEBUG_MODE
+          help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_DEBUG_MODE_HELP
+          highlight: 0
+          default: 0
+          options:
+            1: PLUGIN_ADMIN.ENABLED
+            0: PLUGIN_ADMIN.DISABLED
+          validate:
+            type: bool
+
+        tracking.cookie_domain:
+          type: text
+          label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_COOKIE_DOMAIN
+          help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_COOKIE_DOMAIN_HELP
+          placeholder: auto
+
+        tracking.cookie_prefix:
+          type: text
+          label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_COOKIE_PREFIX
+          help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_COOKIE_PREFIX_HELP
+          validate:
+            pattern: '^[A-Za-z0-9_-]*$'
+
+        tracking.cookie_expires:
+          type: number
+          label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_COOKIE_EXPIRES
+          help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_COOKIE_EXPIRES_HELP
+          default: 0
+          min: 0
+          validate:
+            type: int
+            min: 0
+
+        tracking.linker_domains:
+          type: array
+          value_only: true
+          label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_LINKER_DOMAINS
+          help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_LINKER_DOMAINS_HELP
+          placeholder_value: example.com
+
+        tracking.user_properties:
+          type: array
+          label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_USER_PROPERTIES
+          help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_USER_PROPERTIES_HELP
+          placeholder_key: customer_type
+          placeholder_value: registered
+
+        tracking.event_parameters:
+          type: array
+          label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_EVENT_PARAMETERS
+          help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_EVENT_PARAMETERS_HELP
+          placeholder_key: site_section
+          placeholder_value: main
+
     search_console:
       type: section
       title: PLUGIN_GOOSIALIZE_GOOGLE.SEARCH_CONSOLE
