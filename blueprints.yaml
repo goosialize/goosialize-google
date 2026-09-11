@@ -193,7 +193,7 @@ form:
               type: text
               label: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_COOKIE_DOMAIN
               help: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING_COOKIE_DOMAIN_HELP
-              placeholder: auto
+              placeholder: Google default
 
             tracking.cookie_prefix:
               type: text

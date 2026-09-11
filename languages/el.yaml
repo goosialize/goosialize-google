@@ -42,11 +42,11 @@ PLUGIN_GOOSIALIZE_GOOGLE:
   TRACKING_DEBUG_MODE: Debug mode
   TRACKING_DEBUG_MODE_HELP: Ενεργοποίηση GA4 debug_mode για development και validation.
   TRACKING_COOKIE_DOMAIN: Cookie domain
-  TRACKING_COOKIE_DOMAIN_HELP: Κενό για χρήση του default του Google tag.
+  TRACKING_COOKIE_DOMAIN_HELP: Αφήστε το κενό για χρήση του Google tag default. Συμπληρώστε domain μόνο όταν χρειάζεται explicit cookie domain.
   TRACKING_COOKIE_PREFIX: Cookie prefix
   TRACKING_COOKIE_PREFIX_HELP: Προαιρετικό prefix για τα Google Analytics cookies.
   TRACKING_COOKIE_EXPIRES: Διάρκεια cookie
-  TRACKING_COOKIE_EXPIRES_HELP: Διάρκεια σε δευτερόλεπτα. 0 σημαίνει ότι δεν αλλάζουμε το Google default.
+  TRACKING_COOKIE_EXPIRES_HELP: Διάρκεια σε δευτερόλεπτα. 0 = χρήση του Google default.
   TRACKING_LINKER_DOMAINS: Cross-domain linker domains
   TRACKING_LINKER_DOMAINS_HELP: Domains που συμμετέχουν στο GA4 cross-domain measurement.
   TRACKING_USER_PROPERTIES: User properties

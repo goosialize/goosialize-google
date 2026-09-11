@@ -42,11 +42,11 @@ PLUGIN_GOOSIALIZE_GOOGLE:
   TRACKING_DEBUG_MODE: Debug mode
   TRACKING_DEBUG_MODE_HELP: Enable GA4 debug_mode for development and validation.
   TRACKING_COOKIE_DOMAIN: Cookie domain
-  TRACKING_COOKIE_DOMAIN_HELP: Leave empty to use the Google tag default.
+  TRACKING_COOKIE_DOMAIN_HELP: Leave empty to use the Google tag default. Enter a domain only when you need an explicit cookie domain.
   TRACKING_COOKIE_PREFIX: Cookie prefix
   TRACKING_COOKIE_PREFIX_HELP: Optional prefix used for Google Analytics cookies.
   TRACKING_COOKIE_EXPIRES: Cookie lifetime
-  TRACKING_COOKIE_EXPIRES_HELP: Lifetime in seconds. Use 0 to leave the Google default unchanged.
+  TRACKING_COOKIE_EXPIRES_HELP: Lifetime in seconds. 0 = use the Google default.
   TRACKING_LINKER_DOMAINS: Cross-domain linker domains
   TRACKING_LINKER_DOMAINS_HELP: Domains that participate in GA4 cross-domain measurement.
   TRACKING_USER_PROPERTIES: User properties
