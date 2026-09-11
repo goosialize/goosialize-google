@@ -331,7 +331,17 @@ final class AnalyticsDashboardService
                         ->metrics();
             }
 
+            $empty =
+                (float) ($metrics['activeUsers'] ?? 0) === 0.0
+                && (float) ($metrics['newUsers'] ?? 0) === 0.0
+                && (float) ($metrics['sessions'] ?? 0) === 0.0
+                && (float) ($metrics['screenPageViews'] ?? 0) === 0.0
+                && (float) ($metrics['eventCount'] ?? 0) === 0.0
+                && (float) ($metrics['keyEvents'] ?? 0) === 0.0;
+
             return $base + [
+                'empty' => $empty,
+
                 'property' => [
                     'id' =>
                         $selected

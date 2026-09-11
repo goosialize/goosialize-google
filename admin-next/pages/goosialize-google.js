@@ -1081,6 +1081,7 @@
       this.data = null;
       this.loading = false;
       this.loadingProgress = 0;
+      this.loadingPreviousProgress = 0;
       this.loadingStatus = '';
       this.error = null;
 
@@ -1138,6 +1139,7 @@
 
     async load() {
       this.loading = true;
+      this.loadingPreviousProgress = 0;
       this.loadingProgress = 0;
       this.loadingStatus =
         this.product === 'analytics'
@@ -1221,6 +1223,7 @@
 
       if (manageState) {
         this.loading = true;
+        this.loadingPreviousProgress = 0;
         this.loadingProgress =
           this.product === 'analytics'
             ? 5
@@ -1349,13 +1352,48 @@
               ...packageData,
             };
 
+            this.loadingPreviousProgress =
+              this.loadingProgress;
+
             this.loadingProgress =
               item.progress;
 
             this.render();
+
+            if (
+              item.id === 'overview'
+              && packageData.empty === true
+            ) {
+              this.data = {
+                ...(this.data || {}),
+                empty: true,
+              };
+
+              this.loadingPreviousProgress =
+                this.loadingProgress;
+
+              this.loadingProgress = 100;
+              this.loadingStatus =
+                'No analytics data available';
+
+              this.render();
+
+              await new Promise(
+                (resolve) =>
+                  window.setTimeout(
+                    resolve,
+                    320
+                  )
+              );
+
+              break;
+            }
           }
 
-          this.data = {
+          if (
+            this.data?.empty !== true
+          ) {
+            this.data = {
             ...(this.data || {}),
             empty:
               Number(
@@ -1381,11 +1419,15 @@
                     .traffic_channels
                     .length === 0
               ),
-          };
+            };
 
-          this.loadingProgress = 100;
-          this.loadingStatus =
-            'Dashboard ready';
+            this.loadingPreviousProgress =
+              this.loadingProgress;
+
+            this.loadingProgress = 100;
+            this.loadingStatus =
+              'Dashboard ready';
+          }
 
           this.render();
 
@@ -1705,7 +1747,7 @@
         element('div');
 
       refreshGroup.className =
-        'shrink-0';
+        'shrink-0 self-end';
 
       const refreshSpacer =
         element(
@@ -1782,7 +1824,6 @@
       );
 
       refreshGroup.append(
-        refreshSpacer,
         refreshButton
       );
 
@@ -1830,7 +1871,7 @@
             this.product === 'analytics'
               ? `${Math.round(
                   this.loadingProgress
-                )}%`
+                )}% complete`
               : ''
           );
 
@@ -1890,14 +1931,55 @@
             )
           );
 
-          progressBar.style.width =
-            `${Math.max(
+          const fromProgress =
+            Math.max(
               0,
               Math.min(
                 100,
-                this.loadingProgress
+                Number(
+                  this.loadingPreviousProgress
+                  || 0
+                )
               )
-            )}%`;
+            );
+
+          const toProgress =
+            Math.max(
+              0,
+              Math.min(
+                100,
+                Number(
+                  this.loadingProgress
+                  || 0
+                )
+              )
+            );
+
+          progressBar.style.width =
+            `${toProgress}%`;
+
+          if (
+            toProgress !== fromProgress
+          ) {
+            progressBar.animate(
+              [
+                {
+                  width:
+                    `${fromProgress}%`,
+                },
+                {
+                  width:
+                    `${toProgress}%`,
+                },
+              ],
+              {
+                duration: 520,
+                easing:
+                  'cubic-bezier(0.22, 1, 0.36, 1)',
+                fill: 'both',
+              }
+            );
+          }
         } else {
           progressBar.classList.add(
             'is-indeterminate'
