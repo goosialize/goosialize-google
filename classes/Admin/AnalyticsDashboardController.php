@@ -139,6 +139,21 @@ final class AnalyticsDashboardController
             );
         }
 
+        $package =
+            $query['package']
+            ?? null;
+
+        if (
+            $package !== null
+            && !is_string($package)
+        ) {
+            return $this->failure(
+                400,
+                'package_invalid',
+                'Analytics package is invalid.'
+            );
+        }
+
         $daysRaw =
             $query['days']
             ?? 30;
@@ -205,12 +220,25 @@ final class AnalyticsDashboardController
                     $dateRanges
                 );
 
-            $payload =
-                $dashboard->dashboard(
-                    trim($propertyId),
-                    $period,
-                    new DateTimeImmutable('today')
-                );
+            if (
+                is_string($package)
+                && trim($package) !== ''
+            ) {
+                $payload =
+                    $dashboard->package(
+                        trim($propertyId),
+                        $period,
+                        new DateTimeImmutable('today'),
+                        trim($package)
+                    );
+            } else {
+                $payload =
+                    $dashboard->dashboard(
+                        trim($propertyId),
+                        $period,
+                        new DateTimeImmutable('today')
+                    );
+            }
 
             return $this->response(
                 200,

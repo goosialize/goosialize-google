@@ -450,6 +450,101 @@
         grid-column: 1 / -1;
       }
 
+      .goosialize-google-loading-panel {
+        display: grid;
+        gap: 0.55rem;
+        padding: 0.8rem 0.9rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        background: var(--card);
+        transition:
+          opacity 180ms ease;
+      }
+
+      .goosialize-google-loading-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        font-size: 0.72rem;
+      }
+
+      .goosialize-google-loading-header strong {
+        color: var(--primary);
+        font-variant-numeric:
+          tabular-nums;
+      }
+
+      .goosialize-google-loading-track {
+        position: relative;
+        width: 100%;
+        height: 0.35rem;
+        overflow: hidden;
+        border-radius: 999px;
+        background:
+          color-mix(
+            in srgb,
+            var(--muted-foreground)
+            13%,
+            transparent
+          );
+      }
+
+      .goosialize-google-loading-value {
+        height: 100%;
+        min-width: 0;
+        border-radius: inherit;
+        background: var(--primary);
+        box-shadow:
+          0 0 0.55rem
+          color-mix(
+            in srgb,
+            var(--primary)
+            45%,
+            transparent
+          );
+        transition:
+          width 240ms ease;
+      }
+
+      .goosialize-google-loading-value.is-indeterminate {
+        width: 33%;
+        animation:
+          goosialize-google-loading-slide
+          0.9s ease-in-out infinite;
+      }
+
+      .goosialize-google-loading-panel small {
+        color: var(--muted-foreground);
+        font-size: 0.64rem;
+      }
+
+      @keyframes goosialize-google-loading-slide {
+        0% {
+          transform:
+            translateX(-120%);
+        }
+
+        100% {
+          transform:
+            translateX(320%);
+        }
+      }
+
+      .goosialize-google-timing-grid {
+        width: 100%;
+      }
+
+      @media (min-width: 900px) {
+        .goosialize-google-timing-grid {
+          grid-template-columns:
+            repeat(
+              2,
+              minmax(0, 1fr)
+            ) !important;
+        }
+      }
+
       .goosialize-google-info-icon {
         display: inline-flex;
         width: 0.9rem;
@@ -985,6 +1080,8 @@
       this.days = 30;
       this.data = null;
       this.loading = false;
+      this.loadingProgress = 0;
+      this.loadingStatus = '';
       this.error = null;
 
     }
@@ -1041,6 +1138,11 @@
 
     async load() {
       this.loading = true;
+      this.loadingProgress = 0;
+      this.loadingStatus =
+        this.product === 'analytics'
+          ? 'Loading available properties…'
+          : 'Loading Search Console…';
       this.error = null;
       this.render();
 
@@ -1059,6 +1161,15 @@
           Array.isArray(payload?.data)
             ? payload.data
             : [];
+
+        if (
+          this.product === 'analytics'
+        ) {
+          this.loadingProgress = 5;
+          this.loadingStatus =
+            'Preparing analytics dashboard…';
+          this.render();
+        }
 
         if (
           this.propertyId === ''
@@ -1110,6 +1221,14 @@
 
       if (manageState) {
         this.loading = true;
+        this.loadingProgress =
+          this.product === 'analytics'
+            ? 5
+            : 0;
+        this.loadingStatus =
+          this.product === 'analytics'
+            ? 'Preparing analytics dashboard…'
+            : 'Loading Search Console…';
         this.error = null;
         this.render();
       }
@@ -1138,15 +1257,154 @@
           String(this.days)
         );
 
-        const dashboardPath =
-          this.product === 'search_console'
-            ? `/goosialize-google/search-console/performance?${query.toString()}`
-            : `/goosialize-google/analytics?${query.toString()}`;
+        if (
+          this.product === 'analytics'
+        ) {
+          const packages = [
+            {
+              id: 'overview',
+              progress: 15,
+              status:
+                'Loading overview metrics…',
+            },
+            {
+              id: 'trend',
+              progress: 30,
+              status:
+                'Loading visitor trends…',
+            },
+            {
+              id: 'top_pages',
+              progress: 40,
+              status:
+                'Loading top pages…',
+            },
+            {
+              id: 'audience',
+              progress: 55,
+              status:
+                'Loading traffic and devices…',
+            },
+            {
+              id: 'geo',
+              progress: 70,
+              status:
+                'Loading visitor locations…',
+            },
+            {
+              id: 'timing',
+              progress: 82,
+              status:
+                'Loading busiest days and hours…',
+            },
+            {
+              id: 'events',
+              progress: 92,
+              status:
+                'Loading events…',
+            },
+            {
+              id: 'demographics',
+              progress: 97,
+              status:
+                'Loading optional demographics…',
+            },
+          ];
 
-        this.data =
-          await this.apiGet(
-            dashboardPath
+          this.data = {};
+
+          for (
+            const item
+            of packages
+          ) {
+            this.loadingStatus =
+              item.status;
+
+            this.render();
+
+            const packageQuery =
+              new URLSearchParams(
+                query
+              );
+
+            packageQuery.set(
+              'package',
+              item.id
+            );
+
+            const payload =
+              await this.apiGet(
+                `/goosialize-google/analytics?${packageQuery.toString()}`
+              );
+
+            const {
+              ok,
+              package:
+                loadedPackage,
+              ...packageData
+            } = payload || {};
+
+            this.data = {
+              ...(this.data || {}),
+              ...packageData,
+            };
+
+            this.loadingProgress =
+              item.progress;
+
+            this.render();
+          }
+
+          this.data = {
+            ...(this.data || {}),
+            empty:
+              Number(
+                this.data
+                  ?.overview
+                  ?.activeUsers
+                || 0
+              ) === 0
+              && (
+                !Array.isArray(
+                  this.data?.top_pages
+                )
+                || this.data
+                    .top_pages
+                    .length === 0
+              )
+              && (
+                !Array.isArray(
+                  this.data
+                    ?.traffic_channels
+                )
+                || this.data
+                    .traffic_channels
+                    .length === 0
+              ),
+          };
+
+          this.loadingProgress = 100;
+          this.loadingStatus =
+            'Dashboard ready';
+
+          this.render();
+
+          await new Promise(
+            (resolve) =>
+              window.setTimeout(
+                resolve,
+                220
+              )
           );
+        } else {
+          const dashboardPath =
+            `/goosialize-google/search-console/performance?${query.toString()}`;
+
+          this.data =
+            await this.apiGet(
+              dashboardPath
+            );
+        }
       } catch (error) {
         this.data = null;
 
@@ -1160,6 +1418,7 @@
       } finally {
         if (manageState) {
           this.loading = false;
+          this.loadingStatus = '';
           this.render();
         }
       }
@@ -1536,11 +1795,55 @@
       root.append(toolbar);
 
       if (this.loading) {
+        const progressPanel =
+          element('section');
+
+        progressPanel.className =
+          'goosialize-google-loading-panel';
+
+        progressPanel.setAttribute(
+          'aria-live',
+          'polite'
+        );
+
+        const progressHeader =
+          element('div');
+
+        progressHeader.className =
+          'goosialize-google-loading-header';
+
+        const status =
+          element(
+            'span',
+            this.loadingStatus
+            || (
+              this.product
+                === 'search_console'
+                ? 'Loading Search Console…'
+                : 'Loading Google Analytics…'
+            )
+          );
+
+        const percentage =
+          element(
+            'strong',
+            this.product === 'analytics'
+              ? `${Math.round(
+                  this.loadingProgress
+                )}%`
+              : ''
+          );
+
+        progressHeader.append(
+          status,
+          percentage
+        );
+
         const progress =
           element('div');
 
         progress.className =
-          'h-0.5 w-full overflow-hidden rounded-full bg-muted';
+          'goosialize-google-loading-track';
 
         progress.setAttribute(
           'role',
@@ -1563,32 +1866,64 @@
           element('div');
 
         progressBar.className =
-          'h-full w-1/3 rounded-full bg-primary';
+          'goosialize-google-loading-value';
 
-        progressBar.animate(
-          [
-            {
-              transform:
-                'translateX(-120%)',
-            },
-            {
-              transform:
-                'translateX(320%)',
-            },
-          ],
-          {
-            duration: 900,
-            iterations: Infinity,
-            easing: 'ease-in-out',
-          }
-        );
+        if (
+          this.product === 'analytics'
+        ) {
+          progress.setAttribute(
+            'aria-valuemin',
+            '0'
+          );
+
+          progress.setAttribute(
+            'aria-valuemax',
+            '100'
+          );
+
+          progress.setAttribute(
+            'aria-valuenow',
+            String(
+              Math.round(
+                this.loadingProgress
+              )
+            )
+          );
+
+          progressBar.style.width =
+            `${Math.max(
+              0,
+              Math.min(
+                100,
+                this.loadingProgress
+              )
+            )}%`;
+        } else {
+          progressBar.classList.add(
+            'is-indeterminate'
+          );
+        }
 
         progress.append(
           progressBar
         );
 
+        const hint =
+          element(
+            'small',
+            this.product === 'analytics'
+              ? 'Loading live GA4 data. You can safely wait on this page.'
+              : 'Loading live Search Console data…'
+          );
+
+        progressPanel.append(
+          progressHeader,
+          progress,
+          hint
+        );
+
         root.append(
-          progress
+          progressPanel
         );
 
         this.append(root);
@@ -2130,7 +2465,7 @@
           element('section');
 
         timing.className =
-          'goosialize-google-admin-insight-grid';
+          'goosialize-google-admin-insight-grid goosialize-google-timing-grid';
 
         this.appendBusiestDaysBars(
           timing,
@@ -2199,7 +2534,7 @@
         }
 
         this.appendTable(
-          tables,
+          root,
           'Events',
           this.data.events,
           [['eventName', 'Event']],
@@ -3586,7 +3921,13 @@
                 || ''
               );
 
-            if (!city) {
+            if (
+              !city
+              || city.toLowerCase()
+                === '(not set)'
+              || city.toLowerCase()
+                === 'not set'
+            ) {
               return;
             }
 

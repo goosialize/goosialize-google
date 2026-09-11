@@ -277,6 +277,283 @@ final class AnalyticsDashboardService
         ];
     }
 
+    /**
+     * Load one real dashboard data package.
+     *
+     * @return array<string, mixed>
+     */
+    public function package(
+        string $propertyId,
+        DashboardPeriod $period,
+        DateTimeImmutable $today,
+        string $package
+    ): array {
+        $candidate =
+            new AnalyticsPropertyId(
+                $propertyId
+            );
+
+        $range =
+            $this->dateRanges
+                ->trailingDays(
+                    $today,
+                    $period->value
+                );
+
+        $base = [
+            'ok' => true,
+            'package' => $package,
+        ];
+
+        if ($package === 'overview') {
+            $selected =
+                $this->findProperty(
+                    $propertyId
+                );
+
+            $overview =
+                $this->reporting->run(
+                    $candidate,
+                    'overview',
+                    $range
+                );
+
+            $rows =
+                $overview
+                    ->result()
+                    ->rows();
+
+            $metrics = [];
+
+            if (isset($rows[0])) {
+                $metrics =
+                    $rows[0]
+                        ->metrics();
+            }
+
+            return $base + [
+                'property' => [
+                    'id' =>
+                        $selected
+                            ->propertyId()
+                            ->value(),
+                    'name' =>
+                        $selected
+                            ->propertyName(),
+                    'account' =>
+                        $selected
+                            ->accountName(),
+                ],
+
+                'period' => [
+                    'days' =>
+                        $period->value,
+                    'start_date' =>
+                        $range
+                            ->start()
+                            ->format('Y-m-d'),
+                    'end_date' =>
+                        $range
+                            ->end()
+                            ->format('Y-m-d'),
+                ],
+
+                'overview' => [
+                    'activeUsers' =>
+                        $metrics[
+                            'activeUsers'
+                        ] ?? 0,
+                    'newUsers' =>
+                        $metrics[
+                            'newUsers'
+                        ] ?? 0,
+                    'sessions' =>
+                        $metrics[
+                            'sessions'
+                        ] ?? 0,
+                    'screenPageViews' =>
+                        $metrics[
+                            'screenPageViews'
+                        ] ?? 0,
+                    'engagementRate' =>
+                        $metrics[
+                            'engagementRate'
+                        ] ?? 0,
+                    'averageSessionDuration' =>
+                        $metrics[
+                            'averageSessionDuration'
+                        ] ?? 0,
+                    'eventCount' =>
+                        $metrics[
+                            'eventCount'
+                        ] ?? 0,
+                    'keyEvents' =>
+                        $metrics[
+                            'keyEvents'
+                        ] ?? 0,
+                ],
+            ];
+        }
+
+        if ($package === 'trend') {
+            $report =
+                $this->reporting->run(
+                    $candidate,
+                    'trend',
+                    $range
+                );
+
+            return $base + [
+                'trend' =>
+                    $this->rows(
+                        $report
+                            ->result()
+                            ->rows()
+                    ),
+            ];
+        }
+
+        if ($package === 'top_pages') {
+            $report =
+                $this->reporting->run(
+                    $candidate,
+                    'top_pages',
+                    $range
+                );
+
+            return $base + [
+                'top_pages' =>
+                    $this->rows(
+                        $report
+                            ->result()
+                            ->rows()
+                    ),
+            ];
+        }
+
+        if ($package === 'audience') {
+            $channels =
+                $this->reporting->run(
+                    $candidate,
+                    'traffic_channels',
+                    $range
+                );
+
+            $devices =
+                $this->reporting->run(
+                    $candidate,
+                    'devices',
+                    $range
+                );
+
+            return $base + [
+                'traffic_channels' =>
+                    $this->rows(
+                        $channels
+                            ->result()
+                            ->rows()
+                    ),
+
+                'devices' =>
+                    $this->rows(
+                        $devices
+                            ->result()
+                            ->rows()
+                    ),
+
+                'operating_systems' =>
+                    $this->optionalRows(
+                        $candidate,
+                        'operating_systems',
+                        $range
+                    ),
+            ];
+        }
+
+        if ($package === 'geo') {
+            $countries =
+                $this->reporting->run(
+                    $candidate,
+                    'countries',
+                    $range
+                );
+
+            return $base + [
+                'countries' =>
+                    $this->rows(
+                        $countries
+                            ->result()
+                            ->rows()
+                    ),
+
+                'cities' =>
+                    $this->optionalRows(
+                        $candidate,
+                        'cities',
+                        $range
+                    ),
+            ];
+        }
+
+        if ($package === 'timing') {
+            return $base + [
+                'busy_days' =>
+                    $this->optionalRows(
+                        $candidate,
+                        'busy_days',
+                        $range
+                    ),
+
+                'busy_hours' =>
+                    $this->optionalRows(
+                        $candidate,
+                        'busy_hours',
+                        $range
+                    ),
+            ];
+        }
+
+        if ($package === 'events') {
+            $events =
+                $this->reporting->run(
+                    $candidate,
+                    'events',
+                    $range
+                );
+
+            return $base + [
+                'events' =>
+                    $this->rows(
+                        $events
+                            ->result()
+                            ->rows()
+                    ),
+            ];
+        }
+
+        if ($package === 'demographics') {
+            return $base + [
+                'gender' =>
+                    $this->optionalRows(
+                        $candidate,
+                        'gender',
+                        $range
+                    ),
+
+                'ages' =>
+                    $this->optionalRows(
+                        $candidate,
+                        'ages',
+                        $range
+                    ),
+            ];
+        }
+
+        throw new \InvalidArgumentException(
+            'Unknown analytics dashboard package.'
+        );
+    }
+
     private function optionalRows(
         AnalyticsPropertyId $propertyId,
         string $reportId,
