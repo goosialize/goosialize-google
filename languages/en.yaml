@@ -24,3 +24,7 @@ PLUGIN_GOOSIALIZE_GOOGLE:
   SEARCH_CONSOLE_DEFAULT_PROPERTY_HELP: Search Console property URL, including sc-domain properties when applicable.
   SEARCH_CONSOLE_PERMISSION_READ: View Google Search Console
   NO_SEARCH_CONSOLE_DATA: No Search Console data for this period.
+  TRACKING: Google Analytics Tracking
+  TRACKING_ENABLED: Inject Google Analytics tracking code
+  TRACKING_MEASUREMENT_ID: Measurement ID
+  TRACKING_MEASUREMENT_ID_HELP: GA4 Measurement ID, for example G-XXXXXXXXXX. Tracking is injected into the public page head only when enabled.

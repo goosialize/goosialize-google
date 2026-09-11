@@ -21,6 +21,11 @@ cache:
 diagnostics:
   enabled: true
 
+
+tracking:
+  enabled: false
+  measurement_id: ''
+
 search_console:
   enabled: true
   default_property: null

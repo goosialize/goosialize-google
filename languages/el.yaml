@@ -24,3 +24,7 @@ PLUGIN_GOOSIALIZE_GOOGLE:
   SEARCH_CONSOLE_DEFAULT_PROPERTY_HELP: URL του Search Console property, συμπεριλαμβανομένων sc-domain properties όπου εφαρμόζεται.
   SEARCH_CONSOLE_PERMISSION_READ: Προβολή Google Search Console
   NO_SEARCH_CONSOLE_DATA: Δεν υπάρχουν δεδομένα Search Console για αυτή την περίοδο.
+  TRACKING: Google Analytics Tracking
+  TRACKING_ENABLED: Εισαγωγή κώδικα Google Analytics
+  TRACKING_MEASUREMENT_ID: Measurement ID
+  TRACKING_MEASUREMENT_ID_HELP: Το GA4 Measurement ID, π.χ. G-XXXXXXXXXX. Το tracking εισάγεται στο head των public σελίδων μόνο όταν είναι ενεργοποιημένο.

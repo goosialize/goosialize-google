@@ -8,6 +8,7 @@ use Grav\Common\Plugin;
 use Grav\Events\PermissionsRegisterEvent;
 use Grav\Framework\Acl\PermissionsReader;
 use Goosialize\Google\Admin\AnalyticsDashboardController;
+use Goosialize\Google\Analytics\Tracking\AnalyticsTrackingInjector;
 use Goosialize\Google\Admin\SearchConsoleDashboardController;
 use Goosialize\Google\Core\Persistence\StorageBootstrapper;
 use RocketTheme\Toolbox\Event\Event;
@@ -48,6 +49,10 @@ final class GoosializeGooglePlugin extends Plugin
             ],
             'onPluginsInitialized' => [
                 'onPluginsInitialized',
+                0,
+            ],
+            'onOutputGenerated' => [
+                'onOutputGenerated',
                 0,
             ],
         ];
@@ -111,6 +116,62 @@ final class GoosializeGooglePlugin extends Plugin
                 );
             }
         }
+    }
+
+    public function onOutputGenerated(): void
+    {
+        if ($this->isAdmin()) {
+            return;
+        }
+
+        $config =
+            $this->grav['config']
+            ?? null;
+
+        if (
+            !$config
+                instanceof
+                \Grav\Common\Config\Config
+        ) {
+            return;
+        }
+
+        if (
+            !(bool) $config->get(
+                'plugins.goosialize-google.enabled',
+                true
+            )
+            || !(bool) $config->get(
+                'plugins.goosialize-google.tracking.enabled',
+                false
+            )
+        ) {
+            return;
+        }
+
+        $measurementId =
+            (string) $config->get(
+                'plugins.goosialize-google.tracking.measurement_id',
+                ''
+            );
+
+        $output =
+            $this->grav['output']
+            ?? null;
+
+        if (!is_string($output)) {
+            return;
+        }
+
+        $injector =
+            new AnalyticsTrackingInjector();
+
+        $this->grav['output'] =
+            $injector->inject(
+                $output,
+                true,
+                $measurementId
+            );
     }
 
     public function onRegisterPermissions(
