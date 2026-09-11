@@ -16,8 +16,8 @@ foreach (
         "periodRow.append(\n        periodControls,\n        refreshButton",
         "periodGroup.replaceChildren(\n        periodLabel,\n        periodRow",
         "toolbar.append(\n        propertyGroup,\n        periodGroup",
-        'align-items: stretch',
-        'align-self: stretch',
+        'align-items: center',
+        'align-self: center',
     ]
     as $needle
 ) {

@@ -579,15 +579,16 @@
 
       .goosialize-google-period-row {
         display: flex;
-        align-items: stretch;
+        align-items: center;
         gap: 0.5rem;
       }
 
       .goosialize-google-period-refresh {
         flex: 0 0 auto;
-        height: auto;
-        min-height: 100%;
-        align-self: stretch;
+        width: 2.35rem;
+        height: 2.35rem;
+        min-height: 2.35rem;
+        align-self: center;
       }
 
       .goosialize-google-refresh-button {
