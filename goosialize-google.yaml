@@ -8,6 +8,10 @@ authentication:
   default_connection: null
   service_account_file: ''
 
+
+consent:
+  consumer_enabled: true
+
 analytics:
   enabled: true
   default_property: null

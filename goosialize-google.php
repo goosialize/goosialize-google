@@ -55,6 +55,10 @@ final class GoosializeGooglePlugin extends Plugin
                 'onOutputGenerated',
                 0,
             ],
+            'onTwigSiteVariables' => [
+                'onTwigSiteVariables',
+                0,
+            ],
         ];
     }
 
@@ -116,6 +120,38 @@ final class GoosializeGooglePlugin extends Plugin
                 );
             }
         }
+    }
+
+    public function onTwigSiteVariables(): void
+    {
+        if (
+            $this->isAdmin()
+            || !$this->consentConsumerEnabled()
+        ) {
+            return;
+        }
+
+        $assets =
+            $this->grav['assets']
+            ?? null;
+
+        if (
+            !is_object($assets)
+            || !method_exists(
+                $assets,
+                'addJs'
+            )
+        ) {
+            return;
+        }
+
+        $assets->addJs(
+            'plugin://goosialize-google/assets/js/consent-consumer.js',
+            [
+                'group' => 'bottom',
+                'priority' => 70,
+            ]
+        );
     }
 
     public function onOutputGenerated(): void
@@ -306,6 +342,29 @@ final class GoosializeGooglePlugin extends Plugin
             'page_type' =>
                 'component',
         ];
+    }
+
+    private function consentConsumerEnabled(): bool
+    {
+        $config =
+            $this->grav['config']
+            ?? null;
+
+        if (
+            !$config instanceof
+            \Grav\Common\Config\Config
+        ) {
+            return false;
+        }
+
+        return (bool) $config->get(
+            'plugins.goosialize-google.enabled',
+            true
+        )
+            && (bool) $config->get(
+                'plugins.goosialize-google.consent.consumer_enabled',
+                true
+            );
     }
 
     private function dashboardEnabled(): bool

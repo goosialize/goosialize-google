@@ -28,3 +28,6 @@ PLUGIN_GOOSIALIZE_GOOGLE:
   TRACKING_ENABLED: Εισαγωγή κώδικα Google Analytics
   TRACKING_MEASUREMENT_ID: Measurement ID
   TRACKING_MEASUREMENT_ID_HELP: Το GA4 Measurement ID, π.χ. G-XXXXXXXXXX. Το tracking εισάγεται στο head των public σελίδων μόνο όταν είναι ενεργοποιημένο.
+  CONSENT: Consent
+  CONSENT_CONSUMER_ENABLED: Χρήση consent από Goosialize Cookies
+  CONSENT_CONSUMER_HELP: Το Google Analytics δεν ξεκινά πριν δοθεί analytics consent από το Goosialize Cookies.

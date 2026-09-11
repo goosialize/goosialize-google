@@ -89,17 +89,33 @@ $injected =
 yes(
     str_contains(
         $injected,
-        'googletagmanager.com/gtag/js?id=G-ABC123'
+        'googletagmanager.com/gtag/js?id='
     ),
-    'gtag.js loader missing.'
+    'Dynamic gtag.js loader missing.'
 );
 
 yes(
     str_contains(
         $injected,
-        "gtag('config', 'G-ABC123');"
+        "analytics_storage: 'denied'"
     ),
-    'gtag config call missing.'
+    'Analytics consent must fail closed.'
+);
+
+yes(
+    str_contains(
+        $injected,
+        'goosialize-google:consent-ready'
+    ),
+    'Consent-ready listener missing.'
+);
+
+yes(
+    str_contains(
+        $injected,
+        'goosialize-google:consent-changed'
+    ),
+    'Consent-change listener missing.'
 );
 
 yes(
@@ -114,12 +130,20 @@ yes(
 );
 
 same(
-    2,
+    1,
     substr_count(
         $injected,
         AnalyticsTrackingInjector::MARKER
     ),
-    'Expected two owned tracking markers.'
+    'Expected one consent-gated bootstrap marker.'
+);
+
+yes(
+    str_contains(
+        $injected,
+        'data-goosialize-google-tracking-loader'
+    ),
+    'Dynamic tracking loader ownership marker missing.'
 );
 
 same(
@@ -130,21 +154,6 @@ same(
         'G-ABC123'
     ),
     'Duplicate injection protection failed.'
-);
-
-$existing =
-    '<html><head>'
-    . '<script async src="https://www.googletagmanager.com/gtag/js?id=G-ABC123"></script>'
-    . '</head><body></body></html>';
-
-same(
-    $existing,
-    $injector->inject(
-        $existing,
-        true,
-        'G-ABC123'
-    ),
-    'Existing matching gtag loader must not be duplicated.'
 );
 
 $headless =

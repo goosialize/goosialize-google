@@ -78,6 +78,23 @@ form:
       validate:
         pattern: '^[0-9]+$'
 
+    consent:
+      type: section
+      title: PLUGIN_GOOSIALIZE_GOOGLE.CONSENT
+      underline: true
+
+    consent.consumer_enabled:
+      type: toggle
+      label: PLUGIN_GOOSIALIZE_GOOGLE.CONSENT_CONSUMER_ENABLED
+      help: PLUGIN_GOOSIALIZE_GOOGLE.CONSENT_CONSUMER_HELP
+      highlight: 1
+      default: 1
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+
     tracking:
       type: section
       title: PLUGIN_GOOSIALIZE_GOOGLE.TRACKING

@@ -28,3 +28,6 @@ PLUGIN_GOOSIALIZE_GOOGLE:
   TRACKING_ENABLED: Inject Google Analytics tracking code
   TRACKING_MEASUREMENT_ID: Measurement ID
   TRACKING_MEASUREMENT_ID_HELP: GA4 Measurement ID, for example G-XXXXXXXXXX. Tracking is injected into the public page head only when enabled.
+  CONSENT: Consent
+  CONSENT_CONSUMER_ENABLED: Use Goosialize Cookies consent
+  CONSENT_CONSUMER_HELP: Fail closed and start Google Analytics only after analytics consent is granted by Goosialize Cookies.

@@ -60,19 +60,6 @@ final class AnalyticsTrackingInjector
                 $html,
                 self::MARKER
             ) !== false
-            || stripos(
-                $html,
-                'googletagmanager.com/gtag/js?id='
-                . $measurementId
-            ) !== false
-            || stripos(
-                $html,
-                $measurementId
-            ) !== false
-            && stripos(
-                $html,
-                "gtag('config'"
-            ) !== false
         ) {
             return $html;
         }
@@ -110,12 +97,145 @@ final class AnalyticsTrackingInjector
     ): string {
         return sprintf(
             <<<'HTML'
-<script async src="https://www.googletagmanager.com/gtag/js?id=%1$s" data-goosialize-google-tracking="1"></script>
 <script data-goosialize-google-tracking="1">
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '%1$s');
+(() => {
+  'use strict';
+
+  const measurementId = '%1$s';
+
+  let started = false;
+  let granted = false;
+
+  window.dataLayer =
+    window.dataLayer || [];
+
+  window.gtag =
+    window.gtag || function () {
+      window.dataLayer.push(
+        arguments
+      );
+    };
+
+  window.gtag(
+    'consent',
+    'default',
+    {
+      analytics_storage: 'denied'
+    }
+  );
+
+  function start() {
+    if (
+      started
+      || granted !== true
+    ) {
+      return;
+    }
+
+    started = true;
+
+    const script =
+      document.createElement(
+        'script'
+      );
+
+    script.async = true;
+    script.src =
+      'https://www.googletagmanager.com/gtag/js?id='
+      + encodeURIComponent(
+          measurementId
+        );
+
+    script.setAttribute(
+      'data-goosialize-google-tracking-loader',
+      '1'
+    );
+
+    document.head.appendChild(
+      script
+    );
+
+    window.gtag(
+      'js',
+      new Date()
+    );
+
+    window.gtag(
+      'consent',
+      'update',
+      {
+        analytics_storage: 'granted'
+      }
+    );
+
+    window.gtag(
+      'config',
+      measurementId
+    );
+  }
+
+  function apply(state) {
+    const next =
+      state?.analytics === true;
+
+    granted = next;
+
+    window.gtag(
+      'consent',
+      'update',
+      {
+        analytics_storage:
+          next
+            ? 'granted'
+            : 'denied'
+      }
+    );
+
+    if (next) {
+      start();
+    }
+  }
+
+  function currentConsent() {
+    const adapter =
+      window.GoosializeGoogleConsent;
+
+    if (
+      !adapter
+      || typeof
+        adapter.getState
+        !== 'function'
+    ) {
+      return {
+        analytics: false
+      };
+    }
+
+    return adapter.getState();
+  }
+
+  window.addEventListener(
+    'goosialize-google:consent-ready',
+    event => {
+      apply(
+        event?.detail?.current
+      );
+    }
+  );
+
+  window.addEventListener(
+    'goosialize-google:consent-changed',
+    event => {
+      apply(
+        event?.detail?.current
+      );
+    }
+  );
+
+  apply(
+    currentConsent()
+  );
+})();
 </script>
 HTML,
             $measurementId
