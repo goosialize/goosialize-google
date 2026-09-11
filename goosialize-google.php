@@ -192,17 +192,12 @@ final class GoosializeGooglePlugin extends Plugin
             );
 
         $output =
-            $this->grav['output']
-            ?? null;
-
-        if (!is_string($output)) {
-            return;
-        }
+            (string) $this->grav->output;
 
         $injector =
             new AnalyticsTrackingInjector();
 
-        $this->grav['output'] =
+        $this->grav->output =
             $injector->inject(
                 $output,
                 true,

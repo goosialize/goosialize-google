@@ -41,7 +41,7 @@ foreach (
         '$this->isAdmin()',
         'plugins.goosialize-google.tracking.enabled',
         'plugins.goosialize-google.tracking.measurement_id',
-        '$this->grav[\'output\']',
+        '$this->grav->output',
     ]
     as $needle
 ) {
