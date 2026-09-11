@@ -1694,7 +1694,7 @@
         element('div');
 
       periodControls.className =
-        'mt-1 inline-flex h-10 items-center rounded-md border border-border bg-background p-1 shadow-sm';
+        'inline-flex h-10 items-center rounded-md border border-border bg-background p-1 shadow-sm';
 
       periodControls.setAttribute(
         'role',
@@ -1833,7 +1833,7 @@
         element('div');
 
       periodRow.className =
-        'goosialize-google-period-row';
+        'goosialize-google-period-row mt-1';
 
       periodRow.append(
         periodControls,
