@@ -1378,6 +1378,26 @@
       this.loadingStatus = '';
       this.error = null;
 
+      this.productStates = {
+        analytics: {
+          properties: [],
+          propertyId: '',
+          days: 30,
+          data: null,
+          error: null,
+          loaded: false,
+        },
+
+        search_console: {
+          properties: [],
+          propertyId: '',
+          days: 30,
+          data: null,
+          error: null,
+          loaded: false,
+        },
+      };
+
     }
 
     connectedCallback() {
@@ -1387,6 +1407,106 @@
     }
 
     disconnectedCallback() {
+    }
+
+    saveProductState(
+      product = this.product
+    ) {
+      const state =
+        this.productStates?.[product];
+
+      if (!state) {
+        return;
+      }
+
+      state.properties =
+        Array.isArray(
+          this.properties
+        )
+          ? [...this.properties]
+          : [];
+
+      state.propertyId =
+        String(
+          this.propertyId
+          || ''
+        );
+
+      state.days =
+        Number(
+          this.days
+          || 30
+        );
+
+      state.data =
+        this.data;
+
+      state.error =
+        this.error;
+    }
+
+    restoreProductState(
+      product
+    ) {
+      const state =
+        this.productStates?.[product];
+
+      if (!state) {
+        return false;
+      }
+
+      this.properties =
+        Array.isArray(
+          state.properties
+        )
+          ? [...state.properties]
+          : [];
+
+      this.propertyId =
+        String(
+          state.propertyId
+          || ''
+        );
+
+      this.days =
+        Number(
+          state.days
+          || 30
+        );
+
+      this.data =
+        state.data
+        ?? null;
+
+      this.error =
+        state.error
+        ?? null;
+
+      this.loading = false;
+      this.loadingProgress = 0;
+      this.loadingPreviousProgress = 0;
+      this.loadingStatus = '';
+
+      return (
+        state.loaded === true
+      );
+    }
+
+    markProductLoaded(
+      product = this.product
+    ) {
+      const state =
+        this.productStates?.[product];
+
+      if (!state) {
+        return;
+      }
+
+      this.saveProductState(
+        product
+      );
+
+      state.loaded = true;
     }
 
     async apiGet(path) {
@@ -1502,6 +1622,8 @@
         } else {
           this.data = null;
         }
+
+        this.markProductLoaded();
       } catch (error) {
         this.error =
           error instanceof Error
@@ -1886,7 +2008,24 @@
         if (manageState) {
           this.loading = false;
           this.loadingStatus = '';
+
+          if (
+            this.error === null
+          ) {
+            this.markProductLoaded();
+          } else {
+            this.saveProductState();
+          }
+
           this.render();
+        } else {
+          if (
+            this.error === null
+          ) {
+            this.markProductLoaded();
+          } else {
+            this.saveProductState();
+          }
         }
       }
     }
@@ -1954,9 +2093,23 @@
               return;
             }
 
+            this.saveProductState();
+
             this.product = id;
+
+            const cached =
+              this.restoreProductState(
+                id
+              );
+
+            if (cached) {
+              this.render();
+              return;
+            }
+
             this.properties = [];
             this.propertyId = '';
+            this.days = 30;
             this.data = null;
             this.error = null;
 
@@ -2224,6 +2377,7 @@
             return;
           }
 
+          this.saveProductState();
           this.loadDashboard();
         }
       );
