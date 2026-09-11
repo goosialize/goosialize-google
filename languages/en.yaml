@@ -53,3 +53,14 @@ PLUGIN_GOOSIALIZE_GOOGLE:
   TRACKING_USER_PROPERTIES_HELP: Static GA4 user properties. Keys and values are validated before output.
   TRACKING_EVENT_PARAMETERS: Default event parameters
   TRACKING_EVENT_PARAMETERS_HELP: Static parameters applied to subsequent GA4 events. Reserved or unsafe keys are rejected.
+  AUTHENTICATION_HELP: Configure how this plugin authenticates with Google APIs.
+  AUTHENTICATION_DEFAULT_CONNECTION_HELP: Optional connection identifier used as the default for Google API requests.
+  AUTHENTICATION_SERVICE_ACCOUNT_HELP: Absolute runtime path to the Google service-account JSON file. The credential itself is never stored in plugin configuration or Git.
+  ANALYTICS_HELP: Configure Google Analytics 4 reporting used by the admin dashboard.
+  ANALYTICS_ENABLED_HELP: Enable or disable Google Analytics 4 reporting features in this plugin.
+  ANALYTICS_DEFAULT_PROPERTY_HELP: Numeric Google Analytics 4 property identifier used by default for Analytics requests.
+  CONSENT_HELP: Control whether Google Analytics tracking is gated by Goosialize Cookies consent.
+  TRACKING_HELP: Configure public-site GA4 tracking injection and its Measurement ID.
+  TRACKING_ENABLED_HELP: Enable or disable GA4 tracking injection on public pages.
+  SEARCH_CONSOLE_HELP: Configure Google Search Console reporting used by the admin dashboard.
+  SEARCH_CONSOLE_ENABLED_HELP: Enable or disable Google Search Console reporting features in this plugin.
