@@ -226,12 +226,44 @@
       const url =
         new URL(decoded);
 
-      const path =
-        `${url.pathname || '/'}${url.search || ''}`;
+      let pathname =
+        url.pathname
+        || '/';
 
-      return path || '/';
+      let search =
+        url.search
+        || '';
+
+      try {
+        pathname =
+          decodeURIComponent(
+            pathname
+          );
+      } catch {
+        // Keep the browser-normalized pathname.
+      }
+
+      try {
+        search =
+          decodeURIComponent(
+            search
+          );
+      } catch {
+        // Keep the browser-normalized search.
+      }
+
+      const result =
+        `${pathname}${search}`;
+
+      return result || '/';
     } catch {
-      return decoded;
+      try {
+        return decodeURIComponent(
+          decoded
+        );
+      } catch {
+        return decoded;
+      }
     }
   }
 
@@ -772,11 +804,14 @@
         font-size: 0.64rem;
       }
 
-      .goosialize-google-search-highlight strong {
+      .goosialize-google-search-highlight-value {
+        display: block;
+        min-width: 0;
         overflow: hidden;
         color: var(--foreground);
         font-size: 0.76rem;
         font-weight: 600;
+        line-height: 1.35;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
@@ -2908,6 +2943,11 @@
                     formatSearchPage(
                       row?.page
                     ),
+                  page_full:
+                    String(
+                      row?.page
+                      || ''
+                    ),
                 })
               )
             : [];
@@ -3188,19 +3228,37 @@
         card.className =
           'goosialize-google-search-highlight';
 
-        card.append(
+        const titleNode =
           element(
             'small',
             item.title
-          ),
+          );
+
+        const valueNode =
           element(
-            'strong',
+            'div',
             item.value
-          ),
+          );
+
+        valueNode.className =
+          'goosialize-google-search-highlight-value';
+
+        valueNode.title =
+          String(
+            item.value
+            || ''
+          );
+
+        const metaNode =
           element(
             'span',
             item.meta
-          )
+          );
+
+        card.append(
+          titleNode,
+          valueNode,
+          metaNode
         );
 
         grid.append(card);
@@ -5957,6 +6015,17 @@
 
           td.className =
             'px-3 py-2';
+
+          if (
+            title === 'Search pages'
+            && key === 'page_display'
+            && row?.page_full
+          ) {
+            td.title =
+              String(
+                row.page_full
+              );
+          }
 
           tr.append(td);
         }
