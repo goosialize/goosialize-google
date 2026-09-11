@@ -1140,16 +1140,6 @@
       }
 
       .goosialize-google-map-stage
-      @media (min-width: 1280px) {
-        .goosialize-google-search-kpi-grid {
-          grid-template-columns:
-            repeat(
-              4,
-              minmax(0, 1fr)
-            );
-        }
-      }
-
       .goosialize-google-geo-map {
         width: 100%;
         max-height: 300px;
@@ -1232,6 +1222,17 @@
           grid-template-columns:
             repeat(
               8,
+              minmax(0, 1fr)
+            );
+        }
+      }
+
+
+      @media (min-width: 1280px) {
+        .goosialize-google-kpi-grid.goosialize-google-search-kpi-grid {
+          grid-template-columns:
+            repeat(
+              4,
               minmax(0, 1fr)
             );
         }
