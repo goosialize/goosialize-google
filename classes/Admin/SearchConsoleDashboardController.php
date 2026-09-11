@@ -148,6 +148,21 @@ final class SearchConsoleDashboardController
             );
         }
 
+        $package =
+            $query['package']
+            ?? null;
+
+        if (
+            $package !== null
+            && !is_string($package)
+        ) {
+            return $this->failure(
+                400,
+                'package_invalid',
+                'Search Console package is invalid.'
+            );
+        }
+
         $daysRaw =
             $query['days']
             ?? 30;
@@ -179,13 +194,24 @@ final class SearchConsoleDashboardController
                     $this->reporting()
                 );
 
+            $payload =
+                is_string($package)
+                && trim($package) !== ''
+                    ? $dashboard->package(
+                        trim($siteUrl),
+                        $period,
+                        new DateTimeImmutable('today'),
+                        trim($package)
+                    )
+                    : $dashboard->dashboard(
+                        trim($siteUrl),
+                        $period,
+                        new DateTimeImmutable('today')
+                    );
+
             return $this->response(
                 200,
-                $dashboard->dashboard(
-                    trim($siteUrl),
-                    $period,
-                    new DateTimeImmutable('today')
-                )
+                $payload
             );
         } catch (InvalidArgumentException $e) {
             return $this->failure(

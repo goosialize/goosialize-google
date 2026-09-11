@@ -562,6 +562,58 @@
         }
       }
 
+      .goosialize-google-search-highlights {
+        display: grid;
+        grid-template-columns:
+          minmax(0, 1fr);
+        gap: 0.75rem;
+      }
+
+      @media (min-width: 720px) {
+        .goosialize-google-search-highlights {
+          grid-template-columns:
+            repeat(
+              2,
+              minmax(0, 1fr)
+            );
+        }
+      }
+
+      @media (min-width: 1280px) {
+        .goosialize-google-search-highlights {
+          grid-template-columns:
+            repeat(
+              4,
+              minmax(0, 1fr)
+            );
+        }
+      }
+
+      .goosialize-google-search-highlight {
+        display: grid;
+        min-width: 0;
+        gap: 0.3rem;
+        padding: 0.75rem 0.85rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        background: var(--card);
+      }
+
+      .goosialize-google-search-highlight small,
+      .goosialize-google-search-highlight span {
+        color: var(--muted-foreground);
+        font-size: 0.64rem;
+      }
+
+      .goosialize-google-search-highlight strong {
+        overflow: hidden;
+        color: var(--foreground);
+        font-size: 0.76rem;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       .goosialize-google-info-icon {
         display: inline-flex;
         width: 0.9rem;
@@ -1206,9 +1258,20 @@
         if (
           this.product === 'analytics'
         ) {
+          this.loadingPreviousProgress =
+            this.loadingProgress;
           this.loadingProgress = 5;
           this.loadingStatus =
             'Preparing analytics dashboard…';
+          this.render();
+        } else if (
+          this.product === 'search_console'
+        ) {
+          this.loadingPreviousProgress =
+            this.loadingProgress;
+          this.loadingProgress = 10;
+          this.loadingStatus =
+            'Preparing Search Console dashboard…';
           this.render();
         }
 
@@ -1478,13 +1541,134 @@
               )
           );
         } else {
-          const dashboardPath =
-            `/goosialize-google/search-console/performance?${query.toString()}`;
+          const packages = [
+            {
+              id: 'overview',
+              progress: 25,
+              status:
+                'Loading search overview…',
+            },
+            {
+              id: 'trend',
+              progress: 50,
+              status:
+                'Loading daily search performance…',
+            },
+            {
+              id: 'content',
+              progress: 75,
+              status:
+                'Loading queries and pages…',
+            },
+            {
+              id: 'breakdowns',
+              progress: 95,
+              status:
+                'Loading devices and countries…',
+            },
+          ];
 
-          this.data =
-            await this.apiGet(
-              dashboardPath
+          this.data = {};
+
+          for (
+            const item
+            of packages
+          ) {
+            this.loadingStatus =
+              item.status;
+
+            this.render();
+
+            const packageQuery =
+              new URLSearchParams(
+                query
+              );
+
+            packageQuery.set(
+              'package',
+              item.id
             );
+
+            const payload =
+              await this.apiGet(
+                `/goosialize-google/search-console/performance?${packageQuery.toString()}`
+              );
+
+            const {
+              ok,
+              package:
+                loadedPackage,
+              ...packageData
+            } = payload || {};
+
+            this.data = {
+              ...(this.data || {}),
+              ...packageData,
+            };
+
+            this.loadingPreviousProgress =
+              this.loadingProgress;
+
+            this.loadingProgress =
+              item.progress;
+
+            this.render();
+
+            if (
+              item.id === 'overview'
+              && packageData.empty === true
+            ) {
+              this.data = {
+                ...(this.data || {}),
+                empty: true,
+              };
+
+              this.loadingPreviousProgress =
+                this.loadingProgress;
+
+              this.loadingProgress = 100;
+              this.loadingStatus =
+                'No Search Console data available';
+
+              this.render();
+
+              await new Promise(
+                (resolve) =>
+                  window.setTimeout(
+                    resolve,
+                    320
+                  )
+              );
+
+              break;
+            }
+          }
+
+          if (
+            this.data?.empty !== true
+          ) {
+            this.data = {
+              ...(this.data || {}),
+              empty: false,
+            };
+
+            this.loadingPreviousProgress =
+              this.loadingProgress;
+
+            this.loadingProgress = 100;
+            this.loadingStatus =
+              'Dashboard ready';
+
+            this.render();
+
+            await new Promise(
+              (resolve) =>
+                window.setTimeout(
+                  resolve,
+                  220
+                )
+            );
+          }
         }
       } catch (error) {
         this.data = null;
@@ -1902,7 +2086,10 @@
         const percentage =
           element(
             'strong',
-            this.product === 'analytics'
+            (
+              this.product === 'analytics'
+              || this.product === 'search_console'
+            )
               ? `${Math.round(
                   this.loadingProgress
                 )}% complete`
@@ -1945,6 +2132,7 @@
 
         if (
           this.product === 'analytics'
+          || this.product === 'search_console'
         ) {
           progress.setAttribute(
             'aria-valuemin',
@@ -2448,6 +2636,15 @@
       root.append(cards);
 
       if (
+        this.product === 'search_console'
+        && this.data?.empty !== true
+      ) {
+        this.appendSearchConsoleHighlights(
+          root
+        );
+      }
+
+      if (
         this.product === 'analytics'
       ) {
         this.appendTable(
@@ -2686,6 +2883,142 @@
       }
 
       this.append(root);
+    }
+
+    appendSearchConsoleHighlights(
+      root
+    ) {
+      const highlights = [];
+
+      const query =
+        Array.isArray(
+          this.data?.top_queries
+        )
+          ? this.data.top_queries[0]
+          : null;
+
+      const page =
+        Array.isArray(
+          this.data?.top_pages
+        )
+          ? this.data.top_pages[0]
+          : null;
+
+      const device =
+        Array.isArray(
+          this.data?.devices
+        )
+          ? this.data.devices[0]
+          : null;
+
+      const country =
+        Array.isArray(
+          this.data?.countries
+        )
+          ? this.data.countries[0]
+          : null;
+
+      if (
+        query?.query
+      ) {
+        highlights.push({
+          title: 'Top query',
+          value:
+            String(query.query),
+          meta:
+            `${formatInteger(
+              query.clicks || 0
+            )} clicks · ${formatInteger(
+              query.impressions || 0
+            )} impressions`,
+        });
+      }
+
+      if (
+        page?.page
+      ) {
+        highlights.push({
+          title: 'Best page',
+          value:
+            String(page.page),
+          meta:
+            `${formatInteger(
+              page.clicks || 0
+            )} clicks · ${formatInteger(
+              page.impressions || 0
+            )} impressions`,
+        });
+      }
+
+      if (
+        device?.device
+      ) {
+        highlights.push({
+          title: 'Top device',
+          value:
+            String(device.device),
+          meta:
+            `${formatInteger(
+              device.impressions || 0
+            )} impressions`,
+        });
+      }
+
+      if (
+        country?.country
+      ) {
+        highlights.push({
+          title: 'Top country',
+          value:
+            String(country.country),
+          meta:
+            `${formatInteger(
+              country.impressions || 0
+            )} impressions`,
+        });
+      }
+
+      if (
+        highlights.length === 0
+      ) {
+        return;
+      }
+
+      const grid =
+        element('section');
+
+      grid.className =
+        'goosialize-google-search-highlights';
+
+      for (
+        const item
+        of highlights
+      ) {
+        const card =
+          element('article');
+
+        card.className =
+          'goosialize-google-search-highlight';
+
+        card.append(
+          element(
+            'small',
+            item.title
+          ),
+          element(
+            'strong',
+            item.value
+          ),
+          element(
+            'span',
+            item.meta
+          )
+        );
+
+        grid.append(card);
+      }
+
+      root.append(grid);
     }
 
     appendSearchConsoleTrendChart(

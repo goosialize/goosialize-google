@@ -129,7 +129,8 @@ final readonly class SearchConsoleDashboardService
         }
 
         $empty =
-            $overview->rows === []
+            (float) $metrics['clicks'] === 0.0
+            && (float) $metrics['impressions'] === 0.0
             && $topQueries->rows === []
             && $topPages->rows === [];
 
@@ -196,6 +197,204 @@ final readonly class SearchConsoleDashboardService
                     'country'
                 ),
         ];
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function package(
+        string $siteUrl,
+        SearchConsoleDashboardPeriod $period,
+        DateTimeImmutable $today,
+        string $package
+    ): array {
+        $property =
+            $this->findProperty(
+                $siteUrl
+            );
+
+        $range =
+            new SearchConsoleDateRange(
+                $today->modify(
+                    sprintf(
+                        '-%d days',
+                        $period->value - 1
+                    )
+                ),
+                $today
+            );
+
+        $base = [
+            'ok' => true,
+            'package' => $package,
+        ];
+
+        if ($package === 'overview') {
+            $overview =
+                $this->reporting->execute(
+                    $property,
+                    new SearchConsoleQuery(
+                        $range,
+                        [],
+                        1
+                    )
+                );
+
+            $metrics = [
+                'clicks' => 0.0,
+                'impressions' => 0.0,
+                'ctr' => 0.0,
+                'position' => 0.0,
+            ];
+
+            if (isset($overview->rows[0])) {
+                $metrics =
+                    $this->metrics(
+                        $overview->rows[0]
+                    );
+            }
+
+            $empty =
+                (float) $metrics['clicks'] === 0.0
+                && (float) $metrics['impressions'] === 0.0;
+
+            return $base + [
+                'empty' => $empty,
+
+                'property' => [
+                    'site_url' =>
+                        $property->siteUrl,
+                    'permission_level' =>
+                        $property->permissionLevel,
+                    'type' =>
+                        $property->isDomainProperty()
+                            ? 'domain'
+                            : 'url_prefix',
+                ],
+
+                'period' => [
+                    'days' =>
+                        $period->value,
+                    'start_date' =>
+                        $range
+                            ->startDate
+                            ->format('Y-m-d'),
+                    'end_date' =>
+                        $range
+                            ->endDate
+                            ->format('Y-m-d'),
+                ],
+
+                'overview' =>
+                    $metrics,
+            ];
+        }
+
+        if ($package === 'trend') {
+            $trend =
+                $this->reporting->execute(
+                    $property,
+                    new SearchConsoleQuery(
+                        $range,
+                        [
+                            SearchConsoleDimension::Date,
+                        ],
+                        100
+                    )
+                );
+
+            return $base + [
+                'trend' =>
+                    $this->rows(
+                        $trend->rows,
+                        'date'
+                    ),
+            ];
+        }
+
+        if ($package === 'content') {
+            $topQueries =
+                $this->reporting->execute(
+                    $property,
+                    new SearchConsoleQuery(
+                        $range,
+                        [
+                            SearchConsoleDimension::Query,
+                        ],
+                        25
+                    )
+                );
+
+            $topPages =
+                $this->reporting->execute(
+                    $property,
+                    new SearchConsoleQuery(
+                        $range,
+                        [
+                            SearchConsoleDimension::Page,
+                        ],
+                        25
+                    )
+                );
+
+            return $base + [
+                'top_queries' =>
+                    $this->rows(
+                        $topQueries->rows,
+                        'query'
+                    ),
+
+                'top_pages' =>
+                    $this->rows(
+                        $topPages->rows,
+                        'page'
+                    ),
+            ];
+        }
+
+        if ($package === 'breakdowns') {
+            $devices =
+                $this->reporting->execute(
+                    $property,
+                    new SearchConsoleQuery(
+                        $range,
+                        [
+                            SearchConsoleDimension::Device,
+                        ],
+                        25
+                    )
+                );
+
+            $countries =
+                $this->reporting->execute(
+                    $property,
+                    new SearchConsoleQuery(
+                        $range,
+                        [
+                            SearchConsoleDimension::Country,
+                        ],
+                        25
+                    )
+                );
+
+            return $base + [
+                'devices' =>
+                    $this->rows(
+                        $devices->rows,
+                        'device'
+                    ),
+
+                'countries' =>
+                    $this->rows(
+                        $countries->rows,
+                        'country'
+                    ),
+            ];
+        }
+
+        throw new \InvalidArgumentException(
+            'Unknown Search Console dashboard package.'
+        );
     }
 
     private function findProperty(
