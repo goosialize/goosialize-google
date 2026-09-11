@@ -138,6 +138,103 @@
     );
   }
 
+  function formatSearchDevice(
+    value
+  ) {
+    const raw =
+      String(value || '')
+        .trim();
+
+    if (raw === '') {
+      return '';
+    }
+
+    return (
+      raw.charAt(0).toUpperCase()
+      + raw.slice(1).toLowerCase()
+    );
+  }
+
+  function formatSearchCountry(
+    value
+  ) {
+    const raw =
+      String(value || '')
+        .trim()
+        .toLowerCase();
+
+    const countries = {
+      grc: 'Greece',
+      cyp: 'Cyprus',
+      usa: 'United States',
+      gbr: 'United Kingdom',
+      deu: 'Germany',
+      fra: 'France',
+      ita: 'Italy',
+      esp: 'Spain',
+      nld: 'Netherlands',
+      bel: 'Belgium',
+      aut: 'Austria',
+      che: 'Switzerland',
+      swe: 'Sweden',
+      nor: 'Norway',
+      dnk: 'Denmark',
+      fin: 'Finland',
+      pol: 'Poland',
+      rou: 'Romania',
+      bgr: 'Bulgaria',
+      tur: 'Türkiye',
+      irl: 'Ireland',
+      prt: 'Portugal',
+      can: 'Canada',
+      aus: 'Australia',
+      ind: 'India',
+      jpn: 'Japan',
+    };
+
+    return (
+      countries[raw]
+      || (
+        raw === ''
+          ? ''
+          : raw.toUpperCase()
+      )
+    );
+  }
+
+  function formatSearchPage(
+    value
+  ) {
+    const raw =
+      String(value || '')
+        .trim();
+
+    if (raw === '') {
+      return '';
+    }
+
+    let decoded = raw;
+
+    try {
+      decoded =
+        decodeURIComponent(raw);
+    } catch {
+      decoded = raw;
+    }
+
+    try {
+      const url =
+        new URL(decoded);
+
+      const path =
+        `${url.pathname || '/'}${url.search || ''}`;
+
+      return path || '/';
+    } catch {
+      return decoded;
+    }
+  }
+
   const GOOGLE_METRIC_HELP = {
     'Clicks':
       'Visits from Google Search results to your site.',
@@ -560,6 +657,76 @@
               minmax(0, 1fr)
             ) !important;
         }
+      }
+
+      .goosialize-google-search-chart
+      .goosialize-google-links-chart-shell {
+        height: 210px;
+      }
+
+      .goosialize-google-search-insight-layout {
+        display: grid;
+        grid-template-columns:
+          minmax(0, 1fr);
+        gap: 0.75rem;
+      }
+
+      @media (min-width: 1000px) {
+        .goosialize-google-search-insight-layout {
+          grid-template-columns:
+            minmax(0, 1.45fr)
+            minmax(220px, 0.75fr);
+          grid-template-rows:
+            auto auto;
+        }
+
+        .goosialize-google-search-insight-card.is-query {
+          grid-column: 1;
+          grid-row: 1 / span 2;
+        }
+
+        .goosialize-google-search-insight-card.is-compact {
+          grid-column: 2;
+        }
+      }
+
+      .goosialize-google-search-insight-card {
+        min-height: 0;
+      }
+
+      .goosialize-google-search-insight-card.is-compact {
+        align-self: start;
+      }
+
+      .goosialize-google-search-pages-table table {
+        table-layout: fixed;
+      }
+
+      .goosialize-google-search-pages-table
+      th:first-child,
+      .goosialize-google-search-pages-table
+      td:first-child {
+        width: auto;
+      }
+
+      .goosialize-google-search-pages-table
+      th:not(:first-child),
+      .goosialize-google-search-pages-table
+      td:not(:first-child) {
+        width: 6rem;
+      }
+
+      .goosialize-google-search-pages-table
+      td:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .goosialize-google-search-pages-table
+      td {
+        padding-top: 0.45rem !important;
+        padding-bottom: 0.45rem !important;
       }
 
       .goosialize-google-search-highlights {
@@ -2699,7 +2866,7 @@
           element('section');
 
         searchInsights.className =
-          'goosialize-google-admin-insight-grid';
+          'goosialize-google-search-insight-layout';
 
         this.appendSearchConsoleInsight(
           searchInsights,
@@ -2730,11 +2897,26 @@
           );
         }
 
+        const searchPages =
+          Array.isArray(
+            this.data.top_pages
+          )
+            ? this.data.top_pages.map(
+                (row) => ({
+                  ...row,
+                  page_display:
+                    formatSearchPage(
+                      row?.page
+                    ),
+                })
+              )
+            : [];
+
         this.appendSearchConsoleTable(
           root,
           'Search pages',
-          this.data.top_pages,
-          [['page', 'Page']],
+          searchPages,
+          [['page_display', 'Page']],
           searchMetrics
         );
       } else {
@@ -2940,7 +3122,9 @@
         highlights.push({
           title: 'Best page',
           value:
-            String(page.page),
+            formatSearchPage(
+              page.page
+            ),
           meta:
             `${formatInteger(
               page.clicks || 0
@@ -2956,7 +3140,9 @@
         highlights.push({
           title: 'Top device',
           value:
-            String(device.device),
+            formatSearchDevice(
+              device.device
+            ),
           meta:
             `${formatInteger(
               device.impressions || 0
@@ -2970,7 +3156,9 @@
         highlights.push({
           title: 'Top country',
           value:
-            String(country.country),
+            formatSearchCountry(
+              country.country
+            ),
           meta:
             `${formatInteger(
               country.impressions || 0
@@ -3080,7 +3268,7 @@
         element('section');
 
       wrapper.className =
-        'goosialize-google-links-chart';
+        'goosialize-google-links-chart goosialize-google-search-chart';
 
       const header =
         element('div');
@@ -5524,10 +5712,18 @@
           .map(
             (row) => ({
               label:
-                String(
-                  row?.[dimensionKey]
-                  || ''
-                ),
+                dimensionKey === 'device'
+                  ? formatSearchDevice(
+                      row?.[dimensionKey]
+                    )
+                  : dimensionKey === 'country'
+                    ? formatSearchCountry(
+                        row?.[dimensionKey]
+                      )
+                    : String(
+                        row?.[dimensionKey]
+                        || ''
+                      ),
               clicks:
                 Number(
                   row?.clicks
@@ -5551,7 +5747,12 @@
               b.impressions
               - a.impressions
           )
-          .slice(0, 8);
+          .slice(
+            0,
+            title === 'Top queries'
+              ? 5
+              : 4
+          );
 
       if (data.length === 0) {
         return;
@@ -5561,7 +5762,13 @@
         element('article');
 
       card.className =
-        'goosialize-google-insight-card';
+        'goosialize-google-insight-card goosialize-google-search-insight-card';
+
+      card.classList.add(
+        title === 'Top queries'
+          ? 'is-query'
+          : 'is-compact'
+      );
 
       const heading =
         element('h3');
@@ -5667,6 +5874,14 @@
 
       section.className =
         'overflow-hidden rounded-lg border border-border bg-card';
+
+      if (
+        title === 'Search pages'
+      ) {
+        section.classList.add(
+          'goosialize-google-search-pages-table'
+        );
+      }
 
       const heading =
         element(
