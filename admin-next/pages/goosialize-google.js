@@ -139,6 +139,23 @@
   }
 
   const GOOGLE_METRIC_HELP = {
+    'Clicks':
+      'Visits from Google Search results to your site.',
+    'Impressions':
+      'How often your pages appeared in Google Search results.',
+    'CTR':
+      'Percentage of impressions that resulted in a click.',
+    'Average position':
+      'Average ranking position of your highest result in Google Search.',
+    'Top queries':
+      'Search terms that generated impressions or clicks for your site.',
+    'Search pages':
+      'Pages appearing most often in Google Search results.',
+    'Search devices':
+      'Devices used by people who saw or clicked your search results.',
+    'Search countries':
+      'Countries where your Google Search impressions and clicks originated.',
+
     'Active users':
       'Unique users who actively engaged with the site during the selected period.',
     'New users':
@@ -2216,6 +2233,13 @@
           root,
           this.data.trend
         );
+      } else if (
+        this.product === 'search_console'
+      ) {
+        this.appendSearchConsoleTrendChart(
+          root,
+          this.data.trend
+        );
       }
 
       const metrics =
@@ -2474,35 +2498,46 @@
           ],
         ];
 
-        this.appendSearchConsoleTable(
-          tables,
+        const searchInsights =
+          element('section');
+
+        searchInsights.className =
+          'goosialize-google-admin-insight-grid';
+
+        this.appendSearchConsoleInsight(
+          searchInsights,
           'Top queries',
           this.data.top_queries,
-          [['query', 'Query']],
-          searchMetrics
+          'query'
         );
 
+        this.appendSearchConsoleInsight(
+          searchInsights,
+          'Search devices',
+          this.data.devices,
+          'device'
+        );
+
+        this.appendSearchConsoleInsight(
+          searchInsights,
+          'Search countries',
+          this.data.countries,
+          'country'
+        );
+
+        if (
+          searchInsights.childElementCount > 0
+        ) {
+          root.append(
+            searchInsights
+          );
+        }
+
         this.appendSearchConsoleTable(
-          tables,
-          'Top pages',
+          root,
+          'Search pages',
           this.data.top_pages,
           [['page', 'Page']],
-          searchMetrics
-        );
-
-        this.appendSearchConsoleTable(
-          tables,
-          'Devices',
-          this.data.devices,
-          [['device', 'Device']],
-          searchMetrics
-        );
-
-        this.appendSearchConsoleTable(
-          tables,
-          'Countries',
-          this.data.countries,
-          [['country', 'Country']],
           searchMetrics
         );
       } else {
@@ -2651,6 +2686,692 @@
       }
 
       this.append(root);
+    }
+
+    appendSearchConsoleTrendChart(
+      root,
+      rows
+    ) {
+      if (
+        !Array.isArray(rows)
+        || rows.length === 0
+      ) {
+        return;
+      }
+
+      const data =
+        rows
+          .map((row) => ({
+            date:
+              String(
+                row?.date
+                || ''
+              ),
+            clicks:
+              Number(
+                row?.clicks
+                || 0
+              ),
+            impressions:
+              Number(
+                row?.impressions
+                || 0
+              ),
+            ctr:
+              Number(
+                row?.ctr
+                || 0
+              ),
+            position:
+              Number(
+                row?.position
+                || 0
+              ),
+          }))
+          .filter(
+            (row) =>
+              row.date !== ''
+          )
+          .sort(
+            (a, b) =>
+              a.date.localeCompare(
+                b.date
+              )
+          );
+
+      if (data.length === 0) {
+        return;
+      }
+
+      const wrapper =
+        element('section');
+
+      wrapper.className =
+        'goosialize-google-links-chart';
+
+      const header =
+        element('div');
+
+      header.className =
+        'goosialize-google-links-chart-header';
+
+      const headingBlock =
+        element('div');
+
+      const heading =
+        element(
+          'h3',
+          'Search performance over time'
+        );
+
+      const period =
+        element(
+          'p',
+          `${formatGaDate(data[0].date)} — ${formatGaDate(data[data.length - 1].date)}`
+        );
+
+      headingBlock.append(
+        heading,
+        period
+      );
+
+      const series = [
+        {
+          key: 'clicks',
+          label: 'Clicks',
+          color: '#8b5cf6',
+          format: formatInteger,
+          enabled: true,
+        },
+        {
+          key: 'impressions',
+          label: 'Impressions',
+          color: '#3b82f6',
+          format: formatInteger,
+          enabled: true,
+        },
+        {
+          key: 'ctr',
+          label: 'CTR',
+          color: '#14b8a6',
+          format: formatPercent,
+          enabled: false,
+        },
+        {
+          key: 'position',
+          label: 'Position',
+          color: '#f59e0b',
+          format:
+            (value) =>
+              formatDecimal(
+                value,
+                1
+              ),
+          enabled: false,
+        },
+      ];
+
+      const active =
+        new Set(
+          series
+            .filter(
+              (item) =>
+                item.enabled
+            )
+            .map(
+              (item) =>
+                item.key
+            )
+        );
+
+      const toggles =
+        element('div');
+
+      toggles.className =
+        'goosialize-google-chart-toggles';
+
+      header.append(
+        headingBlock,
+        toggles
+      );
+
+      const chartShell =
+        element('div');
+
+      chartShell.className =
+        'goosialize-google-links-chart-shell';
+
+      wrapper.append(
+        header,
+        chartShell
+      );
+
+      const renderChart =
+        () => {
+          chartShell.replaceChildren();
+
+          const ns =
+            'http://www.w3.org/2000/svg';
+
+          const svg =
+            document.createElementNS(
+              ns,
+              'svg'
+            );
+
+          const width = 900;
+          const height = 280;
+          const left = 38;
+          const right = 16;
+          const top = 18;
+          const bottom = 34;
+
+          svg.setAttribute(
+            'viewBox',
+            `0 0 ${width} ${height}`
+          );
+
+          svg.setAttribute(
+            'preserveAspectRatio',
+            'xMidYMid meet'
+          );
+
+          svg.style.width =
+            '100%';
+
+          svg.style.height =
+            '100%';
+
+          svg.style.display =
+            'block';
+
+          const plotWidth =
+            width - left - right;
+
+          const plotHeight =
+            height - top - bottom;
+
+          const xFor =
+            (index) =>
+              left
+              + (
+                  data.length === 1
+                    ? plotWidth / 2
+                    : (
+                        plotWidth
+                        * index
+                        / (
+                          data.length - 1
+                        )
+                      )
+                );
+
+          const maxima = {};
+
+          for (const item of series) {
+            maxima[item.key] =
+              Math.max(
+                1,
+                ...data.map(
+                  (row) =>
+                    Number(
+                      row[item.key]
+                      || 0
+                    )
+                )
+              );
+          }
+
+          const yFor =
+            (
+              key,
+              value
+            ) =>
+              top
+              + plotHeight
+              - (
+                  Number(value || 0)
+                  / maxima[key]
+                  * plotHeight
+                );
+
+          for (
+            let tick = 0;
+            tick <= 4;
+            tick += 1
+          ) {
+            const y =
+              top
+              + (
+                  plotHeight
+                  * tick
+                  / 4
+                );
+
+            const line =
+              document.createElementNS(
+                ns,
+                'line'
+              );
+
+            line.setAttribute(
+              'x1',
+              String(left)
+            );
+
+            line.setAttribute(
+              'x2',
+              String(
+                width - right
+              )
+            );
+
+            line.setAttribute(
+              'y1',
+              String(y)
+            );
+
+            line.setAttribute(
+              'y2',
+              String(y)
+            );
+
+            line.setAttribute(
+              'stroke',
+              'currentColor'
+            );
+
+            line.setAttribute(
+              'stroke-opacity',
+              '0.08'
+            );
+
+            line.setAttribute(
+              'stroke-dasharray',
+              '3 3'
+            );
+
+            svg.append(line);
+          }
+
+          const curve =
+            (points) =>
+              points
+                .map(
+                  (
+                    point,
+                    index
+                  ) => {
+                    if (index === 0) {
+                      return (
+                        `M ${point.x},${point.y}`
+                      );
+                    }
+
+                    const previous =
+                      points[index - 1];
+
+                    const control =
+                      (
+                        previous.x
+                        + point.x
+                      ) / 2;
+
+                    return (
+                      `C ${control},${previous.y} ` +
+                      `${control},${point.y} ` +
+                      `${point.x},${point.y}`
+                    );
+                  }
+                )
+                .join(' ');
+
+          for (const item of series) {
+            if (
+              !active.has(
+                item.key
+              )
+            ) {
+              continue;
+            }
+
+            const points =
+              data.map(
+                (
+                  row,
+                  index
+                ) => ({
+                  x:
+                    xFor(index),
+                  y:
+                    yFor(
+                      item.key,
+                      row[item.key]
+                    ),
+                })
+              );
+
+            const path =
+              document.createElementNS(
+                ns,
+                'path'
+              );
+
+            path.setAttribute(
+              'd',
+              curve(points)
+            );
+
+            path.setAttribute(
+              'fill',
+              'none'
+            );
+
+            path.setAttribute(
+              'stroke',
+              item.color
+            );
+
+            path.setAttribute(
+              'stroke-width',
+              '2'
+            );
+
+            path.setAttribute(
+              'vector-effect',
+              'non-scaling-stroke'
+            );
+
+            svg.append(path);
+
+            points.forEach(
+              (point) => {
+                const marker =
+                  document.createElementNS(
+                    ns,
+                    'circle'
+                  );
+
+                marker.setAttribute(
+                  'cx',
+                  String(point.x)
+                );
+
+                marker.setAttribute(
+                  'cy',
+                  String(point.y)
+                );
+
+                marker.setAttribute(
+                  'r',
+                  '4'
+                );
+
+                marker.setAttribute(
+                  'fill',
+                  item.color
+                );
+
+                marker.setAttribute(
+                  'stroke',
+                  item.color
+                );
+
+                marker.setAttribute(
+                  'stroke-width',
+                  '1.5'
+                );
+
+                svg.append(marker);
+              }
+            );
+          }
+
+          const tooltip =
+            element('div');
+
+          tooltip.className =
+            'goosialize-google-chart-tooltip';
+
+          data.forEach(
+            (
+              row,
+              index
+            ) => {
+              const x =
+                xFor(index);
+
+              const hit =
+                document.createElementNS(
+                  ns,
+                  'rect'
+                );
+
+              const previousX =
+                index === 0
+                  ? left
+                  : (
+                      xFor(index - 1)
+                      + x
+                    ) / 2;
+
+              const nextX =
+                index ===
+                  data.length - 1
+                  ? width - right
+                  : (
+                      x
+                      + xFor(index + 1)
+                    ) / 2;
+
+              hit.setAttribute(
+                'x',
+                String(previousX)
+              );
+
+              hit.setAttribute(
+                'y',
+                String(top)
+              );
+
+              hit.setAttribute(
+                'width',
+                String(
+                  Math.max(
+                    1,
+                    nextX - previousX
+                  )
+                )
+              );
+
+              hit.setAttribute(
+                'height',
+                String(plotHeight)
+              );
+
+              hit.setAttribute(
+                'fill',
+                'transparent'
+              );
+
+              hit.style.cursor =
+                'crosshair';
+
+              hit.addEventListener(
+                'mouseenter',
+                () => {
+                  tooltip.replaceChildren();
+
+                  tooltip.append(
+                    element(
+                      'strong',
+                      formatGaDate(
+                        row.date
+                      )
+                    )
+                  );
+
+                  for (
+                    const item
+                    of series
+                  ) {
+                    if (
+                      !active.has(
+                        item.key
+                      )
+                    ) {
+                      continue;
+                    }
+
+                    const line =
+                      element('div');
+
+                    const label =
+                      element(
+                        'span',
+                        item.label
+                      );
+
+                    label.style.color =
+                      item.color;
+
+                    line.append(
+                      label,
+                      element(
+                        'b',
+                        item.format(
+                          row[item.key]
+                        )
+                      )
+                    );
+
+                    tooltip.append(line);
+                  }
+
+                  tooltip.style.display =
+                    'block';
+
+                  tooltip.style.left =
+                    `${Math.min(
+                      80,
+                      Math.max(
+                        6,
+                        x / width * 100
+                      )
+                    )}%`;
+
+                  tooltip.style.top =
+                    '1rem';
+                }
+              );
+
+              hit.addEventListener(
+                'mouseleave',
+                () => {
+                  tooltip.style.display =
+                    'none';
+                }
+              );
+
+              svg.append(hit);
+            }
+          );
+
+          chartShell.append(
+            svg,
+            tooltip
+          );
+        };
+
+      const updateToggle =
+        (
+          button,
+          item
+        ) => {
+          const enabled =
+            active.has(
+              item.key
+            );
+
+          button.setAttribute(
+            'aria-pressed',
+            enabled
+              ? 'true'
+              : 'false'
+          );
+
+          button.style.opacity =
+            enabled
+              ? '1'
+              : '0.42';
+
+          button.style.borderColor =
+            enabled
+              ? item.color
+              : 'var(--border)';
+
+          button.style.color =
+            enabled
+              ? item.color
+              : 'var(--muted-foreground)';
+        };
+
+      for (const item of series) {
+        const button =
+          element(
+            'button',
+            item.label
+          );
+
+        button.type =
+          'button';
+
+        button.className =
+          'goosialize-google-chart-toggle';
+
+        updateToggle(
+          button,
+          item
+        );
+
+        button.addEventListener(
+          'click',
+          () => {
+            if (
+              active.has(
+                item.key
+              )
+            ) {
+              if (
+                active.size === 1
+              ) {
+                return;
+              }
+
+              active.delete(
+                item.key
+              );
+            } else {
+              active.add(
+                item.key
+              );
+            }
+
+            updateToggle(
+              button,
+              item
+            );
+
+            renderChart();
+          }
+        );
+
+        toggles.append(button);
+      }
+
+      renderChart();
+
+      root.append(wrapper);
     }
 
     appendAnalyticsTrendChart(
@@ -4450,6 +5171,148 @@
       scroll.append(table);
       section.append(scroll);
       root.append(section);
+    }
+
+    appendSearchConsoleInsight(
+      root,
+      title,
+      rows,
+      dimensionKey
+    ) {
+      if (
+        !Array.isArray(rows)
+        || rows.length === 0
+      ) {
+        return;
+      }
+
+      const data =
+        rows
+          .map(
+            (row) => ({
+              label:
+                String(
+                  row?.[dimensionKey]
+                  || ''
+                ),
+              clicks:
+                Number(
+                  row?.clicks
+                  || 0
+                ),
+              impressions:
+                Number(
+                  row?.impressions
+                  || 0
+                ),
+            })
+          )
+          .filter(
+            (item) =>
+              item.label !== ''
+              && item.label
+                !== '(not set)'
+          )
+          .sort(
+            (a, b) =>
+              b.impressions
+              - a.impressions
+          )
+          .slice(0, 8);
+
+      if (data.length === 0) {
+        return;
+      }
+
+      const card =
+        element('article');
+
+      card.className =
+        'goosialize-google-insight-card';
+
+      const heading =
+        element('h3');
+
+      heading.append(
+        googleInfoIcon(
+          googleMetricHelp(title),
+          `${title} information`
+        ),
+        document.createTextNode(
+          title
+        )
+      );
+
+      const max =
+        Math.max(
+          1,
+          ...data.map(
+            (item) =>
+              item.impressions
+          )
+        );
+
+      for (const item of data) {
+        const row =
+          element('div');
+
+        row.className =
+          'goosialize-google-insight-row';
+
+        const top =
+          element('div');
+
+        top.className =
+          'goosialize-google-insight-row-top';
+
+        top.append(
+          element(
+            'span',
+            item.label
+          ),
+          element(
+            'strong',
+            formatInteger(
+              item.impressions
+            )
+          )
+        );
+
+        const track =
+          element('div');
+
+        track.className =
+          'goosialize-google-insight-track';
+
+        const fill =
+          element('span');
+
+        fill.style.width =
+          `${
+            item.impressions
+            / max
+            * 100
+          }%`;
+
+        track.append(fill);
+
+        row.append(
+          top,
+          track,
+          element(
+            'small',
+            `${formatInteger(
+              item.clicks
+            )} clicks · ${formatInteger(
+              item.impressions
+            )} impressions`
+          )
+        );
+
+        card.append(row);
+      }
+
+      root.append(card);
     }
 
     appendSearchConsoleTable(

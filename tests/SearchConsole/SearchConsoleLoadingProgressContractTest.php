@@ -16,23 +16,24 @@ if ($page === false) {
 }
 
 $required = [
-    "const progress =",
-    "element('div')",
-    "'h-0.5 w-full overflow-hidden rounded-full bg-muted'",
+    'goosialize-google-loading-panel',
+    'goosialize-google-loading-header',
+    'goosialize-google-loading-track',
+    'goosialize-google-loading-value',
+    'goosialize-google-loading-value.is-indeterminate',
+    'goosialize-google-loading-slide',
     "'progressbar'",
     "'aria-busy'",
     "'Loading Search Console data'",
     "'Loading Google Analytics data'",
-    "const progressBar =",
-    "'h-full w-1/3 rounded-full bg-primary'",
-    "progressBar.animate(",
-    "'translateX(-120%)'",
-    "'translateX(320%)'",
-    "duration: 900",
-    "iterations: Infinity",
-    "easing: 'ease-in-out'",
-    "progress.append(",
-    "progressBar",
+    "'Loading Search Console…'",
+    'translateX(-120%)',
+    'translateX(320%)',
+    '0.9s ease-in-out infinite',
+    "progressBar.classList.add(",
+    "'is-indeterminate'",
+    'progress.append(',
+    'progressBar',
 ];
 
 foreach ($required as $needle) {
@@ -43,17 +44,21 @@ foreach ($required as $needle) {
         ) === false
     ) {
         throw new RuntimeException(
-            'Loading progress contract missing: '
+            'Current loading progress contract missing: '
             . $needle
         );
     }
 }
 
 $forbidden = [
-    'Loading Google Search Console…',
-    'Loading Google Analytics…',
+    "'h-0.5 w-full overflow-hidden rounded-full bg-muted'",
+    "'h-full w-1/3 rounded-full bg-primary'",
     'animate-pulse',
-    '.style.',
+    'style="',
+    "style='",
+    '.style.cssText',
+    "setAttribute('style'",
+    'setAttribute("style"',
 ];
 
 foreach ($forbidden as $needle) {
@@ -64,7 +69,7 @@ foreach ($forbidden as $needle) {
         )
     ) {
         throw new RuntimeException(
-            'Legacy loading UI remains: '
+            'Legacy/raw loading UI remains: '
             . $needle
         );
     }

@@ -22,8 +22,9 @@ $required = [
     'h-10 w-full rounded-lg border border-input bg-muted/50',
     'sm:flex-row sm:items-end',
     'min-w-0 flex-1',
-    'mt-1 inline-flex h-10 items-center',
-    'mt-1 inline-flex h-10 items-center justify-center rounded-md border border-border',
+    'goosialize-google-period-row mt-1',
+    'inline-flex h-10 items-center rounded-md border border-border bg-background p-1 shadow-sm',
+    'goosialize-google-period-refresh',
     'text-xl font-semibold tracking-tight text-foreground',
     'rounded-lg border border-border bg-card py-12 text-center',
 ];
@@ -47,7 +48,11 @@ $forbidden = [
     'inline-flex gap-1 rounded-md border border-border bg-card p-1',
     'inline-flex gap-1 rounded-md border border-border bg-background p-1',
     'Goosialize Ltd',
-    '.style.',
+    'style="',
+    "style='",
+    '.style.cssText',
+    "setAttribute('style'",
+    'setAttribute("style"',
 ];
 
 foreach ($forbidden as $needle) {

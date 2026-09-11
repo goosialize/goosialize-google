@@ -54,6 +54,18 @@ final readonly class SearchConsoleDashboardService
                 )
             );
 
+        $trend =
+            $this->reporting->execute(
+                $property,
+                new SearchConsoleQuery(
+                    $range,
+                    [
+                        SearchConsoleDimension::Date,
+                    ],
+                    100
+                )
+            );
+
         $topQueries =
             $this->reporting->execute(
                 $property,
@@ -153,6 +165,12 @@ final readonly class SearchConsoleDashboardService
 
             'overview' =>
                 $metrics,
+
+            'trend' =>
+                $this->rows(
+                    $trend->rows,
+                    'date'
+                ),
 
             'top_queries' =>
                 $this->rows(

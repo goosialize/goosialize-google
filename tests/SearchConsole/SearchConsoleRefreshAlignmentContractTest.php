@@ -16,12 +16,17 @@ if ($page === false) {
 }
 
 $required = [
-    "const refreshGroup",
-    "const refreshSpacer",
-    "'invisible text-xs font-medium text-muted-foreground'",
-    "'mt-1 inline-flex h-10 items-center justify-center rounded-md border border-border",
-    "refreshGroup.append(",
-    "propertyGroup,\n        periodGroup,\n        refreshGroup",
+    "'goosialize-google-period-row mt-1'",
+    "'goosialize-google-period-refresh'",
+    'goosialize-google-period-row',
+    'goosialize-google-period-refresh',
+    'align-items: center',
+    'align-self: center',
+    'width: 2.35rem',
+    'height: 2.35rem',
+    "periodRow.append(\n        periodControls,\n        refreshButton",
+    "periodGroup.replaceChildren(\n        periodLabel,\n        periodRow",
+    "toolbar.append(\n        propertyGroup,\n        periodGroup",
 ];
 
 foreach ($required as $needle) {
@@ -33,6 +38,27 @@ foreach ($required as $needle) {
     ) {
         throw new RuntimeException(
             'Refresh alignment contract missing: '
+            . $needle
+        );
+    }
+}
+
+$forbidden = [
+    'const refreshGroup',
+    'const refreshSpacer',
+    'refreshGroup.append(',
+    "'mt-1 inline-flex h-10 items-center justify-center rounded-md border border-border'",
+];
+
+foreach ($forbidden as $needle) {
+    if (
+        str_contains(
+            $page,
+            $needle
+        )
+    ) {
+        throw new RuntimeException(
+            'Legacy refresh alignment remains: '
             . $needle
         );
     }

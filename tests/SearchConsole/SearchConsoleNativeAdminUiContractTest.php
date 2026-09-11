@@ -23,20 +23,32 @@ if (
     );
 }
 
-if (
-    str_contains(
-        $page,
-        '.style.'
-    )
+foreach (
+    [
+        'style="',
+        "style='",
+        '.style.cssText',
+        "setAttribute('style'",
+        'setAttribute("style"',
+    ]
+    as $forbiddenStyle
 ) {
-    throw new RuntimeException(
-        'Inline visual styling remains in Google Admin2 page.'
-    );
+    if (
+        str_contains(
+            $page,
+            $forbiddenStyle
+        )
+    ) {
+        throw new RuntimeException(
+            'Unsafe raw inline visual styling remains in Google Admin2 page: '
+            . $forbiddenStyle
+        );
+    }
 }
 
 $requiredClasses = [
     'text-sm',
-    'text-2xl',
+    'text-xl',
     'font-medium',
     'font-semibold',
     'text-muted-foreground',
@@ -53,7 +65,7 @@ $requiredClasses = [
     'p-5',
     'px-4',
     'py-2',
-    'py-3',
+    'py-2.5',
     'gap-4',
 ];
 

@@ -24,17 +24,26 @@ if (
 }
 
 $required = [
-    "'Refresh'",
-    "'Refreshing…'",
-    "'Refresh Search Console data'",
-    "'Refresh Google Analytics data'",
+    "'goosialize-google-refresh-button'",
+    "'goosialize-google-refresh-icon'",
+    "'aria-label'",
+    "'Refresh data'",
+    "'Refreshing data'",
+    "'Refreshing data…'",
     "refreshButton.addEventListener(",
     "'click'",
     'this.loadDashboard();',
+    "refreshButton.classList.add(",
+    "'is-loading'",
+    'goosialize-google-refresh-rotate',
+    'goosialize-google-refresh-pulse',
 ];
 
 foreach ($required as $needle) {
-    if (!str_contains($page, $needle)) {
+    if (!str_contains(
+        $page,
+        $needle
+    )) {
         throw new RuntimeException(
             'Refresh UI contract missing: '
             . $needle
@@ -42,15 +51,23 @@ foreach ($required as $needle) {
     }
 }
 
-if (
-    str_contains(
-        $page,
-        'grav:plugin-page-action'
-    )
-) {
-    throw new RuntimeException(
-        'Unsupported plugin-page action event remains.'
-    );
+$forbidden = [
+    "element(\n          'button',\n          this.loading\n            ? 'Refreshing…'\n            : 'Refresh'",
+    'grav:plugin-page-action',
+];
+
+foreach ($forbidden as $needle) {
+    if (
+        str_contains(
+            $page,
+            $needle
+        )
+    ) {
+        throw new RuntimeException(
+            'Legacy refresh UI remains: '
+            . $needle
+        );
+    }
 }
 
 if (
