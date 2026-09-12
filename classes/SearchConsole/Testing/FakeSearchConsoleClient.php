@@ -18,6 +18,7 @@ final class FakeSearchConsoleClient implements SearchConsoleClientInterface
     public function __construct(
         private array $sites = [],
         private array $response = [],
+        private array $sitemaps = [],
     ) {
     }
 
@@ -37,6 +38,12 @@ final class FakeSearchConsoleClient implements SearchConsoleClientInterface
      *
      * @return array<string, mixed>
      */
+    public function listSitemaps(
+        string $siteUrl
+    ): array {
+        return $this->sitemaps;
+    }
+
     public function query(
         string $siteUrl,
         array $request

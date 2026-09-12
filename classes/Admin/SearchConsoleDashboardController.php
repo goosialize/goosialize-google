@@ -17,6 +17,8 @@ use Goosialize\Google\SearchConsole\Dashboard\SearchConsoleDashboardService;
 use Goosialize\Google\SearchConsole\Dashboard\SearchConsolePropertyDirectory;
 use Goosialize\Google\SearchConsole\Reporting\SearchConsoleReportingService;
 use Goosialize\Google\SearchConsole\Reporting\SearchConsoleResponseNormalizer;
+use Goosialize\Google\SearchConsole\Sitemap\CanonicalSitemapStatusService;
+use GuzzleHttp\Client;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -92,6 +94,102 @@ final class SearchConsoleDashboardController
             return $this->mappedFailure(
                 $e,
                 'properties_unavailable'
+            );
+        }
+    }
+
+    public function sitemap(
+        ServerRequestInterface $request
+    ): ResponseInterface {
+        $user =
+            $request->getAttribute(
+                'api_user'
+            );
+
+        if (!is_object($user)) {
+            return $this->failure(
+                401,
+                'authentication_required',
+                'Authentication required.'
+            );
+        }
+
+        if (!$this->authorized($request, $user)) {
+            return $this->failure(
+                403,
+                'forbidden',
+                'Google Search Console access is forbidden.'
+            );
+        }
+
+        if (!$this->enabled()) {
+            return $this->failure(
+                404,
+                'search_console_disabled',
+                'Google Search Console is disabled.'
+            );
+        }
+
+        $query =
+            $request->getQueryParams();
+
+        $siteUrl =
+            $query['site_url']
+            ?? $this->config->get(
+                'plugins.goosialize-google.search_console.default_property'
+            );
+
+        if (
+            !is_string($siteUrl)
+            || trim($siteUrl) === ''
+        ) {
+            return $this->failure(
+                400,
+                'property_required',
+                'A Search Console property is required.'
+            );
+        }
+
+        try {
+            $client =
+                (
+                    new GoogleSearchConsoleClientFactory(
+                        (
+                            new SearchConsoleCredentialProviderFactory()
+                        )->create()
+                    )
+                )->create(
+                    $this->credentialReference()
+                );
+
+            $service =
+                new CanonicalSitemapStatusService(
+                    $client,
+                    new Client([
+                        'timeout' => 10.0,
+                        'http_errors' => false,
+                    ])
+                );
+
+            return $this->response(
+                200,
+                $service->status(
+                    trim($siteUrl),
+                    $this->canonicalSitemapUrl(
+                        $request
+                    )
+                )
+            );
+        } catch (InvalidArgumentException $e) {
+            return $this->failure(
+                400,
+                'request_invalid',
+                'Search Console sitemap request is invalid.'
+            );
+        } catch (Throwable $e) {
+            return $this->mappedFailure(
+                $e,
+                'sitemap_unavailable'
             );
         }
     }
@@ -225,6 +323,124 @@ final class SearchConsoleDashboardController
                 'search_console_unavailable'
             );
         }
+    }
+
+    private function canonicalSitemapUrl(
+        ServerRequestInterface $request
+    ): string {
+        $route =
+            $this->config->get(
+                'plugins.goosialize-seo.sitemap.route',
+                '/sitemap.xml'
+            );
+
+        if (
+            !is_string($route)
+            || trim($route) === ''
+        ) {
+            $route =
+                '/sitemap.xml';
+        }
+
+        $route =
+            '/'
+            . trim(
+                $route,
+                '/'
+            );
+
+        $configuredBase =
+            $this->config->get(
+                'plugins.goosialize-seo.canonical.base_url',
+                ''
+            );
+
+        if (
+            is_string($configuredBase)
+            && trim($configuredBase) !== ''
+        ) {
+            return rtrim(
+                trim($configuredBase),
+                '/'
+            )
+            . $route;
+        }
+
+        $uri =
+            $request->getUri();
+
+        $host =
+            trim(
+                $request
+                    ->getHeaderLine(
+                        'Host'
+                    )
+            );
+
+        if ($host === '') {
+            $host =
+                trim(
+                    $uri->getAuthority()
+                );
+        }
+
+        if ($host === '') {
+            throw new RuntimeException(
+                'Canonical sitemap host is unavailable.'
+            );
+        }
+
+        $forwardedProto =
+            strtolower(
+                trim(
+                    $request
+                        ->getHeaderLine(
+                            'X-Forwarded-Proto'
+                        )
+                )
+            );
+
+        if (
+            str_contains(
+                $forwardedProto,
+                ','
+            )
+        ) {
+            $forwardedProto =
+                trim(
+                    explode(
+                        ',',
+                        $forwardedProto,
+                        2
+                    )[0]
+                );
+        }
+
+        $scheme =
+            in_array(
+                $forwardedProto,
+                ['http', 'https'],
+                true
+            )
+                ? $forwardedProto
+                : strtolower(
+                    trim(
+                        $uri->getScheme()
+                    )
+                );
+
+        if (
+            $scheme !== 'http'
+            && $scheme !== 'https'
+        ) {
+            $scheme =
+                'https';
+        }
+
+        return $scheme
+            . '://'
+            . $host
+            . $route;
     }
 
     private function reporting():

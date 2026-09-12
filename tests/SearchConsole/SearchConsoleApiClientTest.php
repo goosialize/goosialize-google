@@ -85,6 +85,31 @@ $http =
                 'options' => $options,
             ];
 
+            if (
+                $method === 'GET'
+                && str_ends_with(
+                    $uri,
+                    '/sitemaps'
+                )
+            ) {
+                return new Response(
+                    200,
+                    ['Content-Type' => 'application/json'],
+                    json_encode([
+                        'sitemap' => [
+                            [
+                                'path' =>
+                                    'https://example.com/sitemap.xml',
+                                'warnings' =>
+                                    '0',
+                                'errors' =>
+                                    '0',
+                            ],
+                        ],
+                    ], JSON_THROW_ON_ERROR)
+                );
+            }
+
             if ($method === 'GET') {
                 return new Response(
                     200,
@@ -150,6 +175,40 @@ $assert(
     'Permission normalization failed.'
 );
 
+$sitemaps =
+    $client->listSitemaps(
+        'sc-domain:example.com'
+    );
+
+$assert(
+    isset(
+        $sitemaps['sitemap'][0]['path']
+    )
+    && $sitemaps['sitemap'][0]['path']
+        === 'https://example.com/sitemap.xml',
+    'Search Console sitemap listing failed.'
+);
+
+$lastRequest =
+    $http->requests[
+        array_key_last(
+            $http->requests
+        )
+    ];
+
+$assert(
+    $lastRequest['method'] === 'GET',
+    'Search Console sitemap method failed.'
+);
+
+$assert(
+    str_ends_with(
+        $lastRequest['uri'],
+        '/sites/sc-domain%3Aexample.com/sitemaps'
+    ),
+    'Search Console sitemap endpoint failed.'
+);
+
 $result = $client->query(
     'sc-domain:example.com',
     [
@@ -168,7 +227,7 @@ $assert(
 );
 
 $assert(
-    count($http->requests) === 2,
+    count($http->requests) === 3,
     'Unexpected request count.'
 );
 
@@ -185,13 +244,13 @@ $assert(
 );
 
 $assert(
-    $http->requests[1]['method']
+    $http->requests[2]['method']
         === 'POST',
     'Search Analytics request must use POST.'
 );
 
 $assert(
-    $http->requests[1]['uri']
+    $http->requests[2]['uri']
         === 'https://www.googleapis.com/webmasters/v3/sites/'
         . 'sc-domain%3Aexample.com'
         . '/searchAnalytics/query',
@@ -199,7 +258,7 @@ $assert(
 );
 
 $headers =
-    $http->requests[1]['options']['headers']
+    $http->requests[2]['options']['headers']
     ?? [];
 
 $assert(
@@ -209,7 +268,7 @@ $assert(
 );
 
 $body =
-    $http->requests[1]['options']['body']
+    $http->requests[2]['options']['body']
     ?? '';
 
 $payload = json_decode(

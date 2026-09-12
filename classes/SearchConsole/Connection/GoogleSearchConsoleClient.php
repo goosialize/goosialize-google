@@ -67,6 +67,26 @@ final class GoogleSearchConsoleClient
         return $sites;
     }
 
+    public function listSitemaps(
+        string $siteUrl
+    ): array {
+        $siteUrl = trim($siteUrl);
+
+        if ($siteUrl === '') {
+            throw new SearchConsoleApiException(
+                'Search Console site URL cannot be empty.'
+            );
+        }
+
+        return $this->request(
+            'GET',
+            self::API_BASE
+                . '/sites/'
+                . rawurlencode($siteUrl)
+                . '/sitemaps'
+        );
+    }
+
     public function query(
         string $siteUrl,
         array $request

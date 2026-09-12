@@ -324,6 +324,14 @@ final class GoosializeGooglePlugin extends Plugin
                 'performance',
             ]
         );
+
+        $routes->get(
+            '/goosialize-google/search-console/sitemap',
+            [
+                SearchConsoleDashboardController::class,
+                'sitemap',
+            ]
+        );
     }
 
     public function onApiSidebarItems(

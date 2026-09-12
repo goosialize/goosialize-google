@@ -15,6 +15,13 @@ interface SearchConsoleClientInterface
     public function listSites(): array;
 
     /**
+     * @return array<string,mixed>
+     */
+    public function listSitemaps(
+        string $siteUrl
+    ): array;
+
+    /**
      * @param array<string, mixed> $request
      *
      * @return array<string, mixed>
