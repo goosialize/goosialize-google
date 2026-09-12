@@ -1,6 +1,14 @@
 # Changelog
 
 
+
+## 0.3.1
+
+- Enforce configured GA4 property as the site scope for property discovery and reporting.
+- Enforce configured Search Console property as the site scope for discovery, performance, and sitemap status.
+- Reject requests for properties outside the configured site scope with `403 property_scope_forbidden`.
+- Preserve multi-property discovery when no default property is configured.
+
 ## 0.3.0
 
 - Added Google Search Console sitemap status integration.

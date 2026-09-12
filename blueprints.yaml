@@ -1,7 +1,7 @@
 name: Goosialize Google — Tools & Integrations
 slug: goosialize-google
 type: plugin
-version: 0.3.0
+version: 0.3.1
 description: Google Analytics 4 and Google Search Console integrations for Grav CMS.
 icon: google
 
