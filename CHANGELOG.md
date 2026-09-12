@@ -1,5 +1,16 @@
 # Changelog
 
+
+## 0.3.0
+
+- Added Google Search Console sitemap status integration.
+- Added canonical sitemap consumption from Goosialize SEO.
+- Added Search Console `sitemaps.list` support using the existing read-only scope.
+- Added GA4 advanced tracking controls and runtime integration.
+- Added production canonical/sitemap compatibility for multilingual sites.
+- Hardened credential handling, API failure mapping, and release/runtime contracts.
+- Preserved read-only Google Search Console behavior; sitemap submit/delete is not exposed.
+
 ## [Unreleased]
 
 ## [0.2.1] - 2026-08-18
