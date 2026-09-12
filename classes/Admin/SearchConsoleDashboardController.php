@@ -82,13 +82,31 @@ final class SearchConsoleDashboardController
         }
 
         try {
-            return $this->response(
-                200,
+            $payload =
                 (
                     new SearchConsolePropertyDirectory(
                         $this->reporting()
                     )
-                )->payload()
+                )->payload();
+
+            $scopedProperty =
+                $this->configuredPropertyScope();
+
+            if ($scopedProperty !== null) {
+                $payload['data'] =
+                    array_values(
+                        array_filter(
+                            $payload['data'],
+                            static fn (array $property): bool =>
+                                ($property['site_url'] ?? null)
+                                === $scopedProperty
+                        )
+                    );
+            }
+
+            return $this->response(
+                200,
+                $payload
             );
         } catch (Throwable $e) {
             return $this->mappedFailure(
@@ -150,6 +168,23 @@ final class SearchConsoleDashboardController
             );
         }
 
+        $siteUrl =
+            trim($siteUrl);
+
+        $scopedProperty =
+            $this->configuredPropertyScope();
+
+        if (
+            $scopedProperty !== null
+            && $siteUrl !== $scopedProperty
+        ) {
+            return $this->failure(
+                403,
+                'property_scope_forbidden',
+                'Requested Search Console property is outside this site scope.'
+            );
+        }
+
         try {
             $client =
                 (
@@ -174,7 +209,7 @@ final class SearchConsoleDashboardController
             return $this->response(
                 200,
                 $service->status(
-                    trim($siteUrl),
+                    $siteUrl,
                     $this->canonicalSitemapUrl(
                         $request
                     )
@@ -246,6 +281,23 @@ final class SearchConsoleDashboardController
             );
         }
 
+        $siteUrl =
+            trim($siteUrl);
+
+        $scopedProperty =
+            $this->configuredPropertyScope();
+
+        if (
+            $scopedProperty !== null
+            && $siteUrl !== $scopedProperty
+        ) {
+            return $this->failure(
+                403,
+                'property_scope_forbidden',
+                'Requested Search Console property is outside this site scope.'
+            );
+        }
+
         $package =
             $query['package']
             ?? null;
@@ -296,13 +348,13 @@ final class SearchConsoleDashboardController
                 is_string($package)
                 && trim($package) !== ''
                     ? $dashboard->package(
-                        trim($siteUrl),
+                        $siteUrl,
                         $period,
                         new DateTimeImmutable('today'),
                         trim($package)
                     )
                     : $dashboard->dashboard(
-                        trim($siteUrl),
+                        $siteUrl,
                         $period,
                         new DateTimeImmutable('today')
                     );
@@ -323,6 +375,25 @@ final class SearchConsoleDashboardController
                 'search_console_unavailable'
             );
         }
+    }
+
+    private function configuredPropertyScope(): ?string
+    {
+        $configured =
+            $this->config->get(
+                'plugins.goosialize-google.search_console.default_property'
+            );
+
+        if (!is_string($configured)) {
+            return null;
+        }
+
+        $configured =
+            trim($configured);
+
+        return $configured !== ''
+            ? $configured
+            : null;
     }
 
     private function canonicalSitemapUrl(
