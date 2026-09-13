@@ -1,52 +1,128 @@
-# Goosialize Google — Tools & Integrations — Installation
+# Installation
 
-Requirements:
+## Requirements
 
-- Grav 2
+- Grav CMS 2
 - Admin2
-- API plugin
+- Grav API plugin
 - PHP 8.1+
+- BCMath
 - PDO SQLite
 - cURL
 - OpenSSL
 - JSON
 
-Install the release under:
-
-user/plugins/goosialize-google/
-
 Official release ZIPs include production Composer dependencies.
 
-Persistent storage is created automatically at:
+## Install
 
-user/data/goosialize-google/google.sqlite
+Extract the plugin to:
 
-Storage is initialized by the web/API runtime, not CLI, to avoid SQLite
-ownership conflicts.
+    user/plugins/goosialize-google/
 
-Google service-account credentials must stay outside Git, SQLite and the
-release ZIP.
+The blueprint must exist at:
 
-Configure only the absolute credential path:
+    user/plugins/goosialize-google/blueprints.yaml
 
-authentication:
-  service_account_file: '/absolute/path/service-account.json'
+Enable the plugin through Admin2.
 
-Required Google APIs:
+## Persistent storage
+
+Persistent data is created under:
+
+    user/data/goosialize-google/
+
+Default database:
+
+    user/data/goosialize-google/google.sqlite
+
+Do not store persistent data inside the plugin directory.
+
+## Credential
+
+Store the Google service-account JSON outside Git and preferably outside the webroot.
+
+Example:
+
+    /home/example/var/goosialize-google/service-account.json
+
+Recommended permissions:
+
+- credential directory: 700
+- credential JSON: 600
+
+Configure only the absolute path:
+
+    authentication:
+      service_account_file: '/home/example/var/goosialize-google/service-account.json'
+
+Never paste the private key into Grav configuration.
+
+## Required Google APIs
+
+Enable:
 
 - Google Analytics Data API
 - Google Analytics Admin API
+- Google Search Console API
 
-Admin2 permission:
+## GA4 property
 
-api.goosialize_google.analytics.read
+Give the service-account email Viewer access to the required GA4 property.
 
-The plugin does not require api.gpm.read.
+Configure:
 
-Developers working from source must run:
+    analytics:
+      enabled: true
+      default_property: '123456789'
 
-composer install --no-dev --prefer-dist --classmap-authoritative
+The default property becomes the strict GA4 site scope.
 
-If PHP classes are added later, rebuild the authoritative autoloader:
+## Search Console property
 
-composer dump-autoload --no-dev --classmap-authoritative
+Add the service-account email to the required Search Console property.
+
+Domain example:
+
+    search_console:
+      enabled: true
+      default_property: 'sc-domain:example.com'
+
+URL-prefix example:
+
+    search_console:
+      enabled: true
+      default_property: 'https://www.example.com/'
+
+The default property becomes the strict Search Console site scope.
+
+## Tracking
+
+Example:
+
+    tracking:
+      enabled: true
+      measurement_id: 'G-XXXXXXXXXX'
+      send_page_view: true
+      allow_google_signals: false
+      allow_ad_personalization_signals: false
+      debug_mode: false
+
+## Consent
+
+For consent-gated tracking, install Goosialize Cookies and keep:
+
+    consent:
+      consumer_enabled: true
+
+See tracking-consent.md.
+
+## Permissions
+
+Analytics:
+
+    api.goosialize_google.analytics.read
+
+Search Console:
+
+    api.goosialize_google.search_console.read
