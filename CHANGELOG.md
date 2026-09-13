@@ -2,6 +2,19 @@
 
 
 
+
+## 0.3.2
+
+### Documentation
+
+- Completed production installation documentation.
+- Added Google Cloud and service-account setup guidance.
+- Added GA4 reporting and strict site-scope documentation.
+- Added Search Console reporting and sitemap-status documentation.
+- Added GA4 tracking and Goosialize Cookies consent guidance.
+- Added security, privacy, upgrade and troubleshooting guides.
+- Updated README to match the production feature set.
+
 ## 0.3.1
 
 - Enforce configured GA4 property as the site scope for property discovery and reporting.
