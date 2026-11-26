@@ -650,22 +650,7 @@ final class SearchConsoleDashboardController
         object $user,
         string $permission
     ): bool {
-        if (
-            method_exists($user, 'get')
-            && $user->get(
-                'access.' . $permission
-            ) === true
-        ) {
-            return true;
-        }
-
-        return method_exists(
-            $user,
-            'authorize'
-        )
-            && $user->authorize(
-                $permission
-            ) === true;
+        return ReportingAuthorization::hasPermission($user, $permission);
     }
 
     private function mappedFailure(
