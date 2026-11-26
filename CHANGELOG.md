@@ -3,6 +3,13 @@
 
 
 
+## 0.3.3
+
+- Resolve Admin2 reporting permissions through Grav API's group-aware permission resolver.
+- Respect explicit account denials, disabled groups, and exact Super Admin grants.
+- Keep Analytics and Search Console read-only and preserve API-key scope and property restrictions.
+- Require Grav API 1.1.26 or newer.
+
 ## 0.3.2
 
 ### Documentation
