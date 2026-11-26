@@ -48,7 +48,13 @@ foreach ($required as $needle) {
 }
 
 $forbidden = [
-    '.style.',
+    // Keep raw inline CSS prohibited throughout the component, in line with
+    // the native Admin2 composition and loading progress contracts.
+    'style="',
+    "style='",
+    '.style.cssText',
+    "setAttribute('style'",
+    'setAttribute("style"',
     'Goosialize Ltd',
     'grav:plugin-page-action',
     'const refreshGroup',
@@ -67,6 +73,31 @@ foreach ($forbidden as $needle) {
             'Unsupported/legacy integration remains: '
             . $needle
         );
+    }
+}
+
+// Native navigation and report controls must remain class-based. Scope
+// the stronger DOM style restriction to this integration boundary; the
+// existing chart renderer and metric cards still use property-level styles.
+$startMarker = 'const productNav =';
+$endMarker = 'root.append(toolbar);';
+if (substr_count($page, $startMarker) !== 1 || substr_count($page, $endMarker) !== 1) {
+    throw new RuntimeException('Admin2 navigation/toolbar boundaries are ambiguous.');
+}
+$start = strpos($page, $startMarker);
+$end = strpos($page, $endMarker);
+if ($start === false || $end === false || $end <= $start) {
+    throw new RuntimeException('Admin2 navigation/toolbar boundary is missing.');
+}
+$toolbar = substr($page, $start, $end - $start + strlen($endMarker));
+foreach (['.style.', '.style[', '.style ='] as $inlineStyle) {
+    if (str_contains($toolbar, $inlineStyle)) {
+        throw new RuntimeException('Native Admin2 navigation/toolbar contains direct inline styling.');
+    }
+}
+foreach (['root.append(productNav);', 'periodRow.append(', 'periodGroup.replaceChildren(', 'root.append(toolbar);'] as $needle) {
+    if (!str_contains($toolbar, $needle)) {
+        throw new RuntimeException('Native Admin2 toolbar composition missing: ' . $needle);
     }
 }
 
