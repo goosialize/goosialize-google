@@ -54,11 +54,26 @@ if (
 foreach (
     [
         'appendAnalyticsTrendChart',
-        'Analytics trend',
-        'xl:col-span-2',
-        '#a855f7',
+        'Visitors over time',
+        'goosialize-google-links-chart',
+        'goosialize-google-links-chart-shell',
+        'goosialize-google-chart-toggles',
+        "row?.dimensions?.date",
+        "row?.metrics?.screenPageViews",
+        "row?.metrics?.sessions",
+        "row?.metrics?.eventCount",
+        "row?.metrics?.engagementRate",
+        "row?.metrics?.averageSessionDuration",
+        "label: 'Views'",
+        "label: 'Sessions'",
+        "label: 'Events'",
+        "label: 'Engagement'",
+        "label: 'Avg. session'",
+        '#8b5cf6',
         '#3b82f6',
-        '#06b6d4',
+        '#ec4899',
+        '#22c55e',
+        '#f59e0b',
     ]
     as $needle
 ) {

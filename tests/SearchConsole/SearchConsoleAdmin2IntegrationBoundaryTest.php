@@ -23,8 +23,14 @@ $required = [
     'text-xs',
     'font-medium',
     'text-muted-foreground',
-    'mt-1 inline-flex h-10 items-center justify-center rounded-md border border-border',
-    'mt-1 inline-flex h-10 items-center rounded-md border border-border bg-background p-1 shadow-sm',
+    'goosialize-google-refresh-button',
+    'goosialize-google-period-row mt-1',
+    'goosialize-google-period-refresh',
+    'inline-flex h-10 items-center rounded-md border border-border bg-background p-1 shadow-sm',
+    "periodRow.append(\n        periodControls,\n        refreshButton",
+    "periodGroup.replaceChildren(\n        periodLabel,\n        periodRow",
+    "'aria-label'",
+    "'Refresh data'",
 ];
 
 foreach ($required as $needle) {
@@ -45,6 +51,9 @@ $forbidden = [
     '.style.',
     'Goosialize Ltd',
     'grav:plugin-page-action',
+    'const refreshGroup',
+    'const refreshSpacer',
+    'mt-1 inline-flex h-10 items-center justify-center rounded-md border border-border',
 ];
 
 foreach ($forbidden as $needle) {
