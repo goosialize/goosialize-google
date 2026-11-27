@@ -45,3 +45,5 @@ Official release artifacts contain:
 - no service-account JSON;
 - no private key;
 - no development test suite.
+
+Group-inherited permissions are resolved using the Grav API permission resolver, including disabled groups and explicit account denials. API-key scope caps remain in force. Super Admin is an exact permission, not inherited from a parent grant.

@@ -92,6 +92,7 @@ if (
 $client = new FakeAnalyticsDataClient();
 
 $dimensions = [
+    'date',
     'pagePath',
     'pageTitle',
     'sessionDefaultChannelGroup',
@@ -160,6 +161,29 @@ $client->registerReportResponse(
                     ['value' => '720'],
                     ['value' => '12'],
                 ],
+            ],
+        ],
+        'rowCount' => 1,
+    ]
+);
+
+// The current dashboard requires a daily trend report as well as overview.
+$client->registerReportResponse(
+    '477785730',
+    'trend',
+    [
+        'dimensionHeaders' => [['name' => 'date']],
+        'metricHeaders' => array_map(
+            static fn (string $name): array => ['name' => $name],
+            ['screenPageViews', 'sessions', 'eventCount', 'engagementRate', 'averageSessionDuration']
+        ),
+        'rows' => [
+            [
+                'dimensionValues' => [['value' => '20260815']],
+                'metricValues' => array_map(
+                    static fn (string $value): array => ['value' => $value],
+                    ['45', '18', '72', '0.65', '90.5']
+                ),
             ],
         ],
         'rowCount' => 1,
@@ -289,6 +313,32 @@ if (
     throw new RuntimeException(
         'Dashboard date range contract failed.'
     );
+}
+
+$expectedTrend = [
+    'dimensions' => ['date' => '20260815'],
+    'metrics' => [
+        'screenPageViews' => 45,
+        'sessions' => 18,
+        'eventCount' => 72,
+        'engagementRate' => 0.65,
+        'averageSessionDuration' => 90.5,
+    ],
+];
+
+if (($payload['trend'][0] ?? null) !== $expectedTrend) {
+    throw new RuntimeException('Dashboard daily trend contract failed.');
+}
+
+$trendPackage = $dashboard->package(
+    '477785730',
+    DashboardPeriod::DAYS_30,
+    new DateTimeImmutable('2026-08-15'),
+    'trend'
+);
+
+if (($trendPackage['trend'][0] ?? null) !== $expectedTrend) {
+    throw new RuntimeException('Progressive trend package contract failed.');
 }
 
 if (($payload['empty'] ?? null) !== false) {

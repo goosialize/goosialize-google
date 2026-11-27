@@ -4,7 +4,7 @@ Google Analytics 4 and Google Search Console tools and integrations for Grav CMS
 
 ## Current release
 
-Version 0.3.1 provides production-ready:
+Version 0.3.3 provides production-ready:
 
 - Google Analytics 4 reporting
 - Google Search Console reporting
@@ -70,7 +70,7 @@ If no default property is configured, multi-property discovery remains available
 
 - Grav CMS 2
 - Admin2
-- Grav API plugin
+- Grav API plugin 1.1.26 or newer (group-aware permission resolver)
 - PHP 8.1+
 - BCMath
 - PDO SQLite

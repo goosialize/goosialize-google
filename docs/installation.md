@@ -4,7 +4,7 @@
 
 - Grav CMS 2
 - Admin2
-- Grav API plugin
+- Grav API plugin 1.1.26 or newer
 - PHP 8.1+
 - BCMath
 - PDO SQLite
@@ -126,3 +126,5 @@ Analytics:
 Search Console:
 
     api.goosialize_google.search_console.read
+
+Reporting permissions can be assigned to groups rather than individual accounts. Grant `api.access` and the two reporting read permissions to an Editor group. Do not grant `api.super`, configuration write, or package-management permissions to report viewers. Configure both site-specific properties before attaching credentials shared across sites.

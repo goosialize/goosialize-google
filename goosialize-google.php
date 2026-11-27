@@ -8,6 +8,7 @@ use Grav\Common\Plugin;
 use Grav\Events\PermissionsRegisterEvent;
 use Grav\Framework\Acl\PermissionsReader;
 use Goosialize\Google\Admin\AnalyticsDashboardController;
+use Goosialize\Google\Admin\ReportingAuthorization;
 use Goosialize\Google\Analytics\Tracking\AnalyticsTrackingInjector;
 use Goosialize\Google\Admin\SearchConsoleDashboardController;
 use Goosialize\Google\Core\Persistence\StorageBootstrapper;
@@ -447,79 +448,10 @@ final class GoosializeGooglePlugin extends Plugin
             );
     }
 
-    private function dashboardAllowed(
-        mixed $user
-    ): bool {
-        if (!is_object($user)) {
-            return false;
-        }
-
-        try {
-            if (
-                method_exists(
-                    $user,
-                    'get'
-                )
-            ) {
-                if (
-                    (bool) $user->get(
-                        'access.admin.super'
-                    )
-                    || (bool) $user->get(
-                        'access.api.super'
-                    )
-                ) {
-                    return true;
-                }
-
-                if (
-                    !(bool) $user->get(
-                        'access.api.access'
-                    )
-                ) {
-                    return false;
-                }
-
-                if (
-                    (bool) $user->get(
-                        'access.'
-                        . self::PERMISSION
-                    )
-                ) {
-                    return true;
-                }
-            }
-
-            if (
-                method_exists(
-                    $user,
-                    'authorize'
-                )
-            ) {
-                if (
-                    (bool) $user->authorize(
-                        'api.super'
-                    )
-                ) {
-                    return true;
-                }
-
-                if (
-                    !(bool) $user->authorize(
-                        'api.access'
-                    )
-                ) {
-                    return false;
-                }
-
-                return (bool) $user->authorize(
-                    self::PERMISSION
-                );
-            }
-        } catch (Throwable) {
-            return false;
-        }
-
-        return false;
+    private function dashboardAllowed(mixed $user): bool
+    {
+        return ReportingAuthorization::hasPermission($user, 'api.super')
+            || (ReportingAuthorization::hasPermission($user, 'api.access')
+                && ReportingAuthorization::hasPermission($user, self::PERMISSION));
     }
 }
